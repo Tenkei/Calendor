@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">تقویم</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Dialog Messages -->
+    <string name="dialog_select_date">انتخاب تاریخ</string>
+    <string name="dialog_exit_title">خروج از برنامه</string>
+    <string name="dialog_exit_body"> آیا قصد خروج از برنامه را دارید؟ </string>
+    <string name="dialog_delete_event_title">حذف رویداد</string>
+    <string name="dialog_delete_event_body">آیا از حذف رویداد مورد نظر اطمینان دارید؟ در صورت حذف تمام اطلاعات مربوط به این رویداد حذف می گردد.</string>
+    <string name="dialog_button_update">بروزرسانی</string>
+    <string name="dialog_button_confirm">تایید</string>
+    <string name="dialog_button_return">بازگشت</string>
+    <string name="dialog_button_exit">خروج</string>
+
+    <string name="weekday_1">ش</string>
+    <string name="weekday_2">ی</string>
+    <string name="weekday_3">د</string>
+    <string name="weekday_4">س</string>
+    <string name="weekday_5">چ</string>
+    <string name="weekday_6">پ</string>
+    <string name="weekday_7">ج</string>
+
+    <string name="event_successfully_deleted">رویداد با موفقیت حذف گردید!</string>
+    <string name="event_successfully_updated">رویداد با موفقیت به روزرسانی گردید!</string>
+    <string name="event_successfully_added">رویداد با موفقیت افزوده شد!</string>
+    <string name="event_error_no_calendar">تقویمی جهت درج رویداد موجود نمی باشد.</string>
+    <string name="event_error_no_content">عنوان یا توضیح رویداد باید تکمیل گردد.</string>
+    <string name="event_error_write_permission">جهت افزودن رویداد به تقویم, دسترسی نوشتن تقویم را فعال نمایید.</string>
+    <string name="event_no_title">(بدون عنوان)</string>
+    <string name="event_no_desc">(فاقد توضیحات)</string>
+
+</resources>

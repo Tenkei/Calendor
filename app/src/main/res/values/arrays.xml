@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="months_background">
+        <item>@drawable/bkg_01</item>
+        <item>@drawable/bkg_02</item>
+        <item>@drawable/bkg_03</item>
+        <item>@drawable/bkg_04</item>
+        <item>@drawable/bkg_05</item>
+        <item>@drawable/bkg_06</item>
+        <item>@drawable/bkg_07</item>
+        <item>@drawable/bkg_08</item>
+        <item>@drawable/bkg_09</item>
+        <item>@drawable/bkg_10</item>
+        <item>@drawable/bkg_11</item>
+        <item>@drawable/bkg_12</item>
+    </array>
+</resources>

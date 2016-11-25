@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    android:clickable="true"
+    android:background="@drawable/bg_calendar_today">
+    <TextView
+        android:id="@+id/event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:paddingBottom="2dp"
+        android:text="Event Title"
+        android:textSize="13sp"
+        android:textColor="@android:color/white"
+        android:maxLines="2"
+        android:ellipsize="end"/>
+
+    <ImageView
+        android:id="@+id/event_icon"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete_circle_white_24dp"
+        android:layout_gravity="left|center_vertical"/>
+</FrameLayout>
