@@ -8,74 +8,80 @@
         android:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-            <FrameLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <ImageSwitcher
+                android:id="@+id/toolbar_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/toolbar_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop"/>
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"/>
 
-                <FrameLayout
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
+            <FrameLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="48dp"
+                android:gravity="center"
+                android:background="@drawable/bg_toolbar_title"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <ImageView
+                    android:id="@+id/toolbar_left_btn"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:gravity="center"
-                    android:background="@drawable/bg_toolbar_title"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-                    <ImageView
-                        android:id="@+id/toolbar_left_btn"
+                    android:layout_gravity="left|center_vertical"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_chevron_left_white_24dp"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/toolbar_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left|center_vertical"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_chevron_left_white_24dp"/>
-                    <LinearLayout
-                        android:orientation="vertical"
+                        android:text="آبان"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/white"
+                        fontPath="fonts/IRANSans(FaNum)_Bold.ttf"/>
+                    <TextView
+                        android:id="@+id/toolbar_sub_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:layout_gravity="center"
-                        android:gravity="center">
-                        <TextView
-                            android:id="@+id/toolbar_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="آبان"
-                            android:textSize="16sp"
-                            android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum)_Bold.ttf"/>
-                        <TextView
-                            android:id="@+id/toolbar_sub_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="-4dp"
-                            android:text="June - July"
-                            android:textSize="13sp"
-                            android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum).ttf"/>
-                    </LinearLayout>
-                    <ImageView
-                        android:id="@+id/toolbar_right_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="right|center_vertical"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_chevron_right_white_24dp"/>
-                </FrameLayout>
+                        android:layout_marginTop="-4dp"
+                        android:text="June - July"
+                        android:textSize="13sp"
+                        android:textColor="@android:color/white"
+                        fontPath="fonts/IRANSans(FaNum).ttf"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/toolbar_right_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|center_vertical"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_chevron_right_white_24dp"/>
             </FrameLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
+
     <com.esbati.keivan.persiancalendar.Utils.Views.SmoothViewPager
-        android:fitsSystemWindows="true"
-        android:elevation="4dp"
         android:id="@+id/pager"
+        android:elevation="4dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="48dp"
-        android:layout_marginBottom="64dp"/>
+        android:layout_marginBottom="64dp"
+        app:behavior_overlapTop="96dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/bottom_sheet"
@@ -123,7 +129,7 @@
         android:id="@+id/add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
         app:layout_anchor="@+id/bottom_sheet"
         app:layout_anchorGravity="top|left"
         app:fabSize="mini"

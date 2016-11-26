@@ -24,12 +24,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.esbati.keivan.persiancalendar.Activities.MainActivity;
 import com.esbati.keivan.persiancalendar.Models.CalendarDay;
@@ -63,10 +66,10 @@ public class HomeFragment extends Fragment {
 
     //Toolbar
     private AppBarLayout mAppbar;
-    private FrameLayout mToolbar;
+    private View mToolbar;
     private TextView mToolbarTitle;
     private TextView mToolbarSubTitle;
-    private ImageView mToolbarBackground;
+    private ImageSwitcher mToolbarBackground;
     private ImageView mNextBtn;
     private ImageView mPreviousBtn;
 
@@ -102,26 +105,37 @@ public class HomeFragment extends Fragment {
         ArrayList<GoogleCalendar> mCalendars = GoogleCalendarHelper.getCalendars();
         ArrayList<GoogleEvent> mEvents = GoogleCalendarHelper.getEvents();
 
-
-
         setupToolbar(rootView);
         setupBottomSheet(rootView);
         setupPager(rootView);
-        mPager.setCurrentItem(mDisplayedMonth -1);
+        //mPager.setCurrentItem(mDisplayedMonth -1);
+        mPager.setCurrentItem(mDisplayedYear * 12 + mDisplayedMonth - 1);
 
-        showDate(new CalendarDay(persianCalendar), true, false);
+        showDate(new CalendarDay(persianCalendar), false, true);
 
         return rootView;
     }
 
     public void setupToolbar(View rootView){
         mAppbar = (AppBarLayout) rootView.findViewById(R.id.appbar);
-        mToolbar = (FrameLayout)rootView.findViewById(R.id.toolbar);
+        mToolbar = (View)rootView.findViewById(R.id.toolbar);
         mToolbarTitle = (TextView)rootView.findViewById(R.id.toolbar_title);
         mToolbarSubTitle = (TextView)rootView.findViewById(R.id.toolbar_sub_title);
-        mToolbarBackground = (ImageView)rootView.findViewById(R.id.toolbar_background);
+        mToolbarBackground = (ImageSwitcher) rootView.findViewById(R.id.toolbar_background);
         mNextBtn = (ImageView)rootView.findViewById(R.id.toolbar_right_btn);
         mPreviousBtn = (ImageView)rootView.findViewById(R.id.toolbar_left_btn);
+
+        mToolbarBackground.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                ImageView imageView = new ImageView(getActivity());
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setLayoutParams(new ImageSwitcher.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                return imageView;
+            }
+        });
+        mToolbarBackground.setInAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
+        mToolbarBackground.setOutAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //mToolbar.setPadding(0, getStatusBarHeight(), 0, getStatusBarHeight());
@@ -130,6 +144,10 @@ public class HomeFragment extends Fragment {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mPager.getCurrentItem() < Integer.MAX_VALUE - 1)
+                    mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+
+                /*
                 mDisplayedMonth++;
 
                 //If It is Last Month of the Year Move to Next Year and Refresh Fragments
@@ -140,12 +158,16 @@ public class HomeFragment extends Fragment {
                 }
 
                 mPager.setCurrentItem(mDisplayedMonth - 1, true);
+                */
             }
         });
 
         mPreviousBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mPager.getCurrentItem() > 0)
+                    mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                /*
                 mDisplayedMonth--;
 
                 //If It is Last Month of the Year Move to Next Year and Refresh Fragments
@@ -156,6 +178,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 mPager.setCurrentItem(mDisplayedMonth - 1, true);
+                */
             }
         });
     }
@@ -177,6 +200,7 @@ public class HomeFragment extends Fragment {
         mPager = (SmoothViewPager) rootView.findViewById(R.id.pager);
         mPagerAdapter = new HomePagerAdapter(getChildFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -185,7 +209,9 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                mDisplayedMonth = position + 1;
+                //mDisplayedMonth = position + 1;
+                mDisplayedMonth = position % 12 + 1;
+                mDisplayedYear = position / 12;
 
                 //Set Toolbar Background
                 Resources res = getResources();
@@ -210,10 +236,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void setFab(){
-        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
-        lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
-        lp.setAnchorId(R.id.bottom_sheet);
-        mEventActionBtn.setLayoutParams(lp);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
+            lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
+            lp.setAnchorId(R.id.bottom_sheet);
+            mEventActionBtn.setLayoutParams(lp);
+        }
 
         switch (mBottomSheetMode){
             case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
@@ -253,7 +281,8 @@ public class HomeFragment extends Fragment {
 
                         //Refresh UI and show Date if Event Successfully added
                         if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
-                            refreshFragment(tempEvent.mStartDate.getPersianMonth() - 1);
+                            //refreshFragment(tempEvent.mStartDate.getPersianMonth() - 1);
+                            refreshFragment(tempEvent.mStartDate.getPersianYear() * 12 + tempEvent.mStartDate.getPersianMonth() - 1);
                             showDate(mSelectedDay, true, true);
                         }
                     }
@@ -415,11 +444,7 @@ public class HomeFragment extends Fragment {
 
     public void showEvent(final GoogleEvent gEvent){
         //Create Temp Event
-        tempEvent = new GoogleEvent();
-        tempEvent.mID = gEvent.mID;
-        tempEvent.mTITLE = gEvent.mTITLE;
-        tempEvent.mDESCRIPTION = gEvent.mDESCRIPTION;
-        tempEvent.mDTSTART = gEvent.mDTSTART;
+        tempEvent = gEvent.clone();
 
         //Collapse Bottom Sheet then Set it Up
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -475,7 +500,8 @@ public class HomeFragment extends Fragment {
 
                                 //Refresh UI and show Date if Event Successfully added
                                 if(msgId == R.string.event_successfully_deleted){
-                                    refreshFragment(gEvent.mStartDate.getPersianMonth() - 1);
+                                    //refreshFragment(gEvent.mStartDate.getPersianMonth() - 1);
+                                    refreshFragment(gEvent.mStartDate.getPersianYear() * 12 + gEvent.mStartDate.getPersianMonth() - 1);
                                     showDate(mSelectedDay, true, true);
                                 }
                             }
@@ -554,12 +580,13 @@ public class HomeFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return CalendarFragment.newInstance(mDisplayedYear, position + 1);
+            //return CalendarFragment.newInstance(mDisplayedYear, position + 1);
+            return CalendarFragment.newInstance(position / 12, position % 12  + 1);
         }
 
         @Override
         public int getCount() {
-            return 12;
+            return Integer.MAX_VALUE;
         }
     }
 }

@@ -32,4 +32,26 @@ public class GoogleEvent {
         mDTSTART = startMillis;
         mStartDate = new PersianCalendar(startMillis);
     }
+
+    public GoogleEvent clone(){
+        GoogleEvent tempEvent = new GoogleEvent();
+        tempEvent.mID = mID;
+        tempEvent.mORGANIZER = mORGANIZER;
+        tempEvent.mTITLE = mTITLE;
+        tempEvent.mEVENT_LOCATION = mEVENT_LOCATION;
+        tempEvent.mDESCRIPTION = mDESCRIPTION;
+        tempEvent.mDTSTART = mDTSTART;
+        tempEvent.mDTEND = mDTEND;
+        tempEvent.mEVENT_TIMEZONE = mEVENT_TIMEZONE;
+        tempEvent.mEVENT_END_TIMEZONE = mEVENT_END_TIMEZONE;
+        tempEvent.mDURATION = mDURATION;
+        tempEvent.mALL_DAY = mALL_DAY;
+        tempEvent.mRRULE = mRRULE;
+        tempEvent.mRDATE = mRDATE;
+        tempEvent.mStartDate = new PersianCalendar(mDTSTART);
+        tempEvent.mEndDate = new PersianCalendar(mDTEND);
+        tempEvent.mCalendar = mCalendar;
+
+        return tempEvent;
+    }
 }
