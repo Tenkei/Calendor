@@ -3,6 +3,10 @@ package com.esbati.keivan.persiancalendar;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
+import com.onesignal.OneSignal;
+
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -17,6 +21,8 @@ public class ApplicationController extends Application {
         super.onCreate();
         mContext = this;
 
+        Fabric.with(this, new Crashlytics());
+        OneSignal.startInit(this).init();
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/IRANSans(FaNum).ttf")
                 .setFontAttrId(R.attr.fontPath)

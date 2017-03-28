@@ -18,10 +18,6 @@
         android:drawableRight="@drawable/ic_tag_grey600_18dp"
         android:background="@null"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lighter_gray"/>
 
     <EditText
         android:id="@+id/event_description"

@@ -9,19 +9,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -66,6 +71,7 @@ public class HomeFragment extends Fragment {
 
     //Toolbar
     private AppBarLayout mAppbar;
+    private CollapsingToolbarLayout mCollapsingToolbar;
     private View mToolbar;
     private TextView mToolbarTitle;
     private TextView mToolbarSubTitle;
@@ -80,9 +86,8 @@ public class HomeFragment extends Fragment {
     private FragmentPagerAdapter mPagerAdapter;
 
     //Bottom Sheet
-    private int mBottomSheetState;
     private int mBottomSheetMode;
-    private View mBottomSheet;
+    private NestedScrollView mBottomSheet;
     private LinearLayout mBottomSheetContainer;
     private BottomSheetBehavior mBottomSheetBehavior;
     private TextView mPersianDate;
@@ -108,7 +113,6 @@ public class HomeFragment extends Fragment {
         setupToolbar(rootView);
         setupBottomSheet(rootView);
         setupPager(rootView);
-        //mPager.setCurrentItem(mDisplayedMonth -1);
         mPager.setCurrentItem(mDisplayedYear * 12 + mDisplayedMonth - 1);
 
         showDate(new CalendarDay(persianCalendar), false, true);
@@ -118,7 +122,8 @@ public class HomeFragment extends Fragment {
 
     public void setupToolbar(View rootView){
         mAppbar = (AppBarLayout) rootView.findViewById(R.id.appbar);
-        mToolbar = (View)rootView.findViewById(R.id.toolbar);
+        mCollapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
+        mToolbar = rootView.findViewById(R.id.toolbar);
         mToolbarTitle = (TextView)rootView.findViewById(R.id.toolbar_title);
         mToolbarSubTitle = (TextView)rootView.findViewById(R.id.toolbar_sub_title);
         mToolbarBackground = (ImageSwitcher) rootView.findViewById(R.id.toolbar_background);
@@ -137,28 +142,11 @@ public class HomeFragment extends Fragment {
         mToolbarBackground.setInAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
         mToolbarBackground.setOutAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //mToolbar.setPadding(0, getStatusBarHeight(), 0, getStatusBarHeight());
-        }
-
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mPager.getCurrentItem() < Integer.MAX_VALUE - 1)
                     mPager.setCurrentItem(mPager.getCurrentItem() + 1);
-
-                /*
-                mDisplayedMonth++;
-
-                //If It is Last Month of the Year Move to Next Year and Refresh Fragments
-                if(mDisplayedMonth > 12){
-                    mDisplayedMonth -= 12;
-                    mDisplayedYear++;
-                    refreshCalendar();
-                }
-
-                mPager.setCurrentItem(mDisplayedMonth - 1, true);
-                */
             }
         });
 
@@ -167,32 +155,33 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 if(mPager.getCurrentItem() > 0)
                     mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-                /*
-                mDisplayedMonth--;
-
-                //If It is Last Month of the Year Move to Next Year and Refresh Fragments
-                if(mDisplayedMonth < 1){
-                    mDisplayedMonth += 12;
-                    mDisplayedYear--;
-                    refreshCalendar();
-                }
-
-                mPager.setCurrentItem(mDisplayedMonth - 1, true);
-                */
             }
         });
     }
 
     public void setupBottomSheet(View rootView){
-        mBottomSheet = rootView.findViewById(R.id.bottom_sheet);
+        mBottomSheet = (NestedScrollView)rootView.findViewById(R.id.bottom_sheet);
         mBottomSheetContainer = (LinearLayout) rootView.findViewById(R.id.bottom_sheet_container);
         mPersianDate = (TextView)rootView.findViewById(R.id.date_shamsi);
         mGregorianDate = (TextView)rootView.findViewById(R.id.date_miladi);
 
         mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int i) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_ADD_EVENT){
+                    //mAppbar.scroll(mAppbar.getHeight() * v * -1);
+                }
+            }
+        });
     }
 
-    public void setupPager(View rootView){
+    public void setupPager(final View rootView){
         mEventActionBtn = (FloatingActionButton) rootView.findViewById(R.id.add_event);
         setFab();
 
@@ -209,7 +198,6 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                //mDisplayedMonth = position + 1;
                 mDisplayedMonth = position % 12 + 1;
                 mDisplayedYear = position / 12;
 
@@ -236,12 +224,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void setFab(){
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
-            lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
-            lp.setAnchorId(R.id.bottom_sheet);
-            mEventActionBtn.setLayoutParams(lp);
-        }
+        //if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        //    CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
+        //    lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
+        //    lp.setAnchorId(R.id.bottom_sheet);
+        //    mEventActionBtn.setLayoutParams(lp);
+        //}
 
         switch (mBottomSheetMode){
             case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
@@ -281,13 +269,13 @@ public class HomeFragment extends Fragment {
 
                         //Refresh UI and show Date if Event Successfully added
                         if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
-                            //refreshFragment(tempEvent.mStartDate.getPersianMonth() - 1);
                             refreshFragment(tempEvent.mStartDate.getPersianYear() * 12 + tempEvent.mStartDate.getPersianMonth() - 1);
                             showDate(mSelectedDay, true, true);
                         }
                     }
                 });
                 break;
+
             case CalendarBottomSheet.SHEET_MODE_VIEW_EVENT:
                 mEventActionBtn.setImageResource(R.drawable.ic_pencil_white_24dp);
                 mEventActionBtn.setOnClickListener(new View.OnClickListener() {
@@ -298,6 +286,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
                 break;
+
             case CalendarBottomSheet.SHEET_MODE_DATE:
             default:
                 mEventActionBtn.setImageResource(R.drawable.ic_calendar_plus_white_24dp);
@@ -312,7 +301,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void showDate(final CalendarDay day, final boolean expandSheet, final boolean needUpdate){
-
         //Collapse Bottom Sheet then Set it Up
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         new Handler().postDelayed(new Runnable() {
