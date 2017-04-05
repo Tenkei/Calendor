@@ -29,7 +29,7 @@
                 android:layout_marginBottom="48dp"
                 android:gravity="center"
                 android:background="@drawable/bg_toolbar_title"
-                app:layout_collapseMode="pin"
+                app:layout_collapseMode="none"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
                 <ImageView
                     android:id="@+id/toolbar_left_btn"

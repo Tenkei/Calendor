@@ -4,15 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.esbati.keivan.persiancalendar.Fragments.HomeFragment;
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.Utils.AndroidUtils;
+import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -26,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
-            //getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                             MainActivity.super.onBackPressed();
                         }
                     }).create();
-            AndroidUtils.showCustomDialog(dialog);
+            AndroidUtilities.showRTLDialog(dialog);
         }
     }
 

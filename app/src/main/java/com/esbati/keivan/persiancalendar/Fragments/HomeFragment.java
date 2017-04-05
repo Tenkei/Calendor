@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -14,24 +13,20 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.GestureDetector;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,13 +34,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.esbati.keivan.persiancalendar.Activities.MainActivity;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.esbati.keivan.persiancalendar.Models.CalendarDay;
 import com.esbati.keivan.persiancalendar.Models.CalendarEvent;
 import com.esbati.keivan.persiancalendar.Models.GoogleCalendar;
 import com.esbati.keivan.persiancalendar.Models.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.Utils.AndroidUtils;
+import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.Views.CalendarBottomSheet;
@@ -70,9 +66,10 @@ public class HomeFragment extends Fragment {
     private GoogleEvent tempEvent;
 
     //Toolbar
+    private int mToolbarMargin;
     private AppBarLayout mAppbar;
     private CollapsingToolbarLayout mCollapsingToolbar;
-    private View mToolbar;
+    private Toolbar mToolbar;
     private TextView mToolbarTitle;
     private TextView mToolbarSubTitle;
     private ImageSwitcher mToolbarBackground;
@@ -120,10 +117,29 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    /*
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mBottomSheet.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
+                lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
+                mEventActionBtn.setLayoutParams(lp);
+
+                mBottomSheet.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
+    }
+    */
+
     public void setupToolbar(View rootView){
         mAppbar = (AppBarLayout) rootView.findViewById(R.id.appbar);
         mCollapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
-        mToolbar = rootView.findViewById(R.id.toolbar);
+        mToolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
         mToolbarTitle = (TextView)rootView.findViewById(R.id.toolbar_title);
         mToolbarSubTitle = (TextView)rootView.findViewById(R.id.toolbar_sub_title);
         mToolbarBackground = (ImageSwitcher) rootView.findViewById(R.id.toolbar_background);
@@ -155,6 +171,23 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 if(mPager.getCurrentItem() > 0)
                     mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+            }
+        });
+
+        mAppbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int appbarHeight = mAppbar.getTotalScrollRange();
+                final int newToolbarMargin = (appbarHeight - Math.abs(verticalOffset)) * 48 / appbarHeight;
+
+                if(mToolbarMargin != newToolbarMargin){
+                    mToolbarMargin = newToolbarMargin;
+                    CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams)mToolbar.getLayoutParams();
+                    lp.setMargins(0, 0, 0, AndroidUtilities.dp(newToolbarMargin));
+                    mToolbar.setLayoutParams(lp);
+                }
+
+                Log.e("Offset", "" + newToolbarMargin);
             }
         });
     }
@@ -224,12 +257,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void setFab(){
-        //if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-        //    CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
-        //    lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
-        //    lp.setAnchorId(R.id.bottom_sheet);
-        //    mEventActionBtn.setLayoutParams(lp);
-        //}
 
         switch (mBottomSheetMode){
             case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
@@ -271,6 +298,16 @@ public class HomeFragment extends Fragment {
                         if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
                             refreshFragment(tempEvent.mStartDate.getPersianYear() * 12 + tempEvent.mStartDate.getPersianMonth() - 1);
                             showDate(mSelectedDay, true, true);
+
+                            if(msgId == R.string.event_successfully_added){
+                                Answers.getInstance()
+                                        .logCustom(new CustomEvent("Add Event")
+                                                .putCustomAttribute(
+                                                        "Has Detail",
+                                                        TextUtils.isEmpty(tempEvent.mDESCRIPTION) ? "false" : "true"
+                                                )
+                                        );
+                            }
                         }
                     }
                 });
@@ -311,14 +348,19 @@ public class HomeFragment extends Fragment {
                     day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
                 mSelectedDay = day;
 
-                //Set Mode And Fab Button
-                mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
-                setFab();
-
                 //Set Bottom Sheet
                 setDateSheet(day);
-                if(expandSheet)
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Set Mode And Fab Button
+                        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
+                        setFab();
+
+                        if(expandSheet)
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
+                }, 100);
             }
         }, 300);
     }
@@ -390,14 +432,18 @@ public class HomeFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                //Set Mode And Fab Button
-                mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-                setFab();
-
                 //Set Bottom Sheet
                 setAddEventSheet(gEvent, isEditable);
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Set Mode And Fab Button
+                        mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
+                        setFab();
+
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
+                }, 100);
             }
         }, 300);
     }
@@ -439,14 +485,18 @@ public class HomeFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                //Set Mode And Fab Button
-                mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-                setFab();
-
                 //Set Bottom Sheet
                 setShowEventSheet(gEvent);
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Set Mode And Fab Button
+                        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
+                        setFab();
+
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
+                }, 100);
             }
         }, 300);
     }
@@ -494,7 +544,7 @@ public class HomeFragment extends Fragment {
                                 }
                             }
                         }).create();
-                AndroidUtils.showCustomDialog(dialog);
+                AndroidUtilities.showRTLDialog(dialog);
             }
         });
 
@@ -531,18 +581,6 @@ public class HomeFragment extends Fragment {
         Fragment selectedFragment = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + pageNumber);
         if(selectedFragment != null && selectedFragment instanceof CalendarFragment)
             ((CalendarFragment) selectedFragment).refreshCalendar(mDisplayedYear);
-    }
-
-    // A method to find height of the status bar
-    public int getStatusBarHeight() {
-
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-
-        return result;
     }
 
     public boolean onBackPressed(){
