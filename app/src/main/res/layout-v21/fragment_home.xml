@@ -1,9 +1,9 @@
 <android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -14,39 +14,40 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:contentScrim="@color/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             android:fitsSystemWindows="true">
             <ImageSwitcher
                 android:id="@+id/toolbar_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
+                android:fitsSystemWindows="true"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_collapseMode="none"
+                android:layout_height="96dp"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="48dp"
-                android:gravity="center">
+                android:paddingBottom="48dp"
+                android:gravity="bottom|center"
+                app:layout_collapseMode="none"
+                app:contentInsetStart="0dp">
                 <FrameLayout
-                    android:fitsSystemWindows="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_toolbar_title"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
                     <ImageView
                         android:id="@+id/toolbar_left_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left|center_vertical"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:src="@drawable/ic_chevron_left_white_24dp"/>
+
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="wrap_content"
@@ -72,13 +73,24 @@
                             android:textColor="@android:color/white"
                             fontPath="fonts/IRANSans(FaNum).ttf"/>
                     </LinearLayout>
+
                     <ImageView
                         android:id="@+id/toolbar_right_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="right|center_vertical"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:src="@drawable/ic_chevron_right_white_24dp"/>
+
+                    <ImageView
+                        android:visibility="visible"
+                        android:id="@+id/toolbar_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="-48dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_settings_white_24dp"/>
                 </FrameLayout>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -89,9 +101,8 @@
         android:elevation="4dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="64dp"
-        app:behavior_overlapTop="96dp"
+        android:layout_marginTop="16dp"
+        app:behavior_overlapTop="64dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.v4.widget.NestedScrollView

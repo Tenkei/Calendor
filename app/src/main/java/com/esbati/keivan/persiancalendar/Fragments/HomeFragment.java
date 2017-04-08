@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -25,8 +26,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +45,7 @@ import com.esbati.keivan.persiancalendar.Models.GoogleCalendar;
 import com.esbati.keivan.persiancalendar.Models.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
+import com.esbati.keivan.persiancalendar.Utils.ColorHelper;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.Views.CalendarBottomSheet;
@@ -73,11 +77,11 @@ public class HomeFragment extends Fragment {
     private TextView mToolbarTitle;
     private TextView mToolbarSubTitle;
     private ImageSwitcher mToolbarBackground;
+    private ImageView mSetting;
     private ImageView mNextBtn;
     private ImageView mPreviousBtn;
 
     //Body
-    private NestedScrollView mMainContainer;
     private SmoothViewPager mPager;
     private FloatingActionButton mEventActionBtn;
     private FragmentPagerAdapter mPagerAdapter;
@@ -143,6 +147,7 @@ public class HomeFragment extends Fragment {
         mToolbarTitle = (TextView)rootView.findViewById(R.id.toolbar_title);
         mToolbarSubTitle = (TextView)rootView.findViewById(R.id.toolbar_sub_title);
         mToolbarBackground = (ImageSwitcher) rootView.findViewById(R.id.toolbar_background);
+        mSetting = (ImageView)rootView.findViewById(R.id.toolbar_setting);
         mNextBtn = (ImageView)rootView.findViewById(R.id.toolbar_right_btn);
         mPreviousBtn = (ImageView)rootView.findViewById(R.id.toolbar_left_btn);
 
@@ -177,17 +182,41 @@ public class HomeFragment extends Fragment {
         mAppbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                int appbarHeight = mAppbar.getTotalScrollRange();
-                final int newToolbarMargin = (appbarHeight - Math.abs(verticalOffset)) * 48 / appbarHeight;
+                float abHeight = mAppbar.getTotalScrollRange();
+                final float heightRatio = (abHeight - Math.abs(verticalOffset)) / abHeight; //Range from 1 to 0
+                final int newToolbarMarginPixel = (int)(heightRatio * AndroidUtilities.dp(48)); //Range from 48 to 0
+                final int newButtonMarginPixel = (int)((1 - heightRatio) * AndroidUtilities.dp(48)); //Range from 0 to 48
 
-                if(mToolbarMargin != newToolbarMargin){
-                    mToolbarMargin = newToolbarMargin;
-                    CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams)mToolbar.getLayoutParams();
-                    lp.setMargins(0, 0, 0, AndroidUtilities.dp(newToolbarMargin));
-                    mToolbar.setLayoutParams(lp);
-                }
+                //Set Toolbar and Icon Margin, Since Padding is int Value
+                if(mToolbarMargin != newToolbarMarginPixel)
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToolbarMargin = newToolbarMarginPixel;
+                            mToolbar.setPadding(0, 0, 0, newToolbarMarginPixel);
+                            //CollapsingToolbarLayout.LayoutParams clp = (CollapsingToolbarLayout.LayoutParams)mToolbar.getLayoutParams();
+                            //clp.setMargins(0, 0, 0, newToolbarMarginPixel);
+                            //mToolbar.setLayoutParams(clp);
 
-                Log.e("Offset", "" + newToolbarMargin);
+                            FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams)mNextBtn.getLayoutParams();
+                            flp.setMargins(0, 0, newButtonMarginPixel, 0);
+                            mNextBtn.setLayoutParams(flp);
+
+                            flp = (FrameLayout.LayoutParams)mPreviousBtn.getLayoutParams();
+                            flp.setMargins(newButtonMarginPixel,0 , 0, 0);
+                            mPreviousBtn.setLayoutParams(flp);
+
+                            flp = (FrameLayout.LayoutParams)mSetting.getLayoutParams();
+                            flp.setMargins(0, 0, newButtonMarginPixel - AndroidUtilities.dp(48), 0);
+                            mSetting.setLayoutParams(flp);
+                        }
+                    });
+
+                //Set Extra Views
+                mSetting.setAlpha(1 - heightRatio);
+                mSetting.setRotation(180 * heightRatio);
+
+                Log.e("Padding", "" + newToolbarMarginPixel);
             }
         });
     }
@@ -227,6 +256,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+                Log.d("positionOffset", "" + positionOffset);
+                Log.d("positionOffsetPixels", "" + positionOffsetPixels);
             }
 
             @Override
@@ -247,6 +278,13 @@ public class HomeFragment extends Fragment {
                         + " - "
                         + Constants.months_en[(mDisplayedMonth + 2) % 12]
                 );
+
+                //Set Appbar Color
+                //mCollapsingToolbar.setContentScrimColor(ColorHelper.getSeasonColor(mDisplayedMonth));
+                //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //    Window window = getActivity().getWindow();
+                //    window.setStatusBarColor(ColorHelper.getSeasonColor(mDisplayedMonth));
+                //}
             }
 
             @Override
