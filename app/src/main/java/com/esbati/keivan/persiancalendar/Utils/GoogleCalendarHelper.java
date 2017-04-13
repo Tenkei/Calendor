@@ -12,9 +12,8 @@ import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.widget.Toast;
 
-import com.esbati.keivan.persiancalendar.ApplicationController;
+import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
 import com.esbati.keivan.persiancalendar.Models.GoogleCalendar;
 import com.esbati.keivan.persiancalendar.Models.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;

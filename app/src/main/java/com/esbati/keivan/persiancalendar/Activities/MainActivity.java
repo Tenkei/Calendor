@@ -15,6 +15,7 @@ import android.view.View;
 import com.esbati.keivan.persiancalendar.Fragments.HomeFragment;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
+import com.esbati.keivan.persiancalendar.Utils.SoundManager;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Load Audio
+        SoundManager.getInstance();
         setupFragment();
     }
 

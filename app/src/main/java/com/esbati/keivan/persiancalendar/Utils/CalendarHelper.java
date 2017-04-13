@@ -3,7 +3,7 @@ package com.esbati.keivan.persiancalendar.Utils;
 import android.support.annotation.RawRes;
 import android.util.Log;
 
-import com.esbati.keivan.persiancalendar.ApplicationController;
+import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
 import com.esbati.keivan.persiancalendar.Models.CalendarEvent;
 import com.esbati.keivan.persiancalendar.R;
 
@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import ir.smartlab.persindatepicker.util.PersianCalendar;

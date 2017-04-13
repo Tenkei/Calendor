@@ -1,9 +1,10 @@
-package com.esbati.keivan.persiancalendar;
+package com.esbati.keivan.persiancalendar.Controllers;
 
 import android.app.Application;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
+import com.esbati.keivan.persiancalendar.R;
 import com.onesignal.OneSignal;
 
 import io.fabric.sdk.android.Fabric;
