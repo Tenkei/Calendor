@@ -17,6 +17,7 @@ import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Fragments.HomeFragment;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
+import com.esbati.keivan.persiancalendar.Utils.NotificationHelper;
 import com.esbati.keivan.persiancalendar.Utils.SoundManager;
 
 import java.util.ArrayList;
@@ -187,6 +188,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayHol
                 if(!mDay.isCurrentMonth)
                     return;
 
+                //FIXME Remove This Notification on Release
+                NotificationHelper.showStickyNotification(mDay, true);
                 SoundManager.getInstance().playSound(mDay.mDayNo);
                 mFragment.showDate(mDay, true, false);
             }

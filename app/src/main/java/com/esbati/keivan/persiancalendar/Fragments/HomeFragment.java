@@ -108,14 +108,10 @@ public class HomeFragment extends Fragment {
         mDisplayedYear = persianCalendar.getPersianYear();
         mDisplayedMonth = persianCalendar.getPersianMonth();
 
-        ArrayList<GoogleCalendar> mCalendars = GoogleCalendarHelper.getCalendars();
-        ArrayList<GoogleEvent> mEvents = GoogleCalendarHelper.getEvents();
-
         setupToolbar(rootView);
         setupBottomSheet(rootView);
         setupPager(rootView);
         mPager.setCurrentItem(mDisplayedYear * 12 + mDisplayedMonth - 1);
-
         showDate(new CalendarDay(persianCalendar), false, true);
 
         return rootView;

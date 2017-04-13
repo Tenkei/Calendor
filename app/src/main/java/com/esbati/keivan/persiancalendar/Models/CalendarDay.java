@@ -17,6 +17,10 @@ public class CalendarDay {
     public ArrayList<CalendarEvent> mCalendarEvents;
     public ArrayList<GoogleEvent> mGoogleEvents;
 
+    public CalendarDay(){
+        this(new PersianCalendar());
+    }
+
     public CalendarDay(PersianCalendar persianCalendar){
         mPersianDate = persianCalendar;
 

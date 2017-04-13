@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.esbati.keivan.persiancalendar">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
@@ -23,10 +24,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".Services.NotificationUpdateService"/>
+        <service android:name=".Services.NotificationActionService"/>
+
+        <receiver android:name=".Receivers.BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="83ea65b97507c02eff34f3a7c8e8f60a637d0b88" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

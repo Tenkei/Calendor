@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Load Audio
-        SoundManager.getInstance();
         setupFragment();
     }
 
