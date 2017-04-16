@@ -14,10 +14,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
@@ -71,6 +73,7 @@ public class HomeFragment extends Fragment {
 
     //Toolbar
     private int mToolbarMargin;
+    private CoordinatorLayout mCoordinatorLayout;
     private AppBarLayout mAppbar;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private Toolbar mToolbar;
@@ -137,6 +140,7 @@ public class HomeFragment extends Fragment {
     */
 
     public void setupToolbar(View rootView){
+        mCoordinatorLayout = (CoordinatorLayout) rootView.findViewById(R.id.coordinator_layout);
         mAppbar = (AppBarLayout) rootView.findViewById(R.id.appbar);
         mCollapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         mToolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
@@ -185,7 +189,7 @@ public class HomeFragment extends Fragment {
 
                 //Set Toolbar and Icon Margin, Since Padding is int Value
                 if(mToolbarMargin != newToolbarMarginPixel)
-                    new Handler().post(new Runnable() {
+                    mAppbar.post(new Runnable() {
                         @Override
                         public void run() {
                             mToolbarMargin = newToolbarMarginPixel;
@@ -413,7 +417,7 @@ public class HomeFragment extends Fragment {
                         gregorianCalendar.get(Calendar.YEAR)
         );
 
-        //Set Calendar Events
+        //Set Google Calendar Events
         mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
         if(day.mGoogleEvents != null)
             for(final GoogleEvent googleEvent : day.mGoogleEvents){
@@ -595,16 +599,6 @@ public class HomeFragment extends Fragment {
             eventDescTV.setText(R.string.event_no_desc);
 
         mBottomSheetContainer.addView(eventDescription);
-    }
-
-    public void refreshCalendar(){
-        List<Fragment> mCalendarPages = getChildFragmentManager().getFragments();
-
-        if(mCalendarPages != null)
-            for(int i = 0 ; i < mCalendarPages.size() ; i++){
-                if(mCalendarPages.get(i) instanceof CalendarFragment)
-                    ((CalendarFragment) mCalendarPages.get(i)).refreshCalendar(mDisplayedYear);
-            }
     }
 
     public void refreshFragment(int pageNumber){

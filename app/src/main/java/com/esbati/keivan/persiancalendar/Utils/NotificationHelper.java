@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -17,8 +16,6 @@ import com.esbati.keivan.persiancalendar.Services.NotificationActionService;
 import com.esbati.keivan.persiancalendar.Services.NotificationUpdateService;
 
 import java.util.Calendar;
-
-import ir.smartlab.persindatepicker.util.PersianCalendar;
 
 /**
  * Created by Keivan Esbati on 4/9/2017.
@@ -34,12 +31,12 @@ public class NotificationHelper {
         int flags = PendingIntent.FLAG_CANCEL_CURRENT; // cancel old intent and create new one
         PendingIntent pIntent = PendingIntent.getActivity(ApplicationController.getContext(), requestId, intent, flags);
 
+
         //Setup Notification
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(ApplicationController.getContext())
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setColor(ColorHelper.getSeasonColor(calendar.mPersianDate.getPersianMonth()))
                 .setSmallIcon(R.drawable.icon01 + calendar.mDayNo - 1)
-                .setContentTitle(calendar.mPersianDate.getPersianLongDate())
                 //FIXME Remove This Notification on Release
                 //.setContentText(new PersianCalendar(System.currentTimeMillis()).getPersianLongDateAndTime())
                 //.setDefaults(Notification.DEFAULT_ALL)
@@ -47,6 +44,10 @@ public class NotificationHelper {
                 .setShowWhen(false)
                 .setAutoCancel(false)
                 .setOngoing(true);
+
+        //Setup Title Text
+        String mTitle = LanguageHelper.formatStringInPersian(calendar.mPersianDate.getPersianLongDate());
+        mBuilder.setContentTitle(mTitle);
 
         //Set Content Text
         String collapsedText = "";
@@ -60,11 +61,15 @@ public class NotificationHelper {
 
         //Adjust Content Text
         if(!TextUtils.isEmpty(collapsedText)){
+            //If an Event with Title is Found and R est of Events Count
             if(calendar.mGoogleEvents.size() > 1)
                 collapsedText += " و " + (calendar.mGoogleEvents.size() - 1) + " رویداد دیگر";
-
-            mBuilder.setContentText(collapsedText.trim());
+        } else {
+            //If No Event with Title is Found just Add Events Count
+            if(calendar.mGoogleEvents.size() > 0)
+                collapsedText = calendar.mGoogleEvents.size() + " رویداد";
         }
+        mBuilder.setContentText(collapsedText.trim());
 
         //If Events are more than One Create Expanded Inbox Style View
         if(calendar.mGoogleEvents != null && calendar.mGoogleEvents.size() > 1){
