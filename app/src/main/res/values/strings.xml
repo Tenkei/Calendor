@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Seasons</string>
+    <string name="app_name">Calendor</string>
     <string name="action_settings">Settings</string>
 
     <!-- Dialog Messages -->
@@ -21,6 +21,16 @@
     <string name="weekday_6">پ</string>
     <string name="weekday_7">ج</string>
 
+    <string-array name="weekdays">
+        <item>ش</item>
+        <item>ی</item>
+        <item>د</item>
+        <item>س</item>
+        <item>چ</item>
+        <item>پ</item>
+        <item>ج</item>
+    </string-array>
+
     <string name="event_successfully_deleted">رویداد با موفقیت حذف گردید!</string>
     <string name="event_successfully_updated">رویداد با موفقیت به روزرسانی گردید!</string>
     <string name="event_successfully_added">رویداد با موفقیت افزوده شد!</string>
@@ -29,5 +39,12 @@
     <string name="event_error_write_permission">جهت افزودن رویداد به تقویم, دسترسی نوشتن تقویم را فعال نمایید.</string>
     <string name="event_no_title">(بدون عنوان)</string>
     <string name="event_no_desc">(فاقد توضیحات)</string>
+
+
+    <!-- Setting -->
+    <string name="setting_sticky_notification">اعلان نوار ابزار</string>
+    <string name="setting_sticky_notification_display">نمایش تاریخ در نوار اعلانات</string>
+    <string name="setting_sticky_notification_actions">نمایش اکشن ها</string>
+    <string name="setting_sticky_notification_priority">اولویت نمایش</string>
 
 </resources>

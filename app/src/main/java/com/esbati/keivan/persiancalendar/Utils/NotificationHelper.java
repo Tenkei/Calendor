@@ -23,8 +23,15 @@ import java.util.Calendar;
 
 public class NotificationHelper {
     public static final int NOTIFICATION_ID = 666;
+    public static final int[] NOTIFICAITON_PRIORITY = {
+            NotificationCompat.PRIORITY_MIN
+            , NotificationCompat.PRIORITY_LOW
+            , NotificationCompat.PRIORITY_DEFAULT
+            , NotificationCompat.PRIORITY_HIGH
+            , NotificationCompat.PRIORITY_MAX
+    };
 
-    public static void showStickyNotification(CalendarDay calendar, boolean registerAlarm){
+    public static void showStickyNotification(CalendarDay calendar){
         //Setup Content Intent
         Intent intent = new Intent(ApplicationController.getContext(), MainActivity.class);
         int requestId = (int)System.currentTimeMillis(); //unique requestID to differentiate between various notification with same NotifId
@@ -33,14 +40,14 @@ public class NotificationHelper {
 
 
         //Setup Notification
+        int notificationPriority = NOTIFICAITON_PRIORITY[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)];
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(ApplicationController.getContext())
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(notificationPriority)
                 .setColor(ColorHelper.getSeasonColor(calendar.mPersianDate.getPersianMonth()))
                 .setSmallIcon(R.drawable.icon01 + calendar.mDayNo - 1)
-                //FIXME Remove This Notification on Release
-                //.setContentText(new PersianCalendar(System.currentTimeMillis()).getPersianLongDateAndTime())
                 //.setDefaults(Notification.DEFAULT_ALL)
                 .setContentIntent(pIntent)
+                .setWhen(0)
                 .setShowWhen(false)
                 .setAutoCancel(false)
                 .setOngoing(true);
@@ -87,34 +94,22 @@ public class NotificationHelper {
         }
 
         //Setup Actions
-        Intent dismissIntent = new Intent(ApplicationController.getContext(), NotificationActionService.class);
-        dismissIntent.putExtra(NotificationActionService.EXTRA_ACTION, NotificationActionService.ACTION_DISMISS);
-        PendingIntent pDismissIntent = PendingIntent.getService(ApplicationController.getContext(), 0, dismissIntent, flags);
-        mBuilder.addAction(R.drawable.ic_server_remove_white_24dp, "Dismiss", pDismissIntent);
-                //.addAction(R.drawable.ic_calendar_plus_white_24dp, "Add Event", pDismissIntent);
+        if(PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)){
+            Intent dismissIntent = new Intent(ApplicationController.getContext(), NotificationActionService.class);
+            dismissIntent.putExtra(NotificationActionService.EXTRA_ACTION, NotificationActionService.ACTION_DISMISS);
+            PendingIntent pDismissIntent = PendingIntent.getService(ApplicationController.getContext(), 0, dismissIntent, flags);
+            mBuilder.addAction(R.drawable.ic_server_remove_white_24dp, "Dismiss", pDismissIntent);
+                    //.addAction(R.drawable.ic_calendar_plus_white_24dp, "Add Event", pDismissIntent);
+        }
 
         //Show Notification
         NotificationManager mNotificationManager = (NotificationManager) ApplicationController.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
-        if(registerAlarm)
-            keepUpdated(ApplicationController.getContext());
     }
 
-    private static void keepUpdated(Context context){
-        //Set Alarm to Update Notification
-        Intent updateIntent = new Intent(context, NotificationUpdateService.class);
-        PendingIntent pUpdateIntent = PendingIntent.getService(context, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.AM_PM, Calendar.AM);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pUpdateIntent);
+    public static void cancelNotification(){
+        NotificationManager mNotificationManager = (NotificationManager) ApplicationController.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(NOTIFICATION_ID);
     }
 }

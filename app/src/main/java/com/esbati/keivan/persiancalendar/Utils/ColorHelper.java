@@ -9,51 +9,34 @@ import com.esbati.keivan.persiancalendar.R;
 
 public class ColorHelper {
 
+    private static int[] mSeasonalColorsResId = {
+            R.color.seasonal_green,
+            R.color.seasonal_yellow,
+            R.color.seasonal_red,
+            R.color.seasonal_blue
+    };
+
+    private static int[] mSeasonalDrawablesResId = {
+            R.drawable.bg_calendar_spring,
+            R.drawable.bg_calendar_summer,
+            R.drawable.bg_calendar_fall,
+            R.drawable.bg_calendar_winter
+    };
+
+
     public static int getSeasonColor(int month){
         return ApplicationController.getContext().getResources().getColor(getSeasonColorResource(month));
     }
 
     public static int getSeasonColorResource(int month){
-        switch (month) {
-            case 1:
-            case 2:
-            case 3:
-                return R.color.seasonal_green;
-            case 4:
-            case 5:
-            case 6:
-                return R.color.seasonal_yellow;
-            case 7:
-            case 8:
-            case 9:
-                return R.color.seasonal_red;
-            case 10:
-            case 11:
-            case 12:
-            default:
-                return R.color.seasonal_blue;
-        }
+        int monthIndex = month - 1; //Convert Month Number to Index 0 - 11
+        int seasonIndex = monthIndex / 3; //Convert Month Index to Season Index 0 - 3
+        return mSeasonalColorsResId[seasonIndex];
     }
 
     public static int getSeasonDrawableResource(int month){
-        switch (month) {
-            case 1:
-            case 2:
-            case 3:
-                return R.drawable.bg_calendar_spring;
-            case 4:
-            case 5:
-            case 6:
-                return R.drawable.bg_calendar_summer;
-            case 7:
-            case 8:
-            case 9:
-                return R.drawable.bg_calendar_fall;
-            case 10:
-            case 11:
-            case 12:
-            default:
-                return R.drawable.bg_calendar_winter;
-        }
+        int monthIndex = month - 1; //Convert Month Number to Index 0 - 11
+        int seasonIndex = monthIndex / 3; //Convert Month Index to Season Index 0 - 3
+        return mSeasonalDrawablesResId[seasonIndex];
     }
 }

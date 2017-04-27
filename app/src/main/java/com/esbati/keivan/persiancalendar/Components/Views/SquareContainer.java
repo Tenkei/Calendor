@@ -1,10 +1,9 @@
-package com.esbati.keivan.persiancalendar.Utils.Views;
+package com.esbati.keivan.persiancalendar.Components.Views;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 /**
  * Created by Tenkei on 12/12/2015.

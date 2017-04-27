@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 public class LanguageHelper {
 
-    public static final char[] PERSIAN_DIGITS = {'۰', '۱', '۲', '۳', '۴', '۵', '۶',
+    private static final char[] PERSIAN_DIGITS = {'۰', '۱', '۲', '۳', '۴', '۵', '۶',
             '۷', '۸', '۹'};
 
     public static String formatNumberInPersian(int number){
@@ -28,6 +28,4 @@ public class LanguageHelper {
 
         return String.valueOf(formattedText);
     }
-
-
 }

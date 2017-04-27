@@ -1,16 +1,20 @@
 package com.esbati.keivan.persiancalendar.Adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.esbati.keivan.persiancalendar.Models.CalendarDay;
 import com.esbati.keivan.persiancalendar.Models.CalendarEvent;
+import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.Utils.CalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.ColorHelper;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
@@ -143,10 +147,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayHol
     }
 
     @Override
-    public void onBindViewHolder(DayHolder holder, int position) {
+    public void onBindViewHolder(final DayHolder holder, final int position) {
         final CalendarDay mDay = mDays.get(position);
+        holder.itemView.setEnabled(mDay.isCurrentMonth);
 
-        holder.mCalendarDay.setText("" + mDay.mDayNo);
+        holder.mCalendarDay.setText(String.valueOf(mDay.mDayNo));
         if(mDay.mGoogleEvents != null && mDay.mGoogleEvents.size() > 0){
             if(!TextUtils.isEmpty(mDay.mGoogleEvents.get(0).mTITLE))
                 holder.mGoogleEvent.setText(mDay.mGoogleEvents.get(0).mTITLE);
@@ -178,9 +183,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayHol
         } else {
             holder.mCalendarDay.setTextColor(mContext.getResources().getColor(android.R.color.white));
             holder.itemView.setBackgroundColor(mContext.getResources().getColor(R.color.lighter_gray));
+            holder.itemView.setEnabled(false);
 
             holder.mGoogleEvent.setTextColor(mContext.getResources().getColor(android.R.color.white));
         }
+
+        holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean isFocused) {
+                //FIXME May Slow BottomSheet
+                //if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                //    holder.itemView.setElevation(AndroidUtilities.dp(isFocused ? 2 : 0));
+
+                if(isFocused)
+                    holder.itemView.performClick();
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +207,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayHol
                     return;
 
                 //FIXME Remove This Notification on Release
-                NotificationHelper.showStickyNotification(mDay, true);
+                NotificationHelper.showStickyNotification(mDay);
                 SoundManager.getInstance().playSound(mDay.mDayNo);
                 mFragment.showDate(mDay, true, false);
             }
