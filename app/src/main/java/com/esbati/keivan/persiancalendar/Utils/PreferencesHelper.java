@@ -12,11 +12,8 @@ import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
  */
 public class PreferencesHelper {
 
-    //Setting Attributes
-    public final static int APP_CURRENT_VERSION = 105;
-    public final static String KEY_LOGIN_ID = "parseLoginObjectId";
-
     //Setting Toggles Keys
+    public final static String KEY_ANIMATION_SELECTION = "showSelectionAnimation";
     public final static String KEY_NOTIFICATION_SHOW = "showNotification";
     public final static String KEY_NOTIFICATION_ACTIONS = "showNotificationAction";
     public final static String KEY_NOTIFICATION_PRIORITY = "notificationPriority";

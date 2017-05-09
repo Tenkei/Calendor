@@ -127,7 +127,8 @@ public class PersianCalendar extends GregorianCalendar {
 		//Subtract timezone Difference when Converting Date to Millis since Calendar is set in GMT
 		long zone_offset = TimeZone.getDefault().getOffset(Calendar.ZONE_OFFSET) + TimeZone.getDefault().getDSTSavings();
 		return PersianCalendarConstants.MILLIS_JULIAN_EPOCH + julianDate * PersianCalendarConstants.MILLIS_OF_A_DAY
-				+ PersianCalendarUtils.ceil(getTimeInMillis() - PersianCalendarConstants.MILLIS_JULIAN_EPOCH, PersianCalendarConstants.MILLIS_OF_A_DAY) - zone_offset;
+				+ PersianCalendarUtils.ceil(getTimeInMillis() - PersianCalendarConstants.MILLIS_JULIAN_EPOCH, PersianCalendarConstants.MILLIS_OF_A_DAY)
+				- zone_offset;
 	}
 
 	/**
@@ -153,7 +154,7 @@ public class PersianCalendar extends GregorianCalendar {
 	 * GregorianCalendar by calling setTimeZone()
 	 */
 	public PersianCalendar() {
-		setTimeZone(TimeZone.getTimeZone("GMT"));
+		//setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	/**
@@ -198,7 +199,6 @@ public class PersianCalendar extends GregorianCalendar {
 		this.persianMonth = persianMonth;
 		this.persianDay = persianDay;
 		setTimeInMillis(convertToMilis(PersianCalendarUtils.persianToJulian(this.persianYear > 0 ? this.persianYear : this.persianYear + 1, this.persianMonth - 1, this.persianDay)));
-
 		return this;
 	}
 

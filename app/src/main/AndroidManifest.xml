@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -13,10 +14,9 @@
         android:supportsRtl="true"
         android:name=".Controllers.ApplicationController"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".Activities.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
+
+        <activity android:name=".Activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar.Splash"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,15 +25,15 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Services.NotificationUpdateService"/>
-        <service android:name=".Services.NotificationActionService"/>
-
-        <receiver android:name=".Receivers.BootBroadcastReceiver">
+        <receiver android:name=".Receivers.NotificationBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".Services.NotificationUpdateService"/>
+        <service android:name=".Services.NotificationActionService"/>
+        <service android:name=".Services.ApplicationService"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

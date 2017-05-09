@@ -9,14 +9,15 @@
     <android.support.design.widget.AppBarLayout
         android:fitsSystemWindows="true"
         android:id="@+id/appbar"
-        android:elevation="0dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:expanded="false">
         <android.support.design.widget.CollapsingToolbarLayout
             android:fitsSystemWindows="true"
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
             app:contentScrim="@color/colorPrimary"
             app:statusBarScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
@@ -36,11 +37,14 @@
                 android:layout_gravity="bottom"
                 android:paddingBottom="48dp"
                 android:gravity="bottom|center"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 app:layout_collapseMode="none"
                 app:contentInsetStart="0dp">
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false">
                     <ImageView
                         android:id="@+id/toolbar_left_btn"
                         android:layout_width="wrap_content"
@@ -55,7 +59,8 @@
                         android:layout_height="wrap_content"
                         android:minHeight="48dp"
                         android:layout_gravity="center"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:clipChildren="false">
                         <TextView
                             android:id="@+id/toolbar_title"
                             android:layout_width="wrap_content"
@@ -128,7 +133,8 @@
                 android:layout_height="48dp"
                 android:paddingRight="16dp"
                 android:paddingLeft="16dp"
-                android:background="@android:color/holo_blue_dark">
+                android:background="@android:color/holo_blue_dark"
+                android:clipToPadding="false">
                 <TextView
                     android:id="@+id/date_shamsi"
                     android:layout_width="wrap_content"

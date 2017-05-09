@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.NotificationCompat;
@@ -34,6 +35,10 @@ public class SettingFragment extends BottomSheetDialogFragment {
     private View rootView;
     private LinearLayout mSettingContainer;
 
+    //Animation
+    private HeaderCell mAnimation;
+    private TextCheckCell mSelectionAnimation;
+
     //Sticky Notification
     private HeaderCell mStickyNotification;
     private TextCheckCell mShowNotification;
@@ -59,6 +64,29 @@ public class SettingFragment extends BottomSheetDialogFragment {
     private void addSettings(LinearLayout settingContainer){
 
         //Sticky Notification
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            mAnimation = new HeaderCell(getActivity());
+            mAnimation.setText(getString(R.string.setting_animation));
+            settingContainer.addView(mAnimation);
+
+            mSelectionAnimation = new TextCheckCell(getActivity());
+            mSelectionAnimation.setTextAndCheck(getString(R.string.setting_animation_selection)
+                    , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
+                    , false);
+            settingContainer.addView(mSelectionAnimation);
+            mSelectionAnimation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Toggle Setting and Set Notification Settings
+                    boolean isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false);
+                    ((TextCheckCell) view).setChecked(isChecked);
+                }
+            });
+
+            settingContainer.addView(new ShadowSectionCell(getActivity()));
+        }
+
+        //Sticky Notification
         mStickyNotification = new HeaderCell(getActivity());
         mStickyNotification.setText(getString(R.string.setting_sticky_notification));
         settingContainer.addView(mStickyNotification);
@@ -82,7 +110,6 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 getActivity().startService(updateNotification);
             }
         });
-
 
         mNotificationAction = new TextCheckCell(getActivity());
         mNotificationAction.setTextAndCheck(getString(R.string.setting_sticky_notification_actions)

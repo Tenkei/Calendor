@@ -5,6 +5,11 @@
             <solid android:color="@color/seasonal_yellow" />
         </shape>
     </item>
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/seasonal_yellow_focused" />
+        </shape>
+    </item>
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@android:color/white" />

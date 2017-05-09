@@ -15,6 +15,7 @@ import android.view.View;
 import com.esbati.keivan.persiancalendar.Fragments.HomeFragment;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
+import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.SoundManager;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -29,11 +30,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        setTheme(R.style.AppTheme_NoActionBar);
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Load Audio and Events
+        SoundManager.getInstance();
+        GoogleCalendarHelper.getCalendars();
+        GoogleCalendarHelper.getEvents();
 
         setupFragment();
     }

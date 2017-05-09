@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -30,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
@@ -49,7 +47,6 @@ import com.esbati.keivan.persiancalendar.Models.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Services.NotificationUpdateService;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
-import com.esbati.keivan.persiancalendar.Utils.ColorHelper;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet;
@@ -121,6 +118,20 @@ public class HomeFragment extends Fragment {
         mPager.setCurrentItem(isRtL ? Integer.MAX_VALUE - position : position);
         showDate(new CalendarDay(persianCalendar), false, true);
 
+
+        mAppbar.post(new Runnable() {
+            @Override
+            public void run() {
+                mAppbar.setExpanded(true, true);
+            }
+        });
+
+        mToolbarTitle.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_top));
+        mToolbarSubTitle.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_top));
+        mPersianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
+        mGregorianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
+        mEventActionBtn.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_left));
+        mPager.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_bottom));
         return rootView;
     }
 
@@ -632,6 +643,9 @@ public class HomeFragment extends Fragment {
     }
 
     public void refreshFragment(int pageNumber){
+        if(isRtL)
+            pageNumber = Integer.MAX_VALUE - pageNumber;
+
         //if Page is not in Pager Stack return since the Pager will create the Updated Page when Needed
         if (pageNumber > mPager.getCurrentItem() + mPager.getOffscreenPageLimit() || pageNumber < mPager.getCurrentItem() - mPager.getOffscreenPageLimit())
             return;

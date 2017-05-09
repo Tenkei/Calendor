@@ -12,7 +12,7 @@ public class ColorHelper {
     private static int[] mSeasonalColorsResId = {
             R.color.seasonal_green,
             R.color.seasonal_yellow,
-            R.color.seasonal_red,
+            R.color.seasonal_orange,
             R.color.seasonal_blue
     };
 

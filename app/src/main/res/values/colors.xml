@@ -5,10 +5,18 @@
     <color name="colorAccent">@android:color/holo_blue_light</color>
 
     <color name="seasonal_green">@color/holo_green_light</color>
+    <color name="seasonal_green_focused">#9999cc00</color>
     <color name="seasonal_yellow">@color/holo_orange_light</color>
-    <color name="seasonal_red">@color/holo_orange_dark</color>
+    <color name="seasonal_yellow_focused">#99ffbb33</color>
+    <color name="seasonal_orange">@color/holo_orange_dark</color>
+    <color name="seasonal_orange_focused">#99ff8800</color>
     <color name="seasonal_blue">@color/holo_blue_dark</color>
+    <color name="seasonal_blue_focused">#990099cc</color>
+    <color name="holiday">@color/holo_red_dark</color>
+    <color name="holiday_focused">#ffaa0000</color>
     <color name="holiday_highlight">#ff880000</color>
+    <color name="today">@color/holo_blue_dark</color>
+    <color name="today_focused">#ff0077aa</color>
     <color name="today_highlight">#ff005588</color>
 
     <color name="transparent">#00000000</color>

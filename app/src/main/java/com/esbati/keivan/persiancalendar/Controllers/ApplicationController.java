@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.crashlytics.android.Crashlytics;
-import com.esbati.keivan.persiancalendar.Models.CalendarDay;
 import com.esbati.keivan.persiancalendar.R;
+import com.esbati.keivan.persiancalendar.Services.ApplicationService;
 import com.esbati.keivan.persiancalendar.Services.NotificationUpdateService;
-import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
-import com.esbati.keivan.persiancalendar.Utils.NotificationHelper;
-import com.esbati.keivan.persiancalendar.Utils.SoundManager;
+import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 import com.onesignal.OneSignal;
 
 import io.fabric.sdk.android.Fabric;
@@ -36,10 +34,9 @@ public class ApplicationController extends Application {
                 .build()
         );
 
-        //Load Audio and Events
-        SoundManager.getInstance();
-        GoogleCalendarHelper.getCalendars();
-        GoogleCalendarHelper.getEvents();
+        //Start Application Service if Not Running
+        if (!AndroidUtilities.isServiceRunning(ApplicationService.class))
+            startService(new Intent(getBaseContext(), ApplicationService.class));
 
         //Show Sticky Notification
         Intent notificationIntent = new Intent(this, NotificationUpdateService.class);

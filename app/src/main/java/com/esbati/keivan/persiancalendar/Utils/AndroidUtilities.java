@@ -1,6 +1,7 @@
 package com.esbati.keivan.persiancalendar.Utils;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -155,6 +156,16 @@ public class AndroidUtilities {
         }
         return null;
     }
+    public static boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) ApplicationController.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @TargetApi(17)
     public static void showRTLDialog(AlertDialog dialog){
         dialog.show();

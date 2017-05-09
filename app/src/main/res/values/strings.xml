@@ -42,7 +42,9 @@
 
 
     <!-- Setting -->
-    <string name="setting_sticky_notification">اعلان نوار ابزار</string>
+    <string name="setting_animation">انیمیشن</string>
+    <string name="setting_animation_selection">انیمیشن انتخاب روز</string>
+    <string name="setting_sticky_notification">اعلان ها</string>
     <string name="setting_sticky_notification_display">نمایش تاریخ در نوار اعلانات</string>
     <string name="setting_sticky_notification_actions">نمایش اکشن ها</string>
     <string name="setting_sticky_notification_priority">اولویت نمایش</string>
