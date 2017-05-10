@@ -66,8 +66,12 @@ public class HomeFragment extends Fragment {
     private boolean isRtL = true;
     private int mDisplayedMonth;
     private int mDisplayedYear;
-    private CalendarDay mSelectedDay;
+    private int mBottomSheetMode;
+    private int mPreviousBottomSheetState;
+    private boolean mShouldUpdateBottomSheet;
     private GoogleEvent tempEvent;
+    private GoogleEvent mSelectedEvent;
+    private CalendarDay mSelectedDay;
 
     //Toolbar
     private int mToolbarMargin;
@@ -88,7 +92,6 @@ public class HomeFragment extends Fragment {
     private FragmentPagerAdapter mPagerAdapter;
 
     //Bottom Sheet
-    private int mBottomSheetMode;
     private NestedScrollView mBottomSheet;
     private LinearLayout mBottomSheetContainer;
     private BottomSheetBehavior mBottomSheetBehavior;
@@ -99,6 +102,7 @@ public class HomeFragment extends Fragment {
     private TextView mEventTitle;
     private TextView mEventDesc;
 
+    public static int count;
 
     @Nullable
     @Override
@@ -134,25 +138,6 @@ public class HomeFragment extends Fragment {
         mPager.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_bottom));
         return rootView;
     }
-
-    /*
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        mBottomSheet.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mEventActionBtn.getLayoutParams();
-                lp.anchorGravity = Gravity.TOP | Gravity.LEFT;
-                mEventActionBtn.setLayoutParams(lp);
-
-                mBottomSheet.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            }
-        });
-    }
-    */
 
     public void setupToolbar(View rootView){
         mCoordinatorLayout = (CoordinatorLayout) rootView.findViewById(R.id.coordinator_layout);
@@ -252,28 +237,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void setupBottomSheet(View rootView){
-        mBottomSheet = (NestedScrollView)rootView.findViewById(R.id.bottom_sheet);
-        mBottomSheetContainer = (LinearLayout) rootView.findViewById(R.id.bottom_sheet_content_container);
-        mPersianDate = (TextView)rootView.findViewById(R.id.date_shamsi);
-        mGregorianDate = (TextView)rootView.findViewById(R.id.date_miladi);
-
-        mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View view, int i) {
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View view, float v) {
-                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_ADD_EVENT){
-                    //mAppbar.scroll(mAppbar.getHeight() * v * -1);
-                }
-            }
-        });
-    }
-
     public void setupPager(final View rootView){
         mEventActionBtn = (FloatingActionButton) rootView.findViewById(R.id.add_event);
         setFab();
@@ -324,8 +287,111 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void setFab(){
+    public void setupBottomSheet(View rootView){
+        mBottomSheet = (NestedScrollView)rootView.findViewById(R.id.bottom_sheet);
+        mBottomSheetContainer = (LinearLayout) rootView.findViewById(R.id.bottom_sheet_content_container);
+        mPersianDate = (TextView)rootView.findViewById(R.id.date_shamsi);
+        mGregorianDate = (TextView)rootView.findViewById(R.id.date_miladi);
 
+        mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int i) {
+                //Change BottomSheet Content if Needed
+                if(isBottomSheetCollapsed() && mShouldUpdateBottomSheet){
+                    Log.e("BTS", "Item " + count + " Updated: Callback");
+                    mShouldUpdateBottomSheet = false;
+
+                    setFab();
+                    setBottomSheet();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_ADD_EVENT){
+                    //mAppbar.scroll(mAppbar.getHeight() * v * -1);
+                }
+            }
+        });
+    }
+
+    public boolean isBottomSheetCollapsed(){
+        return mBottomSheetContainer.getHeight() == 0 || mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED;
+    }
+
+    public void proceedToSetupBottomSheet(){
+        count++;
+        Log.e("BTS", "Item " + count + " Proceed to Updated");
+
+        if(isBottomSheetCollapsed()){
+            Log.e("BTS", "Item " + count + " Updated: Normally");
+
+            //If Sheet is Flat or Collapsed Set it Up
+            if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED)
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            setFab();
+            setBottomSheet();
+        } else {
+            //FIXME Sometimes if Item is in Settling Mode It won't Change State to Collapsed
+            if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_SETTLING)
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Force Update if BottomSheet got Stuck
+                        if(mShouldUpdateBottomSheet){
+                            Log.e("BTS", "Item " + count + " Updated: Forced");
+                            setFab();
+                            setBottomSheet();
+                        }
+                    }
+                }, 300);
+
+            //If Sheet is not Collapsed, Collapse it then Set it Up
+            mShouldUpdateBottomSheet = true;
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+    }
+
+    public void setBottomSheet(){
+        switch (mBottomSheetMode) {
+            case CalendarBottomSheet.SHEET_MODE_VIEW_EVENT:
+                //Set Bottom Sheet
+                setShowEventSheet(mSelectedEvent);
+                break;
+
+            case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
+                //Set Bottom Sheet
+                setAddEventSheet(mSelectedEvent, true);
+                break;
+
+            case CalendarBottomSheet.SHEET_MODE_DATE:
+            default:
+                //Set Bottom Sheet
+                setDateSheet(mSelectedDay);
+                break;
+        }
+
+        //Expand View If Needed
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE && mPreviousBottomSheetState > 0){
+                    //If BottomSheet is Stuck in Settling Set it to Collapse
+                    if(mPreviousBottomSheetState == BottomSheetBehavior.STATE_SETTLING)
+                        mPreviousBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED;
+
+                    mBottomSheetBehavior.setState(mPreviousBottomSheetState);
+                    mPreviousBottomSheetState = 0;
+                } else if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+        }, 100);
+    }
+
+    public void setFab(){
         switch (mBottomSheetMode){
             case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
                 mEventActionBtn.setImageResource(R.drawable.ic_check_white_24dp);
@@ -390,7 +456,7 @@ public class HomeFragment extends Fragment {
                 mEventActionBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //Enter Edit Mode
+                        //Edit Shown Event
                         addEvent(tempEvent, true);
                     }
                 });
@@ -402,6 +468,7 @@ public class HomeFragment extends Fragment {
                 mEventActionBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //Create New Event
                         addEvent(null, true);
                     }
                 });
@@ -410,31 +477,14 @@ public class HomeFragment extends Fragment {
     }
 
     public void showDate(final CalendarDay day, final boolean expandSheet, final boolean needUpdate){
-        //Collapse Bottom Sheet then Set it Up
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Update Day Events in Case of Adding, Updating or Deleting Events
-                if(needUpdate)
-                    day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
-                mSelectedDay = day;
+        //Update Day Events in Case of Adding, Updating or Deleting Events
+        if(needUpdate)
+            day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
+        mSelectedDay = day;
 
-                //Set Bottom Sheet
-                setDateSheet(day);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Set Mode And Fab Button
-                        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
-                        setFab();
-
-                        if(expandSheet)
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    }
-                }, 100);
-            }
-        }, 300);
+        //Set Mode and Setup Sheet
+        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
+        proceedToSetupBottomSheet();
     }
 
     public void setDateSheet(CalendarDay day){
@@ -500,25 +550,15 @@ public class HomeFragment extends Fragment {
     }
 
     public void addEvent(final GoogleEvent gEvent, final boolean isEditable){
-        //Collapse Bottom Sheet then Set it Up
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Set Bottom Sheet
-                setAddEventSheet(gEvent, isEditable);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Set Mode And Fab Button
-                        mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-                        setFab();
+        //Save Current BottomSheet State to Restore Later
+        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
 
-                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    }
-                }, 100);
-            }
-        }, 300);
+        mSelectedEvent = gEvent;
+
+        //Set Mode and Setup Sheet
+        mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
+        proceedToSetupBottomSheet();
     }
 
     public void setAddEventSheet(GoogleEvent gEvent, boolean isEditable){
@@ -551,28 +591,17 @@ public class HomeFragment extends Fragment {
     }
 
     public void showEvent(final GoogleEvent gEvent){
+        //Save Current BottomSheet State to Restore Later
+        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
+
         //Create Temp Event
         tempEvent = gEvent.clone();
+        mSelectedEvent = gEvent;
 
-        //Collapse Bottom Sheet then Set it Up
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Set Bottom Sheet
-                setShowEventSheet(gEvent);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Set Mode And Fab Button
-                        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-                        setFab();
-
-                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    }
-                }, 100);
-            }
-        }, 300);
+        //Set Mode and Setup Sheet
+        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
+        proceedToSetupBottomSheet();
     }
 
     public void setShowEventSheet(final GoogleEvent gEvent){
@@ -661,7 +690,7 @@ public class HomeFragment extends Fragment {
             //Return Bottom Sheet to Show Date Mode & Expand Bottom Sheet if it Was in Show Event Mode
             showDate(mSelectedDay, mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_VIEW_EVENT, false);
             return true;
-        } else if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED && mBottomSheetContainer.getHeight() > 0){
+        } else if(!isBottomSheetCollapsed()){
             //Close Bottom Sheet if has Content and is Expanded
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return true;
