@@ -8,27 +8,27 @@ import ir.smartlab.persindatepicker.util.PersianCalendar;
  * Created by asus on 11/20/2016.
  */
 
-public class CalendarDay {
+public class CalendarCell {
     public int mDayNo;
     public boolean isToday;
     public boolean isHoliday;
     public boolean isCurrentMonth;
     public PersianCalendar mPersianDate;
+    public ArrayList<Event> mEvents;
     public ArrayList<CalendarEvent> mCalendarEvents;
-    public ArrayList<GoogleEvent> mGoogleEvents;
 
-    public CalendarDay(){
+    public CalendarCell(){
         this(new PersianCalendar());
     }
 
-    public CalendarDay(PersianCalendar persianCalendar){
+    public CalendarCell(PersianCalendar persianCalendar){
         mPersianDate = persianCalendar;
 
         if(mPersianDate != null)
             mDayNo = mPersianDate.getPersianDay();
     }
 
-    public CalendarDay(int day){
+    public CalendarCell(int day){
         mDayNo = day;
     }
 }

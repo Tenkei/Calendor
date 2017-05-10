@@ -26,6 +26,8 @@
         android:gravity="right|center_vertical"
         android:padding="8dp"
         android:minLines="2"
+        android:imeOptions="actionDone"
+        android:inputType="text"
         android:hint="توضیحات"
         android:textColorHint="@color/darkest_gray"
         android:drawablePadding="8dp"

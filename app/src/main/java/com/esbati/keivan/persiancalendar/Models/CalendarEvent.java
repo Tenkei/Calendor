@@ -1,34 +1,57 @@
 package com.esbati.keivan.persiancalendar.Models;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import ir.smartlab.persindatepicker.util.PersianCalendar;
 
 /**
- * Created by asus on 11/21/2016.
+ * Created by asus on 11/23/2016.
  */
 
 public class CalendarEvent {
+    public long   mID;
+    public String mORGANIZER;
+    public String mTITLE;
+    public String mEVENT_LOCATION;
+    public String mDESCRIPTION;
+    public long mDTSTART;
+    public long mDTEND;
+    public String mEVENT_TIMEZONE;
+    public String mEVENT_END_TIMEZONE;
+    public String mDURATION;
+    public String mALL_DAY;
+    public String mRRULE;
+    public String mRDATE;
+    public PersianCalendar mStartDate;
+    public PersianCalendar mEndDate;
+    public Calendar mCalendar;
 
-    public String mTitle;
-    public int mYear;
-    public int mMonth;
-    public int mDay;
-    public boolean isHoliday;
-    public PersianCalendar mPersianDate;
+    public CalendarEvent(){}
 
-    public CalendarEvent(){
-
+    public CalendarEvent(String title, String desc, long startMillis){
+        mTITLE = title;
+        mDESCRIPTION = desc;
+        mDTSTART = startMillis;
+        mStartDate = new PersianCalendar(startMillis);
     }
 
-    public CalendarEvent fromJSON(JSONObject eventJSON) throws JSONException{
-        mTitle = eventJSON.getString("title");
-        mYear = eventJSON.getInt("year");
-        mMonth = eventJSON.getInt("month");
-        mDay = eventJSON.getInt("day");
-        isHoliday = eventJSON.getBoolean("holiday");
-        mPersianDate = new PersianCalendar().setPersianDate(mYear, mMonth, mDay);
-        return this;
+    public CalendarEvent clone(){
+        CalendarEvent tempEvent = new CalendarEvent();
+        tempEvent.mID = mID;
+        tempEvent.mORGANIZER = mORGANIZER;
+        tempEvent.mTITLE = mTITLE;
+        tempEvent.mEVENT_LOCATION = mEVENT_LOCATION;
+        tempEvent.mDESCRIPTION = mDESCRIPTION;
+        tempEvent.mDTSTART = mDTSTART;
+        tempEvent.mDTEND = mDTEND;
+        tempEvent.mEVENT_TIMEZONE = mEVENT_TIMEZONE;
+        tempEvent.mEVENT_END_TIMEZONE = mEVENT_END_TIMEZONE;
+        tempEvent.mDURATION = mDURATION;
+        tempEvent.mALL_DAY = mALL_DAY;
+        tempEvent.mRRULE = mRRULE;
+        tempEvent.mRDATE = mRDATE;
+        tempEvent.mStartDate = new PersianCalendar(mDTSTART);
+        tempEvent.mEndDate = new PersianCalendar(mDTEND);
+        tempEvent.mCalendar = mCalendar;
+
+        return tempEvent;
     }
 }
