@@ -4,12 +4,10 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-import com.esbati.keivan.persiancalendar.Models.CalendarDay;
-import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
+import com.esbati.keivan.persiancalendar.Models.CalendarCell;
+import com.esbati.keivan.persiancalendar.Utils.CalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.NotificationHelper;
 import com.esbati.keivan.persiancalendar.Utils.PreferencesHelper;
-
-import ir.smartlab.persindatepicker.util.PersianCalendar;
 
 /**
  * Created by Keivan Esbati on 4/10/2017.
@@ -25,8 +23,8 @@ public class NotificationUpdateService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         if(PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)){
             //Recover Day Events
-            CalendarDay calendarDay = new CalendarDay();
-            calendarDay.mGoogleEvents = GoogleCalendarHelper.getEvents(calendarDay.mPersianDate);
+            CalendarCell calendarDay = new CalendarCell();
+            calendarDay.mCalendarEvents = CalendarHelper.getEventsOfDay(calendarDay.mPersianDate);
 
             //Show Sticky Notification
             NotificationHelper.showStickyNotification(calendarDay);
@@ -34,4 +32,6 @@ public class NotificationUpdateService extends IntentService {
             NotificationHelper.cancelNotification();
         }
     }
+
+
 }

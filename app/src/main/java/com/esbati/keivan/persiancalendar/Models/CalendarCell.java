@@ -28,7 +28,8 @@ public class CalendarCell {
             mDayNo = mPersianDate.getPersianDay();
     }
 
-    public CalendarCell(int day){
+    public CalendarCell(int year, int month, int day){
+        mPersianDate = new PersianCalendar(year, month, day);
         mDayNo = day;
     }
 }

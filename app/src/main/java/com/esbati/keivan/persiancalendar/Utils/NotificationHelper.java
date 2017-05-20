@@ -12,7 +12,7 @@ import android.text.TextUtils;
 
 import com.esbati.keivan.persiancalendar.Activities.MainActivity;
 import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
-import com.esbati.keivan.persiancalendar.Models.CalendarDay;
+import com.esbati.keivan.persiancalendar.Models.CalendarCell;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Receivers.NotificationBroadcastReceiver;
 import com.esbati.keivan.persiancalendar.Services.NotificationActionService;
@@ -33,7 +33,7 @@ public class NotificationHelper {
             , NotificationCompat.PRIORITY_MAX
     };
 
-    public static void showStickyNotification(CalendarDay calendar){
+    public static void showStickyNotification(CalendarCell calendar){
 
         Context context = ApplicationController.getContext();
 
@@ -63,33 +63,33 @@ public class NotificationHelper {
 
         //Set Content Text
         String collapsedText = "";
-        if(calendar.mGoogleEvents != null)
+        if(calendar.mCalendarEvents != null)
             //Find an Event with Title
-            for(int i = 0 ; i < calendar.mGoogleEvents.size() ; i++)
-                if(!TextUtils.isEmpty(calendar.mGoogleEvents.get(i).mTITLE)){
-                    collapsedText += calendar.mGoogleEvents.get(i).mTITLE ;
+            for(int i = 0; i < calendar.mCalendarEvents.size() ; i++)
+                if(!TextUtils.isEmpty(calendar.mCalendarEvents.get(i).mTITLE)){
+                    collapsedText += calendar.mCalendarEvents.get(i).mTITLE ;
                     break;
                 }
 
         //Adjust Content Text
         if(!TextUtils.isEmpty(collapsedText)){
             //If an Event with Title is Found and R est of Events Count
-            if(calendar.mGoogleEvents.size() > 1)
-                collapsedText += " و " + (calendar.mGoogleEvents.size() - 1) + " رویداد دیگر";
+            if(calendar.mCalendarEvents.size() > 1)
+                collapsedText += " و " + (calendar.mCalendarEvents.size() - 1) + " رویداد دیگر";
         } else {
             //If No Event with Title is Found just Add Events Count
-            if(calendar.mGoogleEvents.size() > 0)
-                collapsedText = calendar.mGoogleEvents.size() + " رویداد";
+            if(calendar.mCalendarEvents.size() > 0)
+                collapsedText = calendar.mCalendarEvents.size() + " رویداد";
         }
         mBuilder.setContentText(collapsedText.trim());
 
         //If Events are more than One Create Expanded Inbox Style View
-        if(calendar.mGoogleEvents != null && calendar.mGoogleEvents.size() > 1){
+        if(calendar.mCalendarEvents != null && calendar.mCalendarEvents.size() > 1){
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            String[] events = new String[calendar.mGoogleEvents.size()];
+            String[] events = new String[calendar.mCalendarEvents.size()];
 
-            for(int i = 0 ; i < calendar.mGoogleEvents.size() ; i++)
-                events[i] = !TextUtils.isEmpty(calendar.mGoogleEvents.get(i).mTITLE) ? calendar.mGoogleEvents.get(i).mTITLE : calendar.mGoogleEvents.get(i).mDESCRIPTION;
+            for(int i = 0; i < calendar.mCalendarEvents.size() ; i++)
+                events[i] = !TextUtils.isEmpty(calendar.mCalendarEvents.get(i).mTITLE) ? calendar.mCalendarEvents.get(i).mTITLE : calendar.mCalendarEvents.get(i).mDESCRIPTION;
 
             inboxStyle.setBigContentTitle(calendar.mPersianDate.getPersianLongDate());
             for (int i = 0 ; i < events.length ; i++)

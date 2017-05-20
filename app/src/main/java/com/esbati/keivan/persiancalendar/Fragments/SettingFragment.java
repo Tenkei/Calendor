@@ -71,14 +71,14 @@ public class SettingFragment extends BottomSheetDialogFragment {
 
             mSelectionAnimation = new TextCheckCell(getActivity());
             mSelectionAnimation.setTextAndCheck(getString(R.string.setting_animation_selection)
-                    , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
+                    , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, true)
                     , false);
             settingContainer.addView(mSelectionAnimation);
             mSelectionAnimation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //Toggle Setting and Set Notification Settings
-                    boolean isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false);
+                    boolean isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, true);
                     ((TextCheckCell) view).setChecked(isChecked);
                 }
             });

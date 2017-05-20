@@ -13,6 +13,7 @@ import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
 public class PreferencesHelper {
 
     //Setting Toggles Keys
+    public final static String KEY_WRITE_CALENDAR_ID = "writeCalendarId";
     public final static String KEY_ANIMATION_SELECTION = "showSelectionAnimation";
     public final static String KEY_NOTIFICATION_SHOW = "showNotification";
     public final static String KEY_NOTIFICATION_ACTIONS = "showNotificationAction";

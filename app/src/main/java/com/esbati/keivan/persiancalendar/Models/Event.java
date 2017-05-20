@@ -28,7 +28,7 @@ public class Event {
         mMonth = eventJSON.getInt("month");
         mDay = eventJSON.getInt("day");
         isHoliday = eventJSON.getBoolean("holiday");
-        mPersianDate = new PersianCalendar().setPersianDate(mYear, mMonth, mDay);
+        mPersianDate = new PersianCalendar(mYear, mMonth, mDay);
         return this;
     }
 }

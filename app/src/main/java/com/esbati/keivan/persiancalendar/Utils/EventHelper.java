@@ -2,9 +2,11 @@ package com.esbati.keivan.persiancalendar.Utils;
 
 import android.support.annotation.RawRes;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.esbati.keivan.persiancalendar.Controllers.ApplicationController;
-import com.esbati.keivan.persiancalendar.Models.CalendarEvent;
+import com.esbati.keivan.persiancalendar.Models.Event;
 import com.esbati.keivan.persiancalendar.R;
 
 import org.json.JSONArray;
@@ -22,7 +24,7 @@ import ir.smartlab.persindatepicker.util.PersianCalendar;
 
 public class EventHelper {
 
-    public static ArrayList<CalendarEvent> mCalendarEvents;
+    public static ArrayList<Event> mEvents;
 
     public static String readRawResource(@RawRes int res) {
         // http://stackoverflow.com/a/5445161
@@ -30,38 +32,37 @@ public class EventHelper {
         return s.hasNext() ? s.next() : "";
     }
 
-    public static ArrayList<CalendarEvent> readEventsFromJSON() {
-        ArrayList<CalendarEvent> calendarEvents = new ArrayList<>();
+    public static ArrayList<Event> readEventsFromJSON() {
+        ArrayList<Event> events = new ArrayList<>();
         try {
             JSONArray days = new JSONObject(readRawResource(R.raw.events)).getJSONArray("events");
 
             int length = days.length();
             for (int i = 0; i < length; ++i) {
                 JSONObject eventJSON = days.getJSONObject(i);
-                CalendarEvent calendarEvent = new CalendarEvent().fromJSON(eventJSON);
-                calendarEvents.add(calendarEvent);
+                Event event = new Event().fromJSON(eventJSON);
+                events.add(event);
             }
-
         } catch (JSONException e) {
             Log.e("JSON Parser", e.getMessage());
         }
-        return calendarEvents;
+        return events;
     }
 
-    public static ArrayList<CalendarEvent> getEvents(PersianCalendar date) {
-        if (mCalendarEvents == null) {
-            mCalendarEvents = readEventsFromJSON();
+    public static ArrayList<Event> getEvents(PersianCalendar date) {
+        if (mEvents == null) {
+            mEvents = readEventsFromJSON();
         }
 
-        ArrayList<CalendarEvent> selectedCalendarEvents = new ArrayList<>();
+        ArrayList<Event> selectedEvents = new ArrayList<>();
 
-        if(mCalendarEvents != null)
-            for (CalendarEvent calendarEvent : mCalendarEvents) {
-                if (calendarEvent.mPersianDate.equals(date)) {
-                    selectedCalendarEvents.add(calendarEvent);
+        if(mEvents != null)
+            for (Event event : mEvents) {
+                if (event.mPersianDate.equals(date)) {
+                    selectedEvents.add(event);
                 }
             }
 
-        return selectedCalendarEvents;
+        return selectedEvents;
     }
 }

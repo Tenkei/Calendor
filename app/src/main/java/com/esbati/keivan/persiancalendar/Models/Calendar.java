@@ -9,4 +9,14 @@ public class Calendar {
     public String displayName;
     public String accountName;
     public String ownerName;
+
+    public Calendar(){
+    }
+
+    //Used to Register New Calendar
+    public Calendar(String name){
+        displayName = name;
+        accountName = name;
+        ownerName = name;
+    }
 }

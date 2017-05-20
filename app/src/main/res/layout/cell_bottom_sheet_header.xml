@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left|bottom"
         android:layout_marginBottom="4dp"
-        android:src="@drawable/ic_chevron_double_up_white_18dp"/>
+        android:src="@drawable/ic_weather_sunset_up_white_24dp"/>
 
     <View
         android:layout_width="match_parent"

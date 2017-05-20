@@ -157,6 +157,11 @@ public class PersianCalendar extends GregorianCalendar {
 		//setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
+	public PersianCalendar(int year, int month, int day) {
+		this();
+		setPersianDate(year, month, day);
+	}
+
 	/**
 	 * Calculate persian date from current Date and populates the corresponding
 	 * fields(persianYear, persianMonth, persianDay)

@@ -41,14 +41,14 @@ import android.widget.ViewSwitcher;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.esbati.keivan.persiancalendar.Models.CalendarDay;
+import com.esbati.keivan.persiancalendar.Models.CalendarCell;
+import com.esbati.keivan.persiancalendar.Models.Event;
 import com.esbati.keivan.persiancalendar.Models.CalendarEvent;
-import com.esbati.keivan.persiancalendar.Models.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Services.NotificationUpdateService;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
+import com.esbati.keivan.persiancalendar.Utils.CalendarHelper;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
-import com.esbati.keivan.persiancalendar.Utils.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet;
 import com.esbati.keivan.persiancalendar.Components.Views.SmoothViewPager;
 
@@ -69,9 +69,10 @@ public class HomeFragment extends Fragment {
     private int mBottomSheetMode;
     private int mPreviousBottomSheetState;
     private boolean mShouldUpdateBottomSheet;
-    private GoogleEvent tempEvent;
-    private GoogleEvent mSelectedEvent;
-    private CalendarDay mSelectedDay;
+    private boolean mShouldExpandBottomSheet;
+    private CalendarEvent tempEvent;
+    private CalendarEvent mSelectedEvent;
+    private CalendarCell mSelectedDay;
 
     //Toolbar
     private int mToolbarMargin;
@@ -102,6 +103,7 @@ public class HomeFragment extends Fragment {
     private TextView mEventTitle;
     private TextView mEventDesc;
 
+    //Counter
     public static int count;
 
     @Nullable
@@ -109,10 +111,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        PersianCalendar persianCalendar = new PersianCalendar();
-        mDisplayedYear = persianCalendar.getPersianYear();
-        mDisplayedMonth = persianCalendar.getPersianMonth();
+        //Setup Initial Day
+        PersianCalendar today = new PersianCalendar();
+        mDisplayedYear = today.getPersianYear();
+        mDisplayedMonth = today.getPersianMonth();
 
+        //Setup Views
         setupToolbar(rootView);
         setupBottomSheet(rootView);
         setupPager(rootView);
@@ -120,9 +124,15 @@ public class HomeFragment extends Fragment {
         //Set Viewpager to Show Current Month
         int position = mDisplayedYear * 12 + mDisplayedMonth - 1;
         mPager.setCurrentItem(isRtL ? Integer.MAX_VALUE - position : position);
-        showDate(new CalendarDay(persianCalendar), false, true);
 
+        //Show Today, Run Start Animation
+        showDate(new CalendarCell(today), false, true);
+        runStartAnimation();
 
+        return rootView;
+    }
+
+    public void runStartAnimation(){
         mAppbar.post(new Runnable() {
             @Override
             public void run() {
@@ -136,8 +146,7 @@ public class HomeFragment extends Fragment {
         mGregorianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
         mEventActionBtn.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_left));
         mPager.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_bottom));
-        return rootView;
-    }
+     }
 
     public void setupToolbar(View rootView){
         mCoordinatorLayout = (CoordinatorLayout) rootView.findViewById(R.id.coordinator_layout);
@@ -334,7 +343,7 @@ public class HomeFragment extends Fragment {
             setFab();
             setBottomSheet();
         } else {
-            //FIXME Sometimes if Item is in Settling Mode It won't Change State to Collapsed
+            //FIXME Sometimes if Bottom Sheet is in Settling Mode It won't Change State to Collapsed
             if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_SETTLING)
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -384,11 +393,11 @@ public class HomeFragment extends Fragment {
 
                     mBottomSheetBehavior.setState(mPreviousBottomSheetState);
                     mPreviousBottomSheetState = 0;
-                } else if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                } else if(mShouldExpandBottomSheet) {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
-        }, 100);
+        }, 200);
     }
 
     public void setFab(){
@@ -418,13 +427,13 @@ public class HomeFragment extends Fragment {
 
                         int msgId;
                         if(tempEvent.mID != 0){
-                            msgId = GoogleCalendarHelper.updateEvent(tempEvent);
+                            msgId = CalendarHelper.updateEvent(tempEvent);
                         } else {
-                            msgId = GoogleCalendarHelper.saveSimpleEvent(tempEvent);
+                            msgId = CalendarHelper.saveSimpleEvent(tempEvent);
                         }
 
 
-                        //int msgId = GoogleCalendarHelper.saveSimpleEvent(mEventTitle.getText().toString(), mEventDesc.getText().toString()
+                        //int msgId = CalendarHelper.saveSimpleEvent(mEventTitle.getText().toString(), mEventDesc.getText().toString()
                         //        , mSelectedDay.mPersianDate.getTimeInMillis());
                         Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
 
@@ -476,18 +485,20 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void showDate(final CalendarDay day, final boolean expandSheet, final boolean needUpdate){
+    public void showDate(final CalendarCell day, final boolean expandSheet, final boolean needUpdate){
+        mShouldExpandBottomSheet = expandSheet;
+
         //Update Day Events in Case of Adding, Updating or Deleting Events
-        if(needUpdate)
-            day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
         mSelectedDay = day;
+        if(needUpdate)
+            day.mCalendarEvents = CalendarHelper.getEventsOfDay(day.mPersianDate);
 
         //Set Mode and Setup Sheet
         mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
         proceedToSetupBottomSheet();
     }
 
-    public void setDateSheet(CalendarDay day){
+    public void setDateSheet(CalendarCell day){
         //Set Persian Date
         mPersianDate.setText(day.mPersianDate.getPersianLongDate());
 
@@ -504,21 +515,21 @@ public class HomeFragment extends Fragment {
         //Set Google Calendar Events
         //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
         mBottomSheetContainer.removeAllViews();
-        if(day.mGoogleEvents != null)
-            for(final GoogleEvent googleEvent : day.mGoogleEvents){
+        if(day.mCalendarEvents != null)
+            for(final CalendarEvent calendarEvent : day.mCalendarEvents){
                 View eventView = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
                 TextView eventTitle = (TextView)eventView.findViewById(R.id.event_title);
 
                 eventView.setBackgroundResource(R.drawable.bg_calendar_today);
-                if(!TextUtils.isEmpty(googleEvent.mTITLE))
-                    eventTitle.setText(googleEvent.mTITLE);
+                if(!TextUtils.isEmpty(calendarEvent.mTITLE))
+                    eventTitle.setText(calendarEvent.mTITLE);
                 else
                     eventTitle.setText(R.string.event_no_title);
 
                 eventView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        showEvent(googleEvent);
+                        showEvent(calendarEvent);
                     }
                 });
 
@@ -526,21 +537,20 @@ public class HomeFragment extends Fragment {
             }
 
         //Set Calendar Events
-        if(day.mCalendarEvents != null && day.mCalendarEvents.size() > 0){
+        if(day.mEvents != null && day.mEvents.size() > 0){
             View eventHeader = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_header, mBottomSheetContainer, false);
             ((TextView) eventHeader.findViewById(R.id.header_title)).setText("رویداد های روز:");
-            ((ImageView) eventHeader.findViewById(R.id.header_icon)).setImageResource(R.drawable.ic_weather_sunset_up_white_24dp);
             mBottomSheetContainer.addView(eventHeader);
         }
 
-        if(day.mCalendarEvents != null)
-            for(CalendarEvent calendarEvent : day.mCalendarEvents){
+        if(day.mEvents != null)
+            for(Event event : day.mEvents){
                 View eventView = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
                 TextView eventTitle = (TextView)eventView.findViewById(R.id.event_title);
 
                 eventView.setBackgroundResource(R.drawable.bg_calendar_today);
-                eventTitle.setText(calendarEvent.mTitle);
-                if(calendarEvent.isHoliday){
+                eventTitle.setText(event.mTitle);
+                if(event.isHoliday){
                     eventView.setBackgroundResource(R.drawable.bg_calendar_holiday);
                 } else {
                     eventView.setBackgroundResource(R.drawable.bg_calendar_today);
@@ -549,19 +559,20 @@ public class HomeFragment extends Fragment {
             }
     }
 
-    public void addEvent(final GoogleEvent gEvent, final boolean isEditable){
+    public void addEvent(final CalendarEvent gEvent, final boolean isEditable){
+        mShouldExpandBottomSheet = true;
+
         //Save Current BottomSheet State to Restore Later
+        mSelectedEvent = gEvent;
         if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
             mPreviousBottomSheetState = mBottomSheetBehavior.getState();
-
-        mSelectedEvent = gEvent;
 
         //Set Mode and Setup Sheet
         mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
         proceedToSetupBottomSheet();
     }
 
-    public void setAddEventSheet(GoogleEvent gEvent, boolean isEditable){
+    public void setAddEventSheet(CalendarEvent gEvent, boolean isEditable){
         //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
         mBottomSheetContainer.removeAllViews();
 
@@ -584,27 +595,29 @@ public class HomeFragment extends Fragment {
                 mEventDesc.setHint(R.string.event_no_desc);
         } else {
             //Create Temp Event in Case of Adding New Event
-            tempEvent = new GoogleEvent();
+            tempEvent = new CalendarEvent();
         }
 
         mBottomSheetContainer.addView(eventSheet);
     }
 
-    public void showEvent(final GoogleEvent gEvent){
-        //Save Current BottomSheet State to Restore Later
-        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
-            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
+    public void showEvent(final CalendarEvent gEvent){
+        mShouldExpandBottomSheet = true;
 
         //Create Temp Event
         tempEvent = gEvent.clone();
         mSelectedEvent = gEvent;
+
+        //Save Current BottomSheet State to Restore Later
+        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
 
         //Set Mode and Setup Sheet
         mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
         proceedToSetupBottomSheet();
     }
 
-    public void setShowEventSheet(final GoogleEvent gEvent){
+    public void setShowEventSheet(final CalendarEvent gEvent){
         //Set Bottom Sheet
         //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
         mBottomSheetContainer.removeAllViews();
@@ -637,7 +650,7 @@ public class HomeFragment extends Fragment {
                         .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 //Delete Event
-                                int msgId = GoogleCalendarHelper.deleteEvent(gEvent);
+                                int msgId = CalendarHelper.deleteEvent(gEvent);
                                 Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
 
                                 //Refresh UI and show Date if Event Successfully added
@@ -717,5 +730,10 @@ public class HomeFragment extends Fragment {
         public int getCount() {
             return Integer.MAX_VALUE;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

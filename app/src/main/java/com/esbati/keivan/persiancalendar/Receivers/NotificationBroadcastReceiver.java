@@ -22,7 +22,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
         String event = intent.getAction();
         if(!TextUtils.isEmpty(event)){
-            Log.d("BroadcastReceiver", event);
+            Log.d("BroadcastReceiver", "Event: " + event);
         }
 
         //Update Notification
