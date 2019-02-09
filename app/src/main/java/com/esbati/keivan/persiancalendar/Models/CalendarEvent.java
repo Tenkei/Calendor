@@ -24,7 +24,7 @@ public class CalendarEvent {
 
     public CalendarEvent fromJSON(JSONObject eventJSON) throws JSONException{
         mTitle = eventJSON.getString("title");
-        mYear = eventJSON.getInt("year");
+        mYear = eventJSON.optInt("year", -1);
         mMonth = eventJSON.getInt("month");
         mDay = eventJSON.getInt("day");
         isHoliday = eventJSON.getBoolean("holiday");
