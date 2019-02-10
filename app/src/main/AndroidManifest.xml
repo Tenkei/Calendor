@@ -12,10 +12,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".Controllers.ApplicationController"
+        android:name=".Components.ApplicationController"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Activities.MainActivity"
+        <activity android:name=".Features.Home.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Splash"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -25,15 +25,15 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".Receivers.NotificationBroadcastReceiver">
+        <receiver android:name=".Features.Notification.NotificationBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".Services.NotificationUpdateService"/>
-        <service android:name=".Services.NotificationActionService"/>
-        <service android:name=".Services.ApplicationService"/>
+        <service android:name=".Features.Notification.NotificationUpdateService"/>
+        <service android:name=".Features.Settings.SettingFragment$NotificationActionService"/>
+        <service android:name=".Features.Notification.ApplicationService"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
