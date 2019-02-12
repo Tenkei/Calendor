@@ -109,7 +109,7 @@ object Repository{
         }
 
         //Add Leading Month Days
-        for (i in 1..days.size % 7) {
+        for (i in 1..(7 - days.size % 7)) {
             days.add(CalendarDay(i))
         }
 
