@@ -13,9 +13,10 @@ import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.Utils.ColorHelper
 
-class CalendarAdapter(val year: Int, val month: Int, val days: List<CalendarDay>): RecyclerView.Adapter<CalendarAdapter.DayHolder>(){
+class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): RecyclerView.Adapter<CalendarAdapter.DayHolder>(){
 
     var onCalendarClickListener: OnCalendarClickListener? = null
+    val calendarDays = ArrayList<CalendarDay>(days)
 
     interface OnCalendarClickListener{
         fun onCalendarClick(day: CalendarDay)
@@ -23,8 +24,8 @@ class CalendarAdapter(val year: Int, val month: Int, val days: List<CalendarDay>
 
     inner class DayHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        val mCalendarDay = itemView.findViewById(R.id.calendar_day) as TextView
-        val mGoogleEvent = itemView.findViewById(R.id.google_event) as TextView
+        private val mCalendarDay = itemView.findViewById(R.id.calendar_day) as TextView
+        private val mGoogleEvent = itemView.findViewById(R.id.google_event) as TextView
 
         init {
             itemView.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
@@ -32,7 +33,7 @@ class CalendarAdapter(val year: Int, val month: Int, val days: List<CalendarDay>
             }
 
             itemView.setOnClickListener {
-                val selectedDay = days[adapterPosition]
+                val selectedDay = calendarDays[adapterPosition]
                 if (selectedDay.isCurrentMonth)
                     onCalendarClickListener?.onCalendarClick(selectedDay)
             }
@@ -100,8 +101,15 @@ class CalendarAdapter(val year: Int, val month: Int, val days: List<CalendarDay>
     }
 
     override fun onBindViewHolder(holder: DayHolder, position: Int){
-        holder.setupView(days[position])
+        holder.setupView(calendarDays[position])
     }
 
-    override fun getItemCount() = days.size
+    override fun getItemCount() = calendarDays.size
+
+    fun refresh(newDays: List<CalendarDay>) {
+        calendarDays.clear()
+        calendarDays.addAll(newDays)
+
+        notifyDataSetChanged()
+    }
 }

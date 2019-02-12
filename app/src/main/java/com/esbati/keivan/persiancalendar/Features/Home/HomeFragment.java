@@ -41,8 +41,8 @@ import android.widget.ViewSwitcher;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment;
 import com.esbati.keivan.persiancalendar.Features.CalendarPage.CalendarFragment;
+import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment;
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
 import com.esbati.keivan.persiancalendar.POJOs.CalendarEvent;
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent;
@@ -683,7 +683,7 @@ public class HomeFragment extends Fragment {
 
         Fragment selectedFragment = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + pageNumber);
         if(selectedFragment != null && selectedFragment instanceof CalendarFragment)
-            ((CalendarFragment) selectedFragment).refreshCalendar(mDisplayedYear);
+            ((CalendarFragment) selectedFragment).refreshCalendar();
     }
 
     public boolean onBackPressed(){
@@ -712,7 +712,7 @@ public class HomeFragment extends Fragment {
             if(isRtL)
                 position = Integer.MAX_VALUE - position;
 
-            return CalendarFragment.newInstance(position / 12, position % 12 + 1);
+            return CalendarFragment.Companion.newInstance(position / 12, position % 12 + 1);
         }
 
         @Override
