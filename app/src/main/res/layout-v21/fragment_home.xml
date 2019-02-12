@@ -102,7 +102,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <com.esbati.keivan.persiancalendar.Components.Views.SmoothViewPager
+    <com.esbati.keivan.persiancalendar.Components.Views.CalendarPager
         android:id="@+id/pager"
         android:elevation="4dp"
         android:layout_width="match_parent"

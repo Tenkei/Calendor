@@ -41,6 +41,7 @@ import android.widget.ViewSwitcher;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.esbati.keivan.persiancalendar.Components.Views.CalendarPager;
 import com.esbati.keivan.persiancalendar.Features.CalendarPage.CalendarFragment;
 import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment;
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
@@ -52,7 +53,6 @@ import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet;
-import com.esbati.keivan.persiancalendar.Components.Views.SmoothViewPager;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -65,7 +65,6 @@ import ir.smartlab.persindatepicker.util.PersianCalendar;
 
 public class HomeFragment extends Fragment {
 
-    private boolean isRtL = true;
     private int mDisplayedMonth;
     private int mDisplayedYear;
     private int mBottomSheetMode;
@@ -86,11 +85,11 @@ public class HomeFragment extends Fragment {
     private TextView mToolbarSubTitle;
     private ImageSwitcher mToolbarBackground;
     private ImageView mSetting;
-    private ImageView mNextBtn;
-    private ImageView mPreviousBtn;
+    private ImageView mRightBtn;
+    private ImageView mLeftBtn;
 
     //Body
-    private SmoothViewPager mPager;
+    private CalendarPager mPager;
     private FloatingActionButton mEventActionBtn;
     private FragmentPagerAdapter mPagerAdapter;
 
@@ -124,9 +123,9 @@ public class HomeFragment extends Fragment {
         setupPager(rootView);
 
         //Set Viewpager to Show Current Month
-        int position = mDisplayedYear * 12 + mDisplayedMonth - 1;
-        mPager.setCurrentItem(isRtL ? Integer.MAX_VALUE - position : position);
-        showDate(new CalendarDay(today), false, true);
+        mPager.setRtL(true);
+        mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth);
+        showDate(new CalendarDay(persianCalendar), false, true);
         runStartAnimation();
 
         return rootView;
@@ -157,8 +156,8 @@ public class HomeFragment extends Fragment {
         mToolbarSubTitle = (TextView)rootView.findViewById(R.id.toolbar_sub_title);
         mToolbarBackground = (ImageSwitcher) rootView.findViewById(R.id.toolbar_background);
         mSetting = (ImageView)rootView.findViewById(R.id.toolbar_setting);
-        mNextBtn = (ImageView)rootView.findViewById(R.id.toolbar_right_btn);
-        mPreviousBtn = (ImageView)rootView.findViewById(R.id.toolbar_left_btn);
+        mRightBtn = (ImageView)rootView.findViewById(R.id.toolbar_right_btn);
+        mLeftBtn = (ImageView)rootView.findViewById(R.id.toolbar_left_btn);
 
         mCollapsingToolbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -188,19 +187,17 @@ public class HomeFragment extends Fragment {
         mToolbarBackground.setInAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
         mToolbarBackground.setOutAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
 
-        mNextBtn.setOnClickListener(new View.OnClickListener() {
+        mRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mPager.getCurrentItem() < Integer.MAX_VALUE - 1)
-                    mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+                mPager.loadRightItem();
             }
         });
 
-        mPreviousBtn.setOnClickListener(new View.OnClickListener() {
+        mLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mPager.getCurrentItem() > 0)
-                    mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                mPager.loadLeftItem();
             }
         });
 
@@ -223,13 +220,13 @@ public class HomeFragment extends Fragment {
                             //clp.setMargins(0, 0, 0, newToolbarMarginPixel);
                             //mToolbar.setLayoutParams(clp);
 
-                            FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams)mNextBtn.getLayoutParams();
+                            FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams) mRightBtn.getLayoutParams();
                             flp.setMargins(0, 0, newButtonMarginPixel, 0);
-                            mNextBtn.setLayoutParams(flp);
+                            mRightBtn.setLayoutParams(flp);
 
-                            flp = (FrameLayout.LayoutParams)mPreviousBtn.getLayoutParams();
+                            flp = (FrameLayout.LayoutParams) mLeftBtn.getLayoutParams();
                             flp.setMargins(newButtonMarginPixel,0 , 0, 0);
-                            mPreviousBtn.setLayoutParams(flp);
+                            mLeftBtn.setLayoutParams(flp);
 
                             flp = (FrameLayout.LayoutParams)mSetting.getLayoutParams();
                             flp.setMargins(0, 0, newButtonMarginPixel - AndroidUtilities.dp(48), 0);
@@ -251,24 +248,15 @@ public class HomeFragment extends Fragment {
         setFab();
 
 
-        mPager = (SmoothViewPager) rootView.findViewById(R.id.pager);
+        mPager = (CalendarPager) rootView.findViewById(R.id.pager);
         mPagerAdapter = new HomePagerAdapter(getChildFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mPager.addOnPageChangeListener(new CalendarPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //Log.d("positionOffset", "" + positionOffset);
-                //Log.d("positionOffsetPixels", "" + positionOffsetPixels);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if(isRtL)
-                    position = Integer.MAX_VALUE - position;
-
-                mDisplayedMonth = position % 12 + 1;
-                mDisplayedYear = position / 12;
+            public void onPageSelected(int year, int month) {
+                mDisplayedYear = year;
+                mDisplayedMonth = month;
 
                 //Set Toolbar Background
                 Resources res = getResources();
@@ -280,13 +268,9 @@ public class HomeFragment extends Fragment {
                 mToolbarTitle.setText(Constants.months[mDisplayedMonth - 1] + " " + mDisplayedYear);
                 mToolbarSubTitle.setText(
                         Constants.months_en[(mDisplayedMonth + 1) % 12]
-                        + " - "
-                        + Constants.months_en[(mDisplayedMonth + 2) % 12]
+                                + " - "
+                                + Constants.months_en[(mDisplayedMonth + 2) % 12]
                 );
-
-                //Set Appbar Color
-                //mCollapsingToolbar.setContentScrimColor(ColorHelper.getSeasonColor(mDisplayedMonth));
-                //mCollapsingToolbar.setStatusBarScrimColor(ColorHelper.getSeasonColor(mDisplayedMonth));
             }
 
             @Override
@@ -439,7 +423,7 @@ public class HomeFragment extends Fragment {
 
                         //Refresh UI and show Date if Event Successfully added
                         if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
-                            refreshFragment(tempEvent.mStartDate.getPersianYear() * 12 + tempEvent.mStartDate.getPersianMonth() - 1);
+                            refreshFragment(tempEvent.mStartDate.getPersianYear(), tempEvent.mStartDate.getPersianMonth());
                             showDate(mSelectedDay, true, true);
 
                             //Update Notification
@@ -657,7 +641,7 @@ public class HomeFragment extends Fragment {
                                 //Refresh UI and show Date if Event Successfully added
                                 if(msgId == R.string.event_successfully_deleted){
                                     //refreshFragment(gEvent.mStartDate.getPersianMonth() - 1);
-                                    refreshFragment(gEvent.mStartDate.getPersianYear() * 12 + gEvent.mStartDate.getPersianMonth() - 1);
+                                    refreshFragment(gEvent.mStartDate.getPersianYear(), gEvent.mStartDate.getPersianMonth());
                                     showDate(mSelectedDay, true, true);
 
                                     //Update Notification
@@ -685,17 +669,14 @@ public class HomeFragment extends Fragment {
         mBottomSheetContainer.addView(eventDescription);
     }
 
-    public void refreshFragment(int pageNumber){
-        if(isRtL)
-            pageNumber = Integer.MAX_VALUE - pageNumber;
 
+    public void refreshFragment(int year, int month){
         //if Page is not in Pager Stack return since the Pager will create the Updated Page when Needed
-        if (pageNumber > mPager.getCurrentItem() + mPager.getOffscreenPageLimit() || pageNumber < mPager.getCurrentItem() - mPager.getOffscreenPageLimit())
-            return;
-
-        Fragment selectedFragment = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + pageNumber);
-        if(selectedFragment != null && selectedFragment instanceof CalendarFragment)
-            ((CalendarFragment) selectedFragment).refreshCalendar();
+        if (mPager.isPageShown(year, month)){
+            Fragment selectedFragment = mPager.getPage(year, month, getChildFragmentManager());
+            if(selectedFragment instanceof CalendarFragment)
+                ((CalendarFragment) selectedFragment).refreshCalendar();
+        }
     }
 
     public boolean onBackPressed(){
@@ -721,10 +702,9 @@ public class HomeFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            if(isRtL)
-                position = Integer.MAX_VALUE - position;
-
-            return CalendarFragment.Companion.newInstance(position / 12, position % 12 + 1);
+            int year = mPager.getYearAndMonth(position).getFirst();
+            int month = mPager.getYearAndMonth(position).getSecond();
+            return CalendarFragment.Companion.newInstance(year, month);
         }
 
         @Override
