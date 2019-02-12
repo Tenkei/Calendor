@@ -178,8 +178,10 @@ public class GoogleCalendarHelper {
         return selectedGoogleEvents;
     }
 
-    public static int saveSimpleEvent(String title, String desc, long startMillis){
-        return saveSimpleEvent(new GoogleEvent(title, desc, startMillis));
+    public static int saveEvent(GoogleEvent event){
+        return event.mID != 0
+                ? GoogleCalendarHelper.updateEvent(event)
+                : GoogleCalendarHelper.saveSimpleEvent(event);
     }
 
     public static int saveSimpleEvent(GoogleEvent newEvent){

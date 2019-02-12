@@ -26,6 +26,11 @@ public class GoogleEvent {
 
     public GoogleEvent(){}
 
+    public GoogleEvent(CalendarDay selectedDay){
+        mDTSTART = selectedDay.mPersianDate.getTimeInMillis();
+        mStartDate = new PersianCalendar(selectedDay.mPersianDate.getTimeInMillis());
+    }
+
     public GoogleEvent(String title, String desc, long startMillis){
         mTITLE = title;
         mDESCRIPTION = desc;

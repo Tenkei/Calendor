@@ -105,62 +105,21 @@
         app:behavior_overlapTop="64dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet
         android:id="@+id/bottom_sheet"
+        android:elevation="4dp"
         android:layoutDirection="ltr"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         app:behavior_peekHeight="48dp"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:id="@+id/bottom_sheet_Date_container"
-                android:orientation="vertical"
-                android:gravity="right|center_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:background="@android:color/holo_blue_dark"
-                android:clipToPadding="false">
-                <TextView
-                    android:id="@+id/date_shamsi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textSize="13sp"
-                    android:textColor="@android:color/white"/>
-                <TextView
-                    android:id="@+id/date_miladi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-4dp"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/white"
-                    fontPath="fonts/IRAN_Sans.ttf"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/bottom_sheet_content_container"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </LinearLayout>
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        app:layout_anchor="@+id/bottom_sheet"
+        app:layout_anchor="@+id/scroll_view"
         app:layout_anchorGravity="top|left"
         app:fabSize="mini"
         app:backgroundTint="@android:color/holo_blue_light"

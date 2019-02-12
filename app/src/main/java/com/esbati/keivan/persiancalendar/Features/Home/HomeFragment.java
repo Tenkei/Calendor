@@ -1,8 +1,5 @@
 package com.esbati.keivan.persiancalendar.Features.Home;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -20,8 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
@@ -45,7 +39,6 @@ import com.esbati.keivan.persiancalendar.Components.Views.CalendarPager;
 import com.esbati.keivan.persiancalendar.Features.CalendarPage.CalendarFragment;
 import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment;
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
-import com.esbati.keivan.persiancalendar.POJOs.CalendarEvent;
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent;
 import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService;
@@ -54,10 +47,10 @@ import com.esbati.keivan.persiancalendar.Utils.Constants;
 import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import ir.smartlab.persindatepicker.util.PersianCalendar;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by asus on 11/18/2016.
@@ -67,11 +60,9 @@ public class HomeFragment extends Fragment {
 
     private int mDisplayedMonth;
     private int mDisplayedYear;
-    private int mBottomSheetMode;
     private int mPreviousBottomSheetState;
     private boolean mShouldUpdateBottomSheet;
     private boolean mShouldExpandBottomSheet;
-    private GoogleEvent tempEvent;
     private GoogleEvent mSelectedEvent;
     private CalendarDay mSelectedDay;
 
@@ -94,15 +85,7 @@ public class HomeFragment extends Fragment {
     private FragmentPagerAdapter mPagerAdapter;
 
     //Bottom Sheet
-    private NestedScrollView mBottomSheet;
-    private LinearLayout mBottomSheetContainer;
-    private BottomSheetBehavior mBottomSheetBehavior;
-    private TextView mPersianDate;
-    private TextView mGregorianDate;
-
-    //Event Sheet
-    private TextView mEventTitle;
-    private TextView mEventDesc;
+    private CalendarBottomSheet mBottomSheet;
 
     //Counter
     public static int count;
@@ -125,7 +108,7 @@ public class HomeFragment extends Fragment {
         //Set Viewpager to Show Current Month
         mPager.setRtL(true);
         mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth);
-        showDate(new CalendarDay(persianCalendar), false, true);
+        showDate(new CalendarDay(today), false, true);
         runStartAnimation();
 
         return rootView;
@@ -141,8 +124,8 @@ public class HomeFragment extends Fragment {
 
         mToolbarTitle.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_top));
         mToolbarSubTitle.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_top));
-        mPersianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
-        mGregorianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
+        mBottomSheet.mPersianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
+        mBottomSheet.mGregorianDate.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right));
         mEventActionBtn.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_left));
         mPager.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_bottom));
      }
@@ -244,10 +227,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void setupPager(final View rootView){
-        mEventActionBtn = (FloatingActionButton) rootView.findViewById(R.id.add_event);
-        setFab();
-
-
         mPager = (CalendarPager) rootView.findViewById(R.id.pager);
         mPagerAdapter = new HomePagerAdapter(getChildFragmentManager());
         mPager.setAdapter(mPagerAdapter);
@@ -275,198 +254,34 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
     }
 
     public void setupBottomSheet(View rootView){
-        mBottomSheet = (NestedScrollView)rootView.findViewById(R.id.bottom_sheet);
-        mBottomSheetContainer = (LinearLayout) rootView.findViewById(R.id.bottom_sheet_content_container);
-        mPersianDate = (TextView)rootView.findViewById(R.id.date_shamsi);
-        mGregorianDate = (TextView)rootView.findViewById(R.id.date_miladi);
-
-        mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        mEventActionBtn = (FloatingActionButton) rootView.findViewById(R.id.add_event);
+        mBottomSheet = (CalendarBottomSheet) rootView.findViewById(R.id.bottom_sheet);
+        mBottomSheet.mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+        mBottomSheet.mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int i) {
                 //Change BottomSheet Content if Needed
-                if(isBottomSheetCollapsed() && mShouldUpdateBottomSheet){
+                if(mBottomSheet.isCollapsed() && mShouldUpdateBottomSheet){
                     Log.e("BTS", "Item " + count + " Updated: Callback");
                     mShouldUpdateBottomSheet = false;
 
-                    setFab();
-                    setBottomSheet();
+                    setBottomSheetMode(mBottomSheet.mBottomSheetMode);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View view, float v) {
-                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_ADD_EVENT){
-                    //mAppbar.scroll(mAppbar.getHeight() * v * -1);
-                }
+                /*if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT){
+                    mAppbar.scroll(mAppbar.getHeight() * v * -1);
+                }*/
             }
         });
-    }
-
-    public boolean isBottomSheetCollapsed(){
-        return mBottomSheetContainer.getHeight() == 0 || mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED;
-    }
-
-    public void proceedToSetupBottomSheet(){
-        count++;
-        Log.e("BTS", "Item " + count + " Proceed to Updated");
-
-        if(isBottomSheetCollapsed()){
-            Log.e("BTS", "Item " + count + " Updated: Normally");
-
-            //If Sheet is Flat or Collapsed Set it Up
-            if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED)
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-            setFab();
-            setBottomSheet();
-        } else {
-            //FIXME Sometimes if Bottom Sheet is in Settling Mode It won't Change State to Collapsed
-            if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_SETTLING)
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Force Update if BottomSheet got Stuck
-                        if(mShouldUpdateBottomSheet){
-                            Log.e("BTS", "Item " + count + " Updated: Forced");
-                            setFab();
-                            setBottomSheet();
-                        }
-                    }
-                }, 300);
-
-            //If Sheet is not Collapsed, Collapse it then Set it Up
-            mShouldUpdateBottomSheet = true;
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-    }
-
-    public void setBottomSheet(){
-        switch (mBottomSheetMode) {
-            case CalendarBottomSheet.SHEET_MODE_VIEW_EVENT:
-                //Set Bottom Sheet
-                setShowEventSheet(mSelectedEvent);
-                break;
-
-            case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
-                //Set Bottom Sheet
-                setAddEventSheet(mSelectedEvent, true);
-                break;
-
-            case CalendarBottomSheet.SHEET_MODE_DATE:
-            default:
-                //Set Bottom Sheet
-                setDateSheet(mSelectedDay);
-                break;
-        }
-
-        //Expand View If Needed
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE && mPreviousBottomSheetState > 0){
-                    //If BottomSheet is Stuck in Settling Set it to Collapse
-                    if(mPreviousBottomSheetState == BottomSheetBehavior.STATE_SETTLING)
-                        mPreviousBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED;
-
-                    mBottomSheetBehavior.setState(mPreviousBottomSheetState);
-                    mPreviousBottomSheetState = 0;
-                } else if(mShouldExpandBottomSheet) {
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-            }
-        }, 200);
-    }
-
-    public void setFab(){
-        switch (mBottomSheetMode){
-            case CalendarBottomSheet.SHEET_MODE_ADD_EVENT:
-                mEventActionBtn.setImageResource(R.drawable.ic_check_white_24dp);
-                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //Return if Add Event Sheet is Not Available
-                        if(mEventTitle == null || mEventDesc == null)
-                            return;
-
-                        //Close Keyboard
-                        if(getView()!=null){
-                            final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                        }
-
-                        //Save Event
-                        tempEvent.mTITLE = mEventTitle.getText().toString();
-                        tempEvent.mDESCRIPTION = mEventDesc.getText().toString();
-                        if(tempEvent.mDTSTART == 0){
-                            tempEvent.mDTSTART = mSelectedDay.mPersianDate.getTimeInMillis();
-                            tempEvent.mStartDate = new PersianCalendar(mSelectedDay.mPersianDate.getTimeInMillis());
-                        }
-
-                        int msgId;
-                        if(tempEvent.mID != 0){
-                            msgId = GoogleCalendarHelper.updateEvent(tempEvent);
-                        } else {
-                            msgId = GoogleCalendarHelper.saveSimpleEvent(tempEvent);
-                        }
-
-
-                        //int msgId = GoogleCalendarHelper.saveSimpleEvent(mEventTitle.getText().toString(), mEventDesc.getText().toString()
-                        //        , mSelectedDay.mPersianDate.getTimeInMillis());
-                        Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
-
-                        //Refresh UI and show Date if Event Successfully added
-                        if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
-                            refreshFragment(tempEvent.mStartDate.getPersianYear(), tempEvent.mStartDate.getPersianMonth());
-                            showDate(mSelectedDay, true, true);
-
-                            //Update Notification
-                            Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                            getActivity().startService(updateNotification);
-
-                            if(msgId == R.string.event_successfully_added){
-                                Answers.getInstance()
-                                        .logCustom(new CustomEvent("Add Event")
-                                                .putCustomAttribute(
-                                                        "Has Detail",
-                                                        TextUtils.isEmpty(tempEvent.mDESCRIPTION) ? "false" : "true"
-                                                )
-                                        );
-                            }
-                        }
-                    }
-                });
-                break;
-
-            case CalendarBottomSheet.SHEET_MODE_VIEW_EVENT:
-                mEventActionBtn.setImageResource(R.drawable.ic_pencil_white_24dp);
-                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //Edit Shown Event
-                        addEvent(tempEvent, true);
-                    }
-                });
-                break;
-
-            case CalendarBottomSheet.SHEET_MODE_DATE:
-            default:
-                mEventActionBtn.setImageResource(R.drawable.ic_calendar_plus_white_24dp);
-                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //Create New Event
-                        addEvent(null, true);
-                    }
-                });
-                break;
-        }
     }
 
     public void showDate(final CalendarDay day, final boolean expandSheet, final boolean needUpdate){
@@ -477,198 +292,171 @@ public class HomeFragment extends Fragment {
             day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
         mSelectedDay = day;
 
-        //Set Mode and Setup Sheet
-        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_DATE;
-        proceedToSetupBottomSheet();
-    }
-
-    public void setDateSheet(CalendarDay day){
-        //Set Persian Date
-        mPersianDate.setText(day.mPersianDate.getPersianLongDate());
-
-        //Set Gregorian Date
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        gregorianCalendar.setTime(day.mPersianDate.getTime());
-        mGregorianDate.setText(
-                Constants.weekdays_en[gregorianCalendar.get(Calendar.DAY_OF_WEEK) - 1] + ", " +
-                        Constants.months_en[(gregorianCalendar.get(Calendar.MONTH))] + " " +
-                        gregorianCalendar.get(Calendar.DAY_OF_MONTH) + " " +
-                        gregorianCalendar.get(Calendar.YEAR)
-        );
-
-        //Set Google Calendar Events
-        //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
-        mBottomSheetContainer.removeAllViews();
-        if(day.mGoogleEvents != null)
-            for(final GoogleEvent googleEvent : day.mGoogleEvents){
-                View eventView = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
-                TextView eventTitle = (TextView)eventView.findViewById(R.id.event_title);
-
-                eventView.setBackgroundResource(R.drawable.bg_calendar_today);
-                if(!TextUtils.isEmpty(googleEvent.mTITLE))
-                    eventTitle.setText(googleEvent.mTITLE);
-                else
-                    eventTitle.setText(R.string.event_no_title);
-
-                eventView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showEvent(googleEvent);
-                    }
-                });
-
-                mBottomSheetContainer.addView(eventView);
-            }
-
-        //Set Calendar Events
-        if(day.mCalendarEvents != null && day.mCalendarEvents.size() > 0){
-            View eventHeader = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_header, mBottomSheetContainer, false);
-            ((TextView) eventHeader.findViewById(R.id.header_title)).setText("رویداد های روز:");
-            mBottomSheetContainer.addView(eventHeader);
-        }
-
-        if(day.mCalendarEvents != null)
-            for(CalendarEvent calendarEvent : day.mCalendarEvents){
-                View eventView = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
-                TextView eventTitle = (TextView)eventView.findViewById(R.id.event_title);
-
-                eventView.setBackgroundResource(R.drawable.bg_calendar_today);
-                eventTitle.setText(calendarEvent.mTitle);
-                if(calendarEvent.isHoliday){
-                    eventView.setBackgroundResource(R.drawable.bg_calendar_holiday);
-                } else {
-                    eventView.setBackgroundResource(R.drawable.bg_calendar_today);
-                }
-                mBottomSheetContainer.addView(eventView);
-            }
-    }
-
-    public void addEvent(final GoogleEvent gEvent, final boolean isEditable){
-        mShouldExpandBottomSheet = true;
-
-        //Save Current BottomSheet State to Restore Later
-        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
-            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
-
-        mSelectedEvent = gEvent;
-
-        //Set Mode and Setup Sheet
-        mBottomSheetMode = isEditable ? CalendarBottomSheet.SHEET_MODE_ADD_EVENT : CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-        proceedToSetupBottomSheet();
-    }
-
-    public void setAddEventSheet(GoogleEvent gEvent, boolean isEditable){
-        //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
-        mBottomSheetContainer.removeAllViews();
-
-        View eventSheet = LayoutInflater.from(getActivity()).inflate(R.layout.cell_event_sheet, mBottomSheetContainer, false);
-        mEventTitle = (TextView)eventSheet.findViewById(R.id.event_title);
-        mEventDesc = (TextView)eventSheet.findViewById(R.id.event_description);
-        mEventTitle.setEnabled(isEditable);
-        mEventDesc.setEnabled(isEditable);
-
-        if(gEvent != null){
-            //Set Event in Case of Updating Available Event
-            if(!TextUtils.isEmpty(gEvent.mTITLE))
-                mEventTitle.setText(gEvent.mTITLE);
-            else
-                mEventTitle.setHint(R.string.event_no_title);
-
-            if(!TextUtils.isEmpty(gEvent.mDESCRIPTION))
-                mEventDesc.setText(gEvent.mDESCRIPTION);
-            else
-                mEventDesc.setHint(R.string.event_no_desc);
-        } else {
-            //Create Temp Event in Case of Adding New Event
-            tempEvent = new GoogleEvent();
-        }
-
-        mBottomSheetContainer.addView(eventSheet);
+        proceedToSetupBottomSheet(CalendarBottomSheet.Mode.SHEET_MODE_DATE);
     }
 
     public void showEvent(final GoogleEvent gEvent){
         mShouldExpandBottomSheet = true;
 
-        //Save Current BottomSheet State to Restore Later
-        if(mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_DATE)
-            mPreviousBottomSheetState = mBottomSheetBehavior.getState();
+        //Save Current BottomSheet Mode to Restore Later
+        if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheet.mBottomSheetBehavior.getState();
 
-        //Create Temp Event
-        tempEvent = gEvent.clone();
         mSelectedEvent = gEvent;
 
-        //Set Mode and Setup Sheet
-        mBottomSheetMode = CalendarBottomSheet.SHEET_MODE_VIEW_EVENT;
-        proceedToSetupBottomSheet();
+        proceedToSetupBottomSheet(CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT);
     }
 
-    public void setShowEventSheet(final GoogleEvent gEvent){
-        //Set Bottom Sheet
-        //mBottomSheetContainer.removeViews(1, mBottomSheetContainer.getChildCount() - 1);
-        mBottomSheetContainer.removeAllViews();
+    public void editEvent(final GoogleEvent gEvent, final boolean isEditable){
+        mShouldExpandBottomSheet = true;
 
-        //Set Event Title
-        View eventTitle = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
-        TextView eventTitleTV = (TextView)eventTitle.findViewById(R.id.event_title);
-        ImageView eventTitleIcon = (ImageView)eventTitle.findViewById(R.id.event_icon);
+        //Save Current BottomSheet Mode to Restore Later
+        if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheet.mBottomSheetBehavior.getState();
 
-        //Set Event Background
-        eventTitle.setBackgroundResource(R.drawable.bg_calendar_today);
+        mSelectedEvent = gEvent;
 
-        //Set Event Title
-        if(!TextUtils.isEmpty(gEvent.mTITLE))
-            eventTitleTV.setText(gEvent.mTITLE);
-        else
-            eventTitleTV.setText(R.string.event_no_title);
+        proceedToSetupBottomSheet(isEditable ? CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT : CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT);
+    }
 
-        //Set Event Icon
-        eventTitleIcon.setVisibility(View.VISIBLE);
-        eventTitleIcon.setOnClickListener(new View.OnClickListener() {
+    public void proceedToSetupBottomSheet(final CalendarBottomSheet.Mode mode){
+        mBottomSheet.mBottomSheetMode = mode;
+
+        count++;
+        Log.e("BTS", "Item " + count + " Proceed to Updated");
+
+        //If Sheet is Flat or Collapsed Set it Up
+        if(mBottomSheet.isCollapsed()){
+            Log.e("BTS", "Item " + count + " Updated: Normally");
+
+            if(mBottomSheet.mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED)
+                mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            setBottomSheetMode(mode);
+        } else {
+            //FIXME Sometimes if Item is in Settling Mode It won't Change Mode to Collapsed
+            if(mBottomSheet.mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_SETTLING)
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Force Update if BottomSheet got Stuck
+                        if(mShouldUpdateBottomSheet){
+                            Log.e("BTS", "Item " + count + " Updated: Forced");
+                            setBottomSheetMode(mode);
+                        }
+                    }
+                }, 300);
+
+            //If Sheet is not Collapsed, Collapse it then Set it Up
+            mShouldUpdateBottomSheet = true;
+            mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+    }
+
+    public void setBottomSheetMode(CalendarBottomSheet.Mode mode){
+        switch (mode) {
+            case SHEET_MODE_DATE:
+            default:
+                mBottomSheet.setDateSheet(mSelectedDay, new Function1<GoogleEvent, Unit>() {
+                    @Override
+                    public Unit invoke(GoogleEvent googleEvent) {
+                        showEvent(googleEvent);
+                        return null;
+                    }
+                });
+
+                mEventActionBtn.setImageResource(R.drawable.ic_calendar_plus_white_24dp);
+                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editEvent(null, true);
+                    }
+                });
+                break;
+
+            case SHEET_MODE_VIEW_EVENT:
+                mBottomSheet.setShowEventSheet(mSelectedEvent, new Function0<Unit>() {
+                    @Override
+                    public Unit invoke() {
+                        int msgId = GoogleCalendarHelper.deleteEvent(mSelectedEvent);
+
+                        //Refresh UI and show Date if Event Successfully added
+                        if(msgId == R.string.event_successfully_deleted){
+                            refreshFragment(mSelectedEvent.mStartDate.getPersianYear(), mSelectedEvent.mStartDate.getPersianMonth());
+                            showDate(mSelectedDay, true, true);
+
+                            //Update Notification
+                            Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
+                            getActivity().startService(updateNotification);
+                        } else {
+                            Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
+                        }
+                        return null;
+                    }
+                });
+
+                mEventActionBtn.setImageResource(R.drawable.ic_pencil_white_24dp);
+                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editEvent(mSelectedEvent, true);
+                    }
+                });
+                break;
+
+            case SHEET_MODE_EDIT_EVENT:
+                final GoogleEvent tempEvent = mSelectedEvent != null
+                        ? mSelectedEvent.clone()
+                        : new GoogleEvent(mSelectedDay);
+
+                mBottomSheet.setEditEventSheet(tempEvent);
+
+                mEventActionBtn.setImageResource(R.drawable.ic_check_white_24dp);
+                mEventActionBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AndroidUtilities.hideSoftKeyboard(view);
+
+                        //Save Event
+                        tempEvent.mTITLE = mBottomSheet.mEventTitle.getText().toString();
+                        tempEvent.mDESCRIPTION = mBottomSheet.mEventDesc.getText().toString();
+
+                        int msgId = GoogleCalendarHelper.saveEvent(tempEvent);
+
+                        //Refresh UI and show Date if Event Successfully added
+                        if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
+                            refreshFragment(tempEvent.mStartDate.getPersianYear(), tempEvent.mStartDate.getPersianMonth());
+                            showDate(mSelectedDay, true, true);
+
+                            //Update Notification
+                            Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
+                            getActivity().startService(updateNotification);
+                        } else {
+                            Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                break;
+        }
+
+        //Expand View If Needed
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                //Exit Confirmation Dialog
-                AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        //.setView(mDialogView)
-                        .setTitle(getResources().getString(R.string.dialog_delete_event_title))
-                        .setMessage(getResources().getString(R.string.dialog_delete_event_body))
-                        .setNegativeButton(getResources().getString(R.string.dialog_button_return), null)
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                //Delete Event
-                                int msgId = GoogleCalendarHelper.deleteEvent(gEvent);
-                                Toast.makeText(getActivity(), msgId, Toast.LENGTH_SHORT).show();
+            public void run() {
+                //If BottomSheet is in the Date mode restore any previous state if available, else just expand it
+                if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE && mPreviousBottomSheetState > 0){
+                    //If BottomSheet is Stuck in Settling Set it to Collapse
+                    if(mPreviousBottomSheetState == BottomSheetBehavior.STATE_SETTLING)
+                        mPreviousBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED;
 
-                                //Refresh UI and show Date if Event Successfully added
-                                if(msgId == R.string.event_successfully_deleted){
-                                    //refreshFragment(gEvent.mStartDate.getPersianMonth() - 1);
-                                    refreshFragment(gEvent.mStartDate.getPersianYear(), gEvent.mStartDate.getPersianMonth());
-                                    showDate(mSelectedDay, true, true);
-
-                                    //Update Notification
-                                    Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                                    getActivity().startService(updateNotification);
-                                }
-                            }
-                        }).create();
-                AndroidUtilities.showRTLDialog(dialog);
+                    mBottomSheet.mBottomSheetBehavior.setState(mPreviousBottomSheetState);
+                    mPreviousBottomSheetState = 0;
+                } else if(mShouldExpandBottomSheet) {
+                    mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
             }
-        });
-
-        mBottomSheetContainer.addView(eventTitle);
-
-        //Set Event Description
-        View eventDescription = LayoutInflater.from(getActivity()).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false);
-        TextView eventDescTV = (TextView)eventDescription.findViewById(R.id.event_title);
-
-        eventDescription.setBackgroundResource(R.drawable.bg_calendar_today);
-        if(!TextUtils.isEmpty(gEvent.mDESCRIPTION))
-            eventDescTV.setText(gEvent.mDESCRIPTION);
-        else
-            eventDescTV.setText(R.string.event_no_desc);
-
-        mBottomSheetContainer.addView(eventDescription);
+        }, 200);
     }
-
 
     public void refreshFragment(int year, int month){
         //if Page is not in Pager Stack return since the Pager will create the Updated Page when Needed
@@ -680,14 +468,13 @@ public class HomeFragment extends Fragment {
     }
 
     public boolean onBackPressed(){
-
-        if(mBottomSheetMode != CalendarBottomSheet.SHEET_MODE_DATE){
+        if(mBottomSheet.mBottomSheetMode != CalendarBottomSheet.Mode.SHEET_MODE_DATE){
             //Return Bottom Sheet to Show Date Mode & Expand Bottom Sheet if it Was in Show Event Mode
-            showDate(mSelectedDay, mBottomSheetMode == CalendarBottomSheet.SHEET_MODE_VIEW_EVENT, false);
+            showDate(mSelectedDay, mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT, false);
             return true;
-        } else if(!isBottomSheetCollapsed()){
+        } else if(!mBottomSheet.isCollapsed()){
             //Close Bottom Sheet if has Content and is Expanded
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             return true;
         } else {
             return false;

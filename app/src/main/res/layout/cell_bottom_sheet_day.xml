@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingRight="16dp"
     android:paddingLeft="16dp"
     android:clickable="true"
@@ -13,13 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
         android:paddingBottom="2dp"
-        android:text="Event Title"
         android:textSize="13sp"
         android:textColor="@android:color/white"
         android:maxLines="2"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        tools:text="Event Title"/>
 
     <ImageView
+        tools:visibility="visible"
         android:id="@+id/event_icon"
         android:visibility="gone"
         android:layout_width="wrap_content"
