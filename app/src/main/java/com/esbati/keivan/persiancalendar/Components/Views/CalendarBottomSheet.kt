@@ -3,17 +3,22 @@ package com.esbati.keivan.persiancalendar.Components.Views
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import java.util.*
@@ -55,6 +60,10 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
     fun isCollapsed(): Boolean {
         return mBottomSheetContainer.height == 0 || mBottomSheetBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    fun collapse() {
+        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     @SuppressLint("SetTextI18n")

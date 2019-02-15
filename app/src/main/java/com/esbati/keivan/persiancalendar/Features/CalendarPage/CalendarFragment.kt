@@ -25,7 +25,7 @@ class CalendarFragment: Fragment() {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
                 override fun onCalendarClick(day: CalendarDay) {
                     SoundManager.getInstance().playSound(day.mDayNo)
-                    (parentFragment as HomeFragment).showDate(day, true, false)
+                    (parentFragment as HomeFragment).showDate(day, true)
                 }
             }
         }

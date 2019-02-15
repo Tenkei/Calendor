@@ -79,13 +79,13 @@ public class HomeFragment extends Fragment {
     private ImageView mRightBtn;
     private ImageView mLeftBtn;
 
-    //Body
+    //Pager
     private CalendarPager mPager;
-    private FloatingActionButton mEventActionBtn;
     private FragmentPagerAdapter mPagerAdapter;
 
     //Bottom Sheet
     private CalendarBottomSheet mBottomSheet;
+    private FloatingActionButton mEventActionBtn;
 
     //Counter
     public static int count;
@@ -99,6 +99,8 @@ public class HomeFragment extends Fragment {
         PersianCalendar today = new PersianCalendar();
         mDisplayedYear = today.getPersianYear();
         mDisplayedMonth = today.getPersianMonth();
+        mSelectedDay = new CalendarDay(today);
+        mSelectedDay.mGoogleEvents = GoogleCalendarHelper.getEvents(mSelectedDay.mPersianDate);
 
         //Setup Views
         setupToolbar(rootView);
@@ -108,7 +110,7 @@ public class HomeFragment extends Fragment {
         //Set Viewpager to Show Current Month
         mPager.setRtL(true);
         mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth);
-        showDate(new CalendarDay(today), false, true);
+        showDate(mSelectedDay, false);
         runStartAnimation();
 
         return rootView;
@@ -284,12 +286,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void showDate(final CalendarDay day, final boolean expandSheet, final boolean needUpdate){
+    public void showDate(final CalendarDay day, final boolean expandSheet){
         mShouldExpandBottomSheet = expandSheet;
-
-        //Update Day Events in Case of Adding, Updating or Deleting Events
-        if(needUpdate)
-            day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate);
         mSelectedDay = day;
 
         proceedToSetupBottomSheet(CalendarBottomSheet.Mode.SHEET_MODE_DATE);
@@ -297,11 +295,6 @@ public class HomeFragment extends Fragment {
 
     public void showEvent(final GoogleEvent gEvent){
         mShouldExpandBottomSheet = true;
-
-        //Save Current BottomSheet Mode to Restore Later
-        if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE)
-            mPreviousBottomSheetState = mBottomSheet.mBottomSheetBehavior.getState();
-
         mSelectedEvent = gEvent;
 
         proceedToSetupBottomSheet(CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT);
@@ -309,17 +302,17 @@ public class HomeFragment extends Fragment {
 
     public void editEvent(final GoogleEvent gEvent, final boolean isEditable){
         mShouldExpandBottomSheet = true;
-
-        //Save Current BottomSheet Mode to Restore Later
-        if(mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE)
-            mPreviousBottomSheetState = mBottomSheet.mBottomSheetBehavior.getState();
-
         mSelectedEvent = gEvent;
 
         proceedToSetupBottomSheet(isEditable ? CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT : CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT);
     }
 
     public void proceedToSetupBottomSheet(final CalendarBottomSheet.Mode mode){
+        //Save Current state to restore later if moving from main mode
+        if(mode != CalendarBottomSheet.Mode.SHEET_MODE_DATE
+                && mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheet.mBottomSheetBehavior.getState();
+
         mBottomSheet.mBottomSheetMode = mode;
 
         count++;
@@ -383,7 +376,9 @@ public class HomeFragment extends Fragment {
                         //Refresh UI and show Date if Event Successfully added
                         if(msgId == R.string.event_successfully_deleted){
                             refreshFragment(mSelectedEvent.mStartDate.getPersianYear(), mSelectedEvent.mStartDate.getPersianMonth());
-                            showDate(mSelectedDay, true, true);
+
+                            mSelectedDay.mGoogleEvents.remove(mSelectedEvent);
+                            showDate(mSelectedDay, true);
 
                             //Update Notification
                             Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
@@ -426,7 +421,9 @@ public class HomeFragment extends Fragment {
                         //Refresh UI and show Date if Event Successfully added
                         if(msgId == R.string.event_successfully_added || msgId == R.string.event_successfully_updated){
                             refreshFragment(tempEvent.mStartDate.getPersianYear(), tempEvent.mStartDate.getPersianMonth());
-                            showDate(mSelectedDay, true, true);
+
+                            mSelectedDay.mGoogleEvents = GoogleCalendarHelper.getEvents(mSelectedDay.mPersianDate);
+                            showDate(mSelectedDay, true);
 
                             //Update Notification
                             Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
@@ -470,11 +467,11 @@ public class HomeFragment extends Fragment {
     public boolean onBackPressed(){
         if(mBottomSheet.mBottomSheetMode != CalendarBottomSheet.Mode.SHEET_MODE_DATE){
             //Return Bottom Sheet to Show Date Mode & Expand Bottom Sheet if it Was in Show Event Mode
-            showDate(mSelectedDay, mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT, false);
+            showDate(mSelectedDay, mBottomSheet.mBottomSheetMode == CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT);
             return true;
         } else if(!mBottomSheet.isCollapsed()){
             //Close Bottom Sheet if has Content and is Expanded
-            mBottomSheet.mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mBottomSheet.collapse();
             return true;
         } else {
             return false;
