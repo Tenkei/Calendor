@@ -204,14 +204,14 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
         //Set Event in Case of Updating Available Event
         if (!TextUtils.isEmpty(gEvent.mTITLE))
-            mEventTitle!!.text = gEvent.mTITLE
+            mEventTitle.text = gEvent.mTITLE
         else
-            mEventTitle!!.setHint(R.string.event_no_title)
+            mEventTitle.setHint(R.string.event_no_title)
 
         if (!TextUtils.isEmpty(gEvent.mDESCRIPTION))
-            mEventDesc!!.text = gEvent.mDESCRIPTION
+            mEventDesc.text = gEvent.mDESCRIPTION
         else
-            mEventDesc!!.setHint(R.string.event_no_desc)
+            mEventDesc.setHint(R.string.event_no_desc)
 
         mBottomSheetContainer.addView(eventSheet)
     }
