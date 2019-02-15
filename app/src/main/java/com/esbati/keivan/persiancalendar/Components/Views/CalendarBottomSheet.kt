@@ -3,22 +3,18 @@ package com.esbati.keivan.persiancalendar.Components.Views
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import java.util.*
@@ -30,18 +26,40 @@ import java.util.*
 class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null
     ) : FrameLayout(context, attrs) {
 
-    @JvmField var mBottomSheetMode = Mode.SHEET_MODE_DATE
+    var mBottomSheetMode = Mode.SHEET_MODE_DATE
+    var onEventListener: OnEventListener? = null
 
-    @JvmField var mBottomSheet: NestedScrollView
-    @JvmField var mBottomSheetContainer: LinearLayout
-    @JvmField var mPersianDate: TextView
-    @JvmField var mGregorianDate: TextView
-    @JvmField var mBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    @JvmField var mEventActionBtn: FloatingActionButton? = null
+    private var mPreviousBottomSheetState: Int = 0
+    private var mShouldUpdateBottomSheet: Boolean = false
+    private var mShouldExpandBottomSheet: Boolean = false
+    private lateinit var mSelectedDay: CalendarDay
+    private var mSelectedEvent: GoogleEvent? = null
+
+    //Views
+    private var mBottomSheet: NestedScrollView
+    private var mBottomSheetContainer: LinearLayout
+    var mPersianDate: TextView
+    var mGregorianDate: TextView
+    private val mBottomSheetBehavior by lazy {
+        BottomSheetBehavior.from<CalendarBottomSheet>(this).apply {
+            setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    //Change BottomSheet Content if Needed
+                    if(isCollapsed() && mShouldUpdateBottomSheet){
+                        mShouldUpdateBottomSheet = false
+                        setBottomSheetMode(mBottomSheetMode)
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            })
+        }
+    }
+    lateinit var eventActionBtn: FloatingActionButton
 
     //Event Sheet
-    @JvmField var mEventTitle: TextView? = null
-    @JvmField var mEventDesc: TextView? = null
+    private lateinit var mEventTitle: TextView
+    private lateinit var mEventDesc: TextView
 
     enum class Mode{
         SHEET_MODE_DATE,
@@ -59,15 +77,36 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     fun isCollapsed(): Boolean {
-        return mBottomSheetContainer.height == 0 || mBottomSheetBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED
+        return mBottomSheetContainer.height == 0 || mBottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
     }
 
     fun collapse() {
-        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    fun showDate(day: CalendarDay, expandSheet: Boolean) {
+        mShouldExpandBottomSheet = expandSheet
+        mSelectedDay = day
+
+        proceedToSetupBottomSheet(Mode.SHEET_MODE_DATE)
+    }
+
+    fun showEvent(gEvent: GoogleEvent) {
+        mShouldExpandBottomSheet = true
+        mSelectedEvent = gEvent
+
+        proceedToSetupBottomSheet(Mode.SHEET_MODE_VIEW_EVENT)
+    }
+
+    fun editEvent(gEvent: GoogleEvent?, isEditable: Boolean) {
+        mShouldExpandBottomSheet = true
+        mSelectedEvent = gEvent
+
+        proceedToSetupBottomSheet(if (isEditable) Mode.SHEET_MODE_EDIT_EVENT else CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT)
     }
 
     @SuppressLint("SetTextI18n")
-    fun setDateSheet(day: CalendarDay, onEventClick: (GoogleEvent) -> Unit) {
+    private fun setDateSheet(day: CalendarDay, onEventClick: (GoogleEvent) -> Unit) {
         //Set Date
         mPersianDate.text = day.mPersianDate.persianLongDate
         val gregorianCalendar = GregorianCalendar().apply {
@@ -114,7 +153,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    fun setShowEventSheet(gEvent: GoogleEvent, onDeleteEvent: () -> Unit) {
+    private fun setShowEventSheet(gEvent: GoogleEvent, onDeleteEvent: () -> Unit) {
         //Set Bottom Sheet
         mBottomSheetContainer.removeAllViews()
 
@@ -156,7 +195,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         mBottomSheetContainer.addView(eventDescription)
     }
 
-    fun setEditEventSheet(gEvent: GoogleEvent) {
+    private fun setEditEventSheet(gEvent: GoogleEvent) {
         mBottomSheetContainer.removeAllViews()
 
         val eventSheet = LayoutInflater.from(context).inflate(R.layout.cell_event_sheet, mBottomSheetContainer, false)
@@ -175,5 +214,94 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             mEventDesc!!.setHint(R.string.event_no_desc)
 
         mBottomSheetContainer.addView(eventSheet)
+    }
+
+    private fun proceedToSetupBottomSheet(mode: Mode) {
+        //Save Current state to restore later if moving from main mBottomSheetMode
+        if (mode !== Mode.SHEET_MODE_DATE && mBottomSheetMode == Mode.SHEET_MODE_DATE)
+            mPreviousBottomSheetState = mBottomSheetBehavior.state
+
+        mBottomSheetMode = mode
+
+        //If Sheet is Flat or Collapsed Set it Up
+        if (isCollapsed()) {
+            if (mBottomSheetBehavior.state != BottomSheetBehavior.STATE_COLLAPSED)
+                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            setBottomSheetMode(mode)
+        } else {
+            //FIXME Sometimes if Item is in Settling Mode It won't Change Mode to Collapsed
+            if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_SETTLING)
+                Handler().postDelayed({
+                    //Force Update if BottomSheet got Stuck
+                    if (mShouldUpdateBottomSheet)
+                        setBottomSheetMode(mode)
+                }, 300)
+
+            //If Sheet is not Collapsed, Collapse it then Set it Up
+            mShouldUpdateBottomSheet = true
+            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+    private fun setBottomSheetMode(mode: CalendarBottomSheet.Mode) {
+        when (mode) {
+            CalendarBottomSheet.Mode.SHEET_MODE_DATE -> {
+                setDateSheet(mSelectedDay) { googleEvent ->
+                    showEvent(googleEvent)
+                }
+
+                eventActionBtn.setImageResource(R.drawable.ic_calendar_plus_white_24dp)
+                eventActionBtn.setOnClickListener { editEvent(null, true) }
+            }
+
+            CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT -> {
+                mSelectedEvent?.let {
+                    setShowEventSheet(it) {
+                        onEventListener?.onEventDeleted(it)
+                    }
+                }
+
+                eventActionBtn.setImageResource(R.drawable.ic_pencil_white_24dp)
+                eventActionBtn.setOnClickListener { editEvent(mSelectedEvent, true) }
+            }
+
+            CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
+                val tempEvent = mSelectedEvent?.clone() ?: GoogleEvent(mSelectedDay)
+
+                setEditEventSheet(tempEvent)
+
+                eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)
+                eventActionBtn.setOnClickListener { view ->
+                    AndroidUtilities.hideSoftKeyboard(view)
+
+                    //Save Event
+                    tempEvent.mTITLE = mEventTitle.text.toString()
+                    tempEvent.mDESCRIPTION = mEventDesc.text.toString()
+
+                    onEventListener?.onEventEdited(tempEvent)
+                }
+            }
+        }
+
+        //Expand View If Needed
+        Handler().postDelayed({
+            //If BottomSheet is in the Date mBottomSheetMode restore any previous state if available, else just expand it
+            if (mBottomSheetMode == Mode.SHEET_MODE_DATE && mPreviousBottomSheetState > 0) {
+                //If BottomSheet is Stuck in Settling Set it to Collapse
+                if (mPreviousBottomSheetState == BottomSheetBehavior.STATE_SETTLING)
+                    mPreviousBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED
+
+                mBottomSheetBehavior.state = mPreviousBottomSheetState
+                mPreviousBottomSheetState = 0
+            } else if (mShouldExpandBottomSheet) {
+                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }, 200)
+    }
+
+    interface OnEventListener{
+        fun onEventDeleted(deletedEvent: GoogleEvent)
+        fun onEventEdited(deletedEvent: GoogleEvent)
     }
 }
