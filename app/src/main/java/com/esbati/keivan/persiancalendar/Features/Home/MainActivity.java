@@ -12,10 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
-import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
 import com.esbati.keivan.persiancalendar.Components.SoundManager;
+import com.esbati.keivan.persiancalendar.R;
+import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
+import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Load Audio and Events
-        SoundManager.getInstance();
+        SoundManager.INSTANCE.init();
         GoogleCalendarHelper.getCalendars();
         GoogleCalendarHelper.getEvents();
 
