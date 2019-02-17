@@ -1,6 +1,10 @@
 package com.esbati.keivan.persiancalendar.Repository
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.support.annotation.RawRes
+import android.support.annotation.RequiresPermission
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.Components.ApplicationController
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
@@ -17,12 +21,15 @@ import kotlin.collections.ArrayList
 object Repository{
 
     private val calendarEvents: List<CalendarEvent>
+
+    var nullable: Int? = null
     init {
         calendarEvents = readEventsFromJSON()
     }
 
     private fun readRawResource(@RawRes res: Int): String {
         val s = Scanner(ApplicationController.getContext().resources.openRawResource(res)).useDelimiter("\\A")
+        var no: Int = nullable ?: 0
         return if (s.hasNext()) s.next() else ""
     }
 
@@ -94,7 +101,13 @@ object Repository{
 
             //Get Events for Current Day
             day.mCalendarEvents = getEvents(day.mPersianDate)
-            day.mGoogleEvents = CalendarDataStore.getEvents(day.mPersianDate)
+            day.mGoogleEvents =
+                if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                    == PackageManager.PERMISSION_GRANTED)
+                    CalendarDataStore.getEvents(day.mPersianDate)
+                else
+                    ArrayList()
+
 
             if (day.mPersianDate.persianWeekDay == 6)
                 day.isHoliday = true

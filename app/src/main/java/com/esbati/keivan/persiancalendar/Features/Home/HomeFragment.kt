@@ -74,7 +74,11 @@ class HomeFragment : Fragment() {
                 mDisplayedMonth = it.persianMonth
 
                 mSelectedDay = CalendarDay(it).apply {
-                    mGoogleEvents = CalendarDataStore.getEvents(it)
+                    mGoogleEvents = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
+                            == PackageManager.PERMISSION_GRANTED)
+                        CalendarDataStore.getEvents(it)
+                    else
+                        ArrayList()
                 }
             }
 
