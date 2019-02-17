@@ -31,6 +31,7 @@ import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore
+import com.esbati.keivan.persiancalendar.Repository.Repository
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -76,7 +77,7 @@ class HomeFragment : Fragment() {
                 mSelectedDay = CalendarDay(it).apply {
                     mGoogleEvents = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
                             == PackageManager.PERMISSION_GRANTED)
-                        CalendarDataStore.getEvents(it)
+                        Repository.getEvents(it)
                     else
                         ArrayList()
                 }
@@ -208,7 +209,7 @@ class HomeFragment : Fragment() {
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object: CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: GoogleEvent) {
-                CalendarDataStore.deleteEvent(deletedEvent).also {
+                Repository.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
                     if (it == 1) {
                         refreshFragment(deletedEvent.mStartDate.persianYear, deletedEvent.mStartDate.persianMonth)
@@ -226,17 +227,19 @@ class HomeFragment : Fragment() {
             }
 
             override fun onEventEdited(editedEvent: GoogleEvent) {
-                if(TextUtils.isEmpty(editedEvent.mTITLE) && TextUtils.isEmpty(editedEvent.mDESCRIPTION))
+                if(TextUtils.isEmpty(editedEvent.mTITLE) && TextUtils.isEmpty(editedEvent.mDESCRIPTION)){
                     Toast.makeText(context, R.string.event_error_no_content, Toast.LENGTH_SHORT).show()
+                    return
+                }
 
                 if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                         == PackageManager.PERMISSION_GRANTED)
-                    CalendarDataStore.saveEvent(editedEvent).also {
+                    Repository.saveEvent(editedEvent).also {
                         //Refresh UI and show Date if Event Successfully added
                         if (it == 1) {
                             refreshFragment(editedEvent.mStartDate.persianYear, editedEvent.mStartDate.persianMonth)
 
-                            mSelectedDay.mGoogleEvents = CalendarDataStore.getEvents(mSelectedDay.mPersianDate)
+                            mSelectedDay.mGoogleEvents = Repository.getEvents(mSelectedDay.mPersianDate)
                             showDate(mSelectedDay, true)
 
                             //Update Notification

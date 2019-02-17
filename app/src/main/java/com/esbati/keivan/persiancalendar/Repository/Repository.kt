@@ -9,6 +9,7 @@ import android.util.Log
 import com.esbati.keivan.persiancalendar.Components.ApplicationController
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.CalendarEvent
+import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -51,16 +52,6 @@ object Repository{
         return calendarEvents
     }
 
-    private fun getEvents(date: PersianCalendar): ArrayList<CalendarEvent> {
-        val selectedCalendarEvents = ArrayList<CalendarEvent>()
-
-        for (calendarEvent in calendarEvents)
-            if (calendarEvent.mPersianDate.equals(date))
-                selectedCalendarEvents.add(calendarEvent)
-
-        return selectedCalendarEvents
-    }
-
     fun prepareDays(year: Int, month: Int): List<CalendarDay> {
         val calendar = PersianCalendar()
         val containToday = calendar.persianYear == year && calendar.persianMonth == month
@@ -100,13 +91,13 @@ object Repository{
             day.isCurrentMonth = true
 
             //Get Events for Current Day
-            day.mCalendarEvents = getEvents(day.mPersianDate)
+            day.mCalendarEvents = this.getRemarks(day.mPersianDate)
             day.mGoogleEvents =
-                if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
-                    == PackageManager.PERMISSION_GRANTED)
-                    CalendarDataStore.getEvents(day.mPersianDate)
-                else
-                    ArrayList()
+                    if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                            == PackageManager.PERMISSION_GRANTED)
+                        CalendarDataStore.getEvents(day.mPersianDate)
+                    else
+                        ArrayList()
 
 
             if (day.mPersianDate.persianWeekDay == 6)
@@ -128,6 +119,24 @@ object Repository{
 
         return days
     }
+
+    private fun getRemarks(date: PersianCalendar): ArrayList<CalendarEvent> {
+        val selectedCalendarEvents = ArrayList<CalendarEvent>()
+
+        for (calendarEvent in calendarEvents)
+            if (calendarEvent.mPersianDate.equals(date))
+                selectedCalendarEvents.add(calendarEvent)
+
+        return selectedCalendarEvents
+    }
+
+    @RequiresPermission(Manifest.permission.READ_CALENDAR)
+    fun getEvents(selectedDate: PersianCalendar): ArrayList<GoogleEvent> = CalendarDataStore.getEvents(selectedDate)
+
+    @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
+    fun saveEvent(event: GoogleEvent): Int = CalendarDataStore.saveEvent(event)
+
+    fun deleteEvent(event: GoogleEvent): Int = CalendarDataStore.deleteEvent(event)
 }
 
 

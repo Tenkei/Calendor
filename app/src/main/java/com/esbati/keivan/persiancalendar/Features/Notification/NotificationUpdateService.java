@@ -8,8 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
-import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore;
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper;
+import com.esbati.keivan.persiancalendar.Repository.Repository;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class NotificationUpdateService extends IntentService {
             CalendarDay calendarDay = new CalendarDay();
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR)
                     == PackageManager.PERMISSION_GRANTED)
-                calendarDay.mGoogleEvents = CalendarDataStore.INSTANCE.getEvents(calendarDay.mPersianDate);
+                calendarDay.mGoogleEvents = Repository.INSTANCE.getEvents(calendarDay.mPersianDate);
             else
                 calendarDay.mGoogleEvents = new ArrayList<>();
             //Show Sticky Notification
