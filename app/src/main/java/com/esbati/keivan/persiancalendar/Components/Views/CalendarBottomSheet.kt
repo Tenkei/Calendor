@@ -302,6 +302,6 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
     interface OnEventListener{
         fun onEventDeleted(deletedEvent: GoogleEvent)
-        fun onEventEdited(deletedEvent: GoogleEvent)
+        fun onEventEdited(editedEvent: GoogleEvent)
     }
 }

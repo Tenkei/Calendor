@@ -4,14 +4,17 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
+import android.support.annotation.RequiresPermission;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.esbati.keivan.persiancalendar.Components.ApplicationController;
 import com.esbati.keivan.persiancalendar.POJOs.GoogleCalendar;
@@ -26,7 +29,7 @@ import ir.smartlab.persindatepicker.util.PersianCalendar;
  * Created by asus on 11/23/2016.
  */
 
-public class GoogleCalendarHelper {
+public class CalendarDataStore {
 
     private static ArrayList<GoogleCalendar> mGCalendars;
     private static ArrayList<GoogleEvent> mGEvents;
@@ -37,14 +40,14 @@ public class GoogleCalendarHelper {
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
     private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
 
-    public static final String[] CALENDAR_PROJECTION = new String[] {
+    private static final String[] CALENDAR_PROJECTION = new String[] {
             Calendars._ID,                           // 0
             Calendars.ACCOUNT_NAME,                  // 1
             Calendars.CALENDAR_DISPLAY_NAME,         // 2
             Calendars.OWNER_ACCOUNT                  // 3
     };
 
-    public static final String[] EVENT_PROJECTION = new String[] {
+    private static final String[] EVENT_PROJECTION = new String[] {
             Events._ID,                           // 0
             Events.ORGANIZER,                     // 1
             Events.TITLE,                         // 2
@@ -60,30 +63,24 @@ public class GoogleCalendarHelper {
             Events.RDATE,                         // 12
     };
 
-    public static ArrayList<GoogleCalendar> getCalendars(){
-        if(mGCalendars != null)
-            return mGCalendars;
+    @RequiresPermission(Manifest.permission.READ_CALENDAR)
+    public static void init(){
+        mGCalendars = getCalendars();
+
+        mGEvents = new ArrayList<>();
+        for(GoogleCalendar gCalendar:mGCalendars)
+            mGEvents.addAll(getEvents(gCalendar));
+    }
+
+    @RequiresPermission(Manifest.permission.READ_CALENDAR)
+    private static ArrayList<GoogleCalendar> getCalendars(){
+        ArrayList<GoogleCalendar> calendars = new ArrayList<>();
 
         // Run query
-        Cursor cur = null;
         ContentResolver cr = ApplicationController.getContext().getContentResolver();
-        Uri uri = Calendars.CONTENT_URI;
-
-        if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            cur = cr.query(uri, CALENDAR_PROJECTION, null, null, null);
-        else
-            return mGCalendars;
-
-        //String selection = "((" + Calendars.ACCOUNT_NAME + " = ?) AND ("
-        //        + Calendars.ACCOUNT_TYPE + " = ?) AND ("
-        //        + Calendars.OWNER_ACCOUNT + " = ?))";
-        //String[] selectionArgs = new String[] {"hera@example.com", "com.example",
-        //        "hera@example.com"};
-        //// Submit the query and get a Cursor object back.
-        //cur = cr.query(uri, CALENDAR_PROJECTION, selection, selectionArgs, null);
+        Cursor cur = cr.query(Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null);
 
         // Use the cursor to step through the returned records
-        mGCalendars = new ArrayList<>();
         while (cur.moveToNext()) {
             GoogleCalendar gCalendar = new GoogleCalendar();
 
@@ -93,43 +90,23 @@ public class GoogleCalendarHelper {
             gCalendar.accountName = cur.getString(PROJECTION_ACCOUNT_NAME_INDEX);
             gCalendar.ownerName = cur.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
 
-            mGCalendars.add(gCalendar);
+            calendars.add(gCalendar);
         }
+        cur.close();
 
-        return mGCalendars;
+        return calendars;
     }
 
-    public static ArrayList<GoogleEvent> getEvents(){
-        if(mGEvents == null)
-            if(mGCalendars != null)
-                for(GoogleCalendar gCalendar:mGCalendars){
-                    GoogleCalendarHelper.getEvents(gCalendar);
-                }
+    @RequiresPermission(Manifest.permission.READ_CALENDAR)
+    private static ArrayList<GoogleEvent> getEvents(GoogleCalendar calendar){
+        ArrayList<GoogleEvent> events = new ArrayList<>();
 
-        return mGEvents;
-    }
-
-    public static ArrayList<GoogleEvent> getEvents(GoogleCalendar calendar){
-
-        // add the begin and end times to the URI to use these to limit the list to events between them
-        Uri.Builder eventsUriBuilder = CalendarContract.Instances.CONTENT_URI.buildUpon();
-
-        // Run query
-        Cursor cur = null;
-        ContentResolver cr = ApplicationController.getContext().getContentResolver();
-        Uri uri = Events.CONTENT_URI;
-
+        // Submit the query and get a Cursor object back.
         String selection = "((" + Events.CALENDAR_ID + " = ?))";
         String[] selectionArgs = new String[] {"" + calendar.calID};
 
-        // Submit the query and get a Cursor object back.
-        if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            cur = cr.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
-        else
-            return mGEvents;
-
-        if(mGEvents == null)
-            mGEvents = new ArrayList<>();
+        ContentResolver cr = ApplicationController.getContext().getContentResolver();
+        Cursor cur = cr.query(Events.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null);
 
         // Use the cursor to step through the returned records
         while (cur.moveToNext()) {
@@ -151,52 +128,44 @@ public class GoogleCalendarHelper {
             gEvent.mRRULE = cur.getString(11);
             gEvent.mRDATE = cur.getString(12);
 
-
             gEvent.mStartDate = new PersianCalendar(gEvent.mDTSTART);
             gEvent.mEndDate = new PersianCalendar(gEvent.mDTEND);
 
-            mGEvents.add(gEvent);
+            events.add(gEvent);
         }
+        cur.close();
 
-        return mGEvents;
+        return events;
     }
 
-    public static ArrayList<GoogleEvent> getEvents(PersianCalendar date) {
-        if (mGEvents == null) {
-            mGEvents = getEvents();
-        }
-
+    public static ArrayList<GoogleEvent> getEvents(PersianCalendar selectedDate) {
         ArrayList<GoogleEvent> selectedGoogleEvents = new ArrayList<>();
 
         if(mGEvents != null)
-            for (GoogleEvent gEvent : mGEvents) {
-                if (gEvent.mStartDate != null && gEvent.mStartDate.equals(date)) {
+            for (GoogleEvent gEvent : mGEvents)
+                if (selectedDate.equals(gEvent.mStartDate))
                     selectedGoogleEvents.add(gEvent);
-                }
-            }
 
         return selectedGoogleEvents;
     }
 
+    @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     public static int saveEvent(GoogleEvent event){
-        return event.mID != 0
-                ? GoogleCalendarHelper.updateEvent(event)
-                : GoogleCalendarHelper.saveSimpleEvent(event);
-    }
-
-    public static int saveSimpleEvent(GoogleEvent newEvent){
         //Return if No Calendar is Available
         if(mGCalendars == null || mGCalendars.size() <= 0)
-            return R.string.event_error_no_calendar;
+            return -1;
 
-        if(TextUtils.isEmpty(newEvent.mTITLE) && TextUtils.isEmpty(newEvent.mDESCRIPTION)){
-            return R.string.event_error_no_content;
-        }
+        return event.mID != 0
+                ? updateEvent(event)
+                : saveSimpleEvent(event);
+    }
 
-        Uri uri = null;
-        ContentResolver cr = ApplicationController.getContext().getContentResolver();
+    @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
+    private static int saveSimpleEvent(GoogleEvent newEvent){
+        GoogleCalendar defaultCalendar = mGCalendars.get(0);
+
         ContentValues values = new ContentValues();
-        values.put(Events.CALENDAR_ID, mGCalendars.get(0).calID);
+        values.put(Events.CALENDAR_ID, defaultCalendar.calID);
         values.put(Events.TITLE, newEvent.mTITLE);
         values.put(Events.DESCRIPTION, newEvent.mDESCRIPTION);
         values.put(Events.DTSTART, newEvent.mDTSTART);
@@ -204,59 +173,46 @@ public class GoogleCalendarHelper {
         values.put(Events.EVENT_TIMEZONE, new PersianCalendar().getTimeZone().getDisplayName());
 
         // Submit the query and get a Cursor object back.
-        if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            uri = cr.insert(Events.CONTENT_URI, values);
-        else
-            return R.string.event_error_write_permission;
+        ContentResolver cr = ApplicationController.getContext().getContentResolver();
+        Uri uri = cr.insert(Events.CONTENT_URI, values);
 
         //Get the event ID and Add it to Google Events Pool
         newEvent.mID = Long.parseLong(uri.getLastPathSegment());
-
-        if(mGEvents == null)
-            mGEvents = new ArrayList<>();
-
         mGEvents.add(newEvent);
 
-        return R.string.event_successfully_added;
+        return 1;
     }
 
-    public static int updateEvent(GoogleEvent gEvent){
-        Uri updateUri = null;
-        ContentResolver cr = ApplicationController.getContext().getContentResolver();
-        ContentValues values = new ContentValues();
-
+    private static int updateEvent(GoogleEvent gEvent){
         //Update Event Row
+        ContentValues values = new ContentValues();
         values.put(Events.TITLE, gEvent.mTITLE);
         values.put(Events.DESCRIPTION, gEvent.mDESCRIPTION);
 
-        updateUri = ContentUris.withAppendedId(Events.CONTENT_URI, gEvent.mID);
+        ContentResolver cr = ApplicationController.getContext().getContentResolver();
+        Uri updateUri = ContentUris.withAppendedId(Events.CONTENT_URI, gEvent.mID);
         int rows = cr.update(updateUri, values, null, null);
 
         //Update Google Events Pool
-        if(mGEvents != null)
-            for(GoogleEvent event:mGEvents){
-                if(gEvent.mID == event.mID){
-                    event.mTITLE = gEvent.mTITLE;
-                    event.mDESCRIPTION = gEvent.mDESCRIPTION;
-                    break;
-                }
+        for(GoogleEvent event:mGEvents)
+            if(gEvent.mID == event.mID){
+                event.mTITLE = gEvent.mTITLE;
+                event.mDESCRIPTION = gEvent.mDESCRIPTION;
+                break;
             }
 
-        return R.string.event_successfully_updated;
+        return rows;
     }
 
     public static int deleteEvent(GoogleEvent gEvent){
-        Uri deleteUri = null;
+        //Delete Event Row
         ContentResolver cr = ApplicationController.getContext().getContentResolver();
-
-        deleteUri = ContentUris.withAppendedId(Events.CONTENT_URI, gEvent.mID);
+        Uri deleteUri = ContentUris.withAppendedId(Events.CONTENT_URI, gEvent.mID);
         int rows = cr.delete(deleteUri, null, null);
 
         //Remove From Google Events Pool
-        if(mGEvents != null)
-            if(mGEvents.contains(gEvent))
-                mGEvents.remove(gEvent);
+        mGEvents.remove(gEvent);
 
-        return R.string.event_successfully_deleted;
+        return rows;
     }
 }

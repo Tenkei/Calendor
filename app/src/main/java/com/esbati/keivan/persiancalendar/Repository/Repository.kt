@@ -94,7 +94,7 @@ object Repository{
 
             //Get Events for Current Day
             day.mCalendarEvents = getEvents(day.mPersianDate)
-            day.mGoogleEvents = GoogleCalendarHelper.getEvents(day.mPersianDate)
+            day.mGoogleEvents = CalendarDataStore.getEvents(day.mPersianDate)
 
             if (day.mPersianDate.persianWeekDay == 6)
                 day.isHoliday = true

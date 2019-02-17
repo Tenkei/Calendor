@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
-import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
+import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore;
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper;
 
 /**
@@ -23,7 +23,7 @@ public class NotificationUpdateService extends IntentService {
         if(PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)){
             //Recover Day Events
             CalendarDay calendarDay = new CalendarDay();
-            calendarDay.mGoogleEvents = GoogleCalendarHelper.getEvents(calendarDay.mPersianDate);
+            calendarDay.mGoogleEvents = CalendarDataStore.getEvents(calendarDay.mPersianDate);
 
             //Show Sticky Notification
             NotificationHelper.showStickyNotification(calendarDay);

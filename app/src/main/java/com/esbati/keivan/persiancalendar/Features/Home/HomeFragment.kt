@@ -1,6 +1,8 @@
 package com.esbati.keivan.persiancalendar.Features.Home
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -9,13 +11,17 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.*
+import com.esbati.keivan.persiancalendar.Components.ApplicationController
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.Components.Views.CalendarPager
 import com.esbati.keivan.persiancalendar.Features.CalendarPage.CalendarFragment
@@ -24,7 +30,7 @@ import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper
+import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -68,7 +74,7 @@ class HomeFragment : Fragment() {
                 mDisplayedMonth = it.persianMonth
 
                 mSelectedDay = CalendarDay(it).apply {
-                    mGoogleEvents = GoogleCalendarHelper.getEvents(it)
+                    mGoogleEvents = CalendarDataStore.getEvents(it)
                 }
             }
 
@@ -198,9 +204,9 @@ class HomeFragment : Fragment() {
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object: CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: GoogleEvent) {
-                GoogleCalendarHelper.deleteEvent(deletedEvent).also {
+                CalendarDataStore.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
-                    if (it == R.string.event_successfully_deleted) {
+                    if (it == 1) {
                         refreshFragment(deletedEvent.mStartDate.persianYear, deletedEvent.mStartDate.persianMonth)
 
                         mSelectedDay.mGoogleEvents.remove(deletedEvent)
@@ -210,27 +216,35 @@ class HomeFragment : Fragment() {
                         val updateNotification = Intent(activity, NotificationUpdateService::class.java)
                         activity.startService(updateNotification)
                     } else {
-                        Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
 
-            override fun onEventEdited(deletedEvent: GoogleEvent) {
-                GoogleCalendarHelper.saveEvent(deletedEvent).also {
-                    //Refresh UI and show Date if Event Successfully added
-                    if (it == R.string.event_successfully_added || it == R.string.event_successfully_updated) {
-                        refreshFragment(deletedEvent.mStartDate.getPersianYear(), deletedEvent.mStartDate.getPersianMonth())
+            override fun onEventEdited(editedEvent: GoogleEvent) {
+                if(TextUtils.isEmpty(editedEvent.mTITLE) && TextUtils.isEmpty(editedEvent.mDESCRIPTION))
+                    Toast.makeText(context, R.string.event_error_no_content, Toast.LENGTH_SHORT).show()
 
-                        mSelectedDay.mGoogleEvents = GoogleCalendarHelper.getEvents(mSelectedDay!!.mPersianDate)
-                        showDate(mSelectedDay, true)
+                if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                        == PackageManager.PERMISSION_GRANTED)
+                    CalendarDataStore.saveEvent(editedEvent).also {
+                        //Refresh UI and show Date if Event Successfully added
+                        if (it == 1) {
+                            refreshFragment(editedEvent.mStartDate.persianYear, editedEvent.mStartDate.persianMonth)
 
-                        //Update Notification
-                        val updateNotification = Intent(activity, NotificationUpdateService::class.java)
-                        activity.startService(updateNotification)
-                    } else {
-                        Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+                            mSelectedDay.mGoogleEvents = CalendarDataStore.getEvents(mSelectedDay.mPersianDate)
+                            showDate(mSelectedDay, true)
+
+                            //Update Notification
+                            val updateNotification = Intent(activity, NotificationUpdateService::class.java)
+                            activity.startService(updateNotification)
+                        } else {
+                            Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
+                            Log.d("Calendar", getString(R.string.event_error_no_calendar))
+                        }
                     }
-                }
+                else
+                    Toast.makeText(context, R.string.event_error_write_permission, Toast.LENGTH_SHORT).show()
             }
         }
     }

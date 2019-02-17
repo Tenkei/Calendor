@@ -1,12 +1,15 @@
 package com.esbati.keivan.persiancalendar.Features.Home;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +17,7 @@ import android.view.View;
 
 import com.esbati.keivan.persiancalendar.Components.SoundManager;
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.Repository.GoogleCalendarHelper;
+import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore;
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -38,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Load Audio and Events
         SoundManager.INSTANCE.init();
-        GoogleCalendarHelper.getCalendars();
-        GoogleCalendarHelper.getEvents();
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR)
+                == PackageManager.PERMISSION_GRANTED)
+            CalendarDataStore.init();
 
         setupFragment();
     }
