@@ -200,6 +200,10 @@ class HomeFragment : Fragment() {
                         + " - "
                         + Constants.months_en[(mDisplayedMonth + 2) % 12])
             }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                mBottomSheet.collapse()
+            }
         })
     }
 
