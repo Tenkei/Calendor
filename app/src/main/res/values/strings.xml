@@ -6,12 +6,15 @@
     <string name="dialog_select_date">انتخاب تاریخ</string>
     <string name="dialog_exit_title">خروج از برنامه</string>
     <string name="dialog_exit_body"> آیا قصد خروج از برنامه را دارید؟ </string>
+    <string name="dialog_calendar_rationale_title">دسترسی به تقویم</string>
+    <string name="dialog_calendar_rationale_body">برنامه جهت ایجاد و نمایش رویداد ها نیازمند دسترسی به تقویم می باشد.</string>
     <string name="dialog_delete_event_title">حذف رویداد</string>
     <string name="dialog_delete_event_body">آیا از حذف رویداد مورد نظر اطمینان دارید؟ در صورت حذف تمام اطلاعات مربوط به این رویداد حذف می گردد.</string>
     <string name="dialog_button_update">بروزرسانی</string>
     <string name="dialog_button_confirm">تایید</string>
     <string name="dialog_button_return">بازگشت</string>
     <string name="dialog_button_exit">خروج</string>
+
 
     <string name="weekday_1">ش</string>
     <string name="weekday_2">ی</string>
@@ -40,7 +43,6 @@
     <string name="event_no_title">(بدون عنوان)</string>
     <string name="event_no_desc">(فاقد توضیحات)</string>
 
-
     <!-- Setting -->
     <string name="setting_animation">انیمیشن</string>
     <string name="setting_animation_selection">انیمیشن انتخاب روز</string>
@@ -48,5 +50,4 @@
     <string name="setting_sticky_notification_display">نمایش تاریخ در نوار اعلانات</string>
     <string name="setting_sticky_notification_actions">نمایش اکشن ها</string>
     <string name="setting_sticky_notification_priority">اولویت نمایش</string>
-
 </resources>
