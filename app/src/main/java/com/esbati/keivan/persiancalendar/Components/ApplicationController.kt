@@ -23,6 +23,7 @@ class ApplicationController : Application() {
         super.onCreate()
         appContext = this
 
+        SoundManager.init()
         Fabric.with(this, Crashlytics())
         OneSignal.startInit(this).init()
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
