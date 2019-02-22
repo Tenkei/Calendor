@@ -19,7 +19,7 @@ class NotificationActionService : IntentService("NotificationActionService") {
 
         if (mActionType >= 0)
             when (mActionType) {
-                ACTION_DISMISS -> NotificationHelper.cancelNotification()
+                ACTION_DISMISS -> NotificationHelper.cancelNotification(this)
             }
     }
 

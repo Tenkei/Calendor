@@ -43,6 +43,11 @@
     <string name="event_no_title">(بدون عنوان)</string>
     <string name="event_no_desc">(فاقد توضیحات)</string>
 
+    <!-- Notification -->
+    <string name="notification_collapsed_text_with_title">%s و %d رویداد دیگر</string>
+    <string name="notification_collapsed_text_without_title">%d رویداد</string>
+    <string name="notification_action_dismiss_title">Dismiss</string>
+
     <!-- Setting -->
     <string name="setting_animation">انیمیشن</string>
     <string name="setting_animation_selection">انیمیشن انتخاب روز</string>

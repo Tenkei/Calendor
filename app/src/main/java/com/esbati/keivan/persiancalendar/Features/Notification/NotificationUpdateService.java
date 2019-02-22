@@ -34,9 +34,9 @@ public class NotificationUpdateService extends IntentService {
             else
                 calendarDay.mGoogleEvents = new ArrayList<>();
             //Show Sticky Notification
-            NotificationHelper.showStickyNotification(calendarDay);
+            NotificationHelper.INSTANCE.showStickyNotification(this, calendarDay);
         } else {
-            NotificationHelper.cancelNotification();
+            NotificationHelper.INSTANCE.cancelNotification(this);
         }
     }
 }
