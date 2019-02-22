@@ -33,7 +33,7 @@
 
         <service android:name=".Features.Notification.ApplicationService"/>
         <service android:name=".Features.Notification.NotificationUpdateService"/>
-        <service android:name=".Features.Settings.SettingFragment$NotificationActionService"/>
+        <service android:name=".Features.Notification.NotificationActionService"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

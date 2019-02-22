@@ -12,12 +12,11 @@ import android.text.TextUtils;
 
 import com.esbati.keivan.persiancalendar.Components.ApplicationController;
 import com.esbati.keivan.persiancalendar.Features.Home.MainActivity;
-import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment;
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay;
 import com.esbati.keivan.persiancalendar.R;
+import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper;
 import com.esbati.keivan.persiancalendar.Utils.ColorHelper;
 import com.esbati.keivan.persiancalendar.Utils.LanguageHelper;
-import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper;
 
 import java.util.Calendar;
 
@@ -26,8 +25,8 @@ import java.util.Calendar;
  */
 
 public class NotificationHelper {
-    public static final int NOTIFICATION_ID = 666;
-    public static final int[] NOTIFICATION_PRIORITY = {
+    private static final int STICKY_NOTIFICATION_ID = 666;
+    private static final int[] NOTIFICATION_PRIORITY = {
             NotificationCompat.PRIORITY_MIN
             , NotificationCompat.PRIORITY_LOW
             , NotificationCompat.PRIORITY_DEFAULT
@@ -35,13 +34,12 @@ public class NotificationHelper {
             , NotificationCompat.PRIORITY_MAX
     };
 
-    public static void showStickyNotification(CalendarDay calendar){
-
+    public static void showStickyNotification(CalendarDay shownDay){
         Context context = ApplicationController.getContext();
 
         //Setup Content Intent
         Intent intent = new Intent(context, MainActivity.class);
-        int requestId = (int)System.currentTimeMillis(); //unique requestID to differentiate between various notification with same NotifId
+        int requestId = (int)System.currentTimeMillis(); //unique requestID to differentiate between various notification with same Id
         int flags = PendingIntent.FLAG_CANCEL_CURRENT; // cancel old intent and create new one
         PendingIntent pIntent = PendingIntent.getActivity(context, requestId, intent, flags);
 
@@ -50,9 +48,8 @@ public class NotificationHelper {
         int notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)];
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context)
                 .setPriority(notificationPriority)
-                .setColor(ColorHelper.getSeasonColor(calendar.mPersianDate.getPersianMonth()))
-                .setSmallIcon(R.drawable.icon01 + calendar.mDayNo - 1)
-                //.setDefaults(Notification.DEFAULT_ALL)
+                .setColor(ColorHelper.getSeasonColor(shownDay.mPersianDate.getPersianMonth()))
+                .setSmallIcon(R.drawable.icon01 + shownDay.mDayNo - 1)
                 .setContentIntent(pIntent)
                 .setWhen(0)
                 .setShowWhen(false)
@@ -60,40 +57,40 @@ public class NotificationHelper {
                 .setOngoing(true);
 
         //Setup Title Text
-        String mTitle = LanguageHelper.formatStringInPersian(calendar.mPersianDate.getPersianLongDate());
+        String mTitle = LanguageHelper.formatStringInPersian(shownDay.mPersianDate.getPersianLongDate());
         mBuilder.setContentTitle(mTitle);
 
         //Set Content Text
         String collapsedText = "";
-        if(calendar.mGoogleEvents != null)
+        if(shownDay.mGoogleEvents != null)
             //Find an Event with Title
-            for(int i = 0 ; i < calendar.mGoogleEvents.size() ; i++)
-                if(!TextUtils.isEmpty(calendar.mGoogleEvents.get(i).mTITLE)){
-                    collapsedText += calendar.mGoogleEvents.get(i).mTITLE ;
+            for(int i = 0 ; i < shownDay.mGoogleEvents.size() ; i++)
+                if(!TextUtils.isEmpty(shownDay.mGoogleEvents.get(i).mTITLE)){
+                    collapsedText += shownDay.mGoogleEvents.get(i).mTITLE ;
                     break;
                 }
 
         //Adjust Content Text
         if(!TextUtils.isEmpty(collapsedText)){
             //If an Event with Title is Found and R est of Events Count
-            if(calendar.mGoogleEvents.size() > 1)
-                collapsedText += " و " + (calendar.mGoogleEvents.size() - 1) + " رویداد دیگر";
+            if(shownDay.mGoogleEvents.size() > 1)
+                collapsedText += " و " + (shownDay.mGoogleEvents.size() - 1) + " رویداد دیگر";
         } else {
             //If No Event with Title is Found just Add Events Count
-            if(calendar.mGoogleEvents.size() > 0)
-                collapsedText = calendar.mGoogleEvents.size() + " رویداد";
+            if(shownDay.mGoogleEvents.size() > 0)
+                collapsedText = shownDay.mGoogleEvents.size() + " رویداد";
         }
         mBuilder.setContentText(collapsedText.trim());
 
         //If Events are more than One Create Expanded Inbox Style View
-        if(calendar.mGoogleEvents != null && calendar.mGoogleEvents.size() > 1){
+        if(shownDay.mGoogleEvents != null && shownDay.mGoogleEvents.size() > 1){
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            String[] events = new String[calendar.mGoogleEvents.size()];
+            String[] events = new String[shownDay.mGoogleEvents.size()];
 
-            for(int i = 0 ; i < calendar.mGoogleEvents.size() ; i++)
-                events[i] = !TextUtils.isEmpty(calendar.mGoogleEvents.get(i).mTITLE) ? calendar.mGoogleEvents.get(i).mTITLE : calendar.mGoogleEvents.get(i).mDESCRIPTION;
+            for(int i = 0 ; i < shownDay.mGoogleEvents.size() ; i++)
+                events[i] = !TextUtils.isEmpty(shownDay.mGoogleEvents.get(i).mTITLE) ? shownDay.mGoogleEvents.get(i).mTITLE : shownDay.mGoogleEvents.get(i).mDESCRIPTION;
 
-            inboxStyle.setBigContentTitle(calendar.mPersianDate.getPersianLongDate());
+            inboxStyle.setBigContentTitle(shownDay.mPersianDate.getPersianLongDate());
             for (int i = 0 ; i < events.length ; i++)
                 inboxStyle.addLine(events[i]);
 
@@ -102,16 +99,12 @@ public class NotificationHelper {
 
         //Setup Actions
         if(PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)){
-            Intent dismissIntent = new Intent(context, SettingFragment.NotificationActionService.class);
-            dismissIntent.putExtra(SettingFragment.NotificationActionService.EXTRA_ACTION, SettingFragment.NotificationActionService.ACTION_DISMISS);
-            PendingIntent pDismissIntent = PendingIntent.getService(context, 0, dismissIntent, flags);
-            mBuilder.addAction(R.drawable.ic_server_remove_white_24dp, "Dismiss", pDismissIntent);
-                    //.addAction(R.drawable.ic_calendar_plus_white_24dp, "Add Event", pDismissIntent);
+            mBuilder.addAction(R.drawable.ic_server_remove_white_24dp, "Dismiss", NotificationActionService.Companion.getDismissAction(context));
         }
 
         //Show Notification
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(STICKY_NOTIFICATION_ID, mBuilder.build());
 
         //Register Alarm to Trigger in case of Broadcast Failed and Service Killed
         registerAlarm(context);
@@ -119,12 +112,14 @@ public class NotificationHelper {
     }
 
     public static void cancelNotification(){
-        NotificationManager mNotificationManager = (NotificationManager) ApplicationController.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NOTIFICATION_ID);
+        ((NotificationManager) ApplicationController
+                .getContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE))
+                .cancel(STICKY_NOTIFICATION_ID);
+
     }
 
     private static void registerAlarm(Context context){
-
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationBroadcastReceiver.class);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
