@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1033280059307",
+    "firebase_url": "https://persian-calendar-2d294.firebaseio.com",
+    "project_id": "persian-calendar-2d294",
+    "storage_bucket": "persian-calendar-2d294.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033280059307:android:4666b615e6d30b45",
+        "android_client_info": {
+          "package_name": "com.esbati.keivan.persiancalendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033280059307-e0ninihbrq2ihuhc7ucoee0pmql4spsi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEbDHKDGZRxEAMmksmkuxX1i_sSXC5dhg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

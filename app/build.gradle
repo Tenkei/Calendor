@@ -27,9 +27,6 @@ android {
         versionCode 3
         versionName "1.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [onesignal_app_id: "dad44461-4891-4570-9d41-6415ac15ea3b",
-                                // Project number pulled from dashboard, local value is ignored.
-                                onesignal_google_project_number: "REMOTE"]
     }
     buildTypes {
         release {
@@ -60,8 +57,11 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-gcm:10.0.1'
     implementation "com.google.android.gms:play-services-location:10.0.1"
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
 
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
-    implementation 'com.onesignal:OneSignal:3.4.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+apply plugin: 'com.google.gms.google-services'

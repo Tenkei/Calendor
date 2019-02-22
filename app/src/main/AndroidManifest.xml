@@ -31,12 +31,20 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".Features.Notification.ApplicationService"/>
         <service android:name=".Features.Notification.NotificationUpdateService"/>
         <service android:name=".Features.Settings.SettingFragment$NotificationActionService"/>
-        <service android:name=".Features.Notification.ApplicationService"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="83ea65b97507c02eff34f3a7c8e8f60a637d0b88" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_notification" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
     </application>
 </manifest>
