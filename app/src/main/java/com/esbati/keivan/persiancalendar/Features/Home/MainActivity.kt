@@ -33,12 +33,14 @@ class MainActivity : AppCompatActivity() {
 
         setupFragment()
 
-        if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
 
             // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.READ_CALENDAR)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CALENDAR)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CALENDAR)) {
 
                 // Permission Request Explanation
                 val dialog = AlertDialog.Builder(this)
@@ -48,14 +50,14 @@ class MainActivity : AppCompatActivity() {
                         .setPositiveButton(resources.getString(R.string.dialog_button_confirm)) { _, _ ->
                             //Request the permission
                             ActivityCompat.requestPermissions(this@MainActivity,
-                                    arrayOf(Manifest.permission.READ_CALENDAR),
+                                    arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                                     PERMISSIONS_REQUEST_READ_CALENDAR)
                         }.create()
                 AndroidUtilities.showRTLDialog(dialog)
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.READ_CALENDAR),
+                        arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                         PERMISSIONS_REQUEST_READ_CALENDAR)
             }
         }
