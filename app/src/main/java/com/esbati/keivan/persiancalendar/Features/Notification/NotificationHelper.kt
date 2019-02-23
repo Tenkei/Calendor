@@ -1,12 +1,14 @@
 package com.esbati.keivan.persiancalendar.Features.Notification
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.text.TextUtils
 
@@ -24,7 +26,8 @@ import java.util.Calendar
  */
 
 object NotificationHelper {
-    private const val STICKY_NOTIFICATION_ID = 666
+    private const val STICKY_NOTIFICATION_CHANNEL_ID = "STICKY_NOTIFICATION_CHANNEL"
+    private const val STICKY_NOTIFICATION_ID = 16
     private val NOTIFICATION_PRIORITY = intArrayOf(
             NotificationCompat.PRIORITY_MIN,
             NotificationCompat.PRIORITY_LOW,
@@ -32,6 +35,25 @@ object NotificationHelper {
             NotificationCompat.PRIORITY_HIGH,
             NotificationCompat.PRIORITY_MAX
     )
+
+
+    fun createNotificationChannel(context: Context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = context.getString(R.string.notification_sticky_channel_name)
+            val descriptionText = context.getString(R.string.notification_sticky_channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(STICKY_NOTIFICATION_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+                setShowBadge(false)
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 
     fun showStickyNotification(context: Context, shownDay: CalendarDay) {
         //Setup Content Intent
@@ -41,7 +63,7 @@ object NotificationHelper {
 
         //Setup Notification
         val notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
-        val mBuilder = NotificationCompat.Builder(context)
+        val mBuilder = NotificationCompat.Builder(context, STICKY_NOTIFICATION_CHANNEL_ID)
                 .setPriority(notificationPriority)
                 .setColor(ColorHelper.getSeasonColor(shownDay.mPersianDate.persianMonth))
                 .setSmallIcon(R.drawable.icon01 + shownDay.mDayNo - 1)

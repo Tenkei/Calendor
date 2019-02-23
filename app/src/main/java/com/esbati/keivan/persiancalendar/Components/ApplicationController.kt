@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.crashlytics.android.Crashlytics
 import com.esbati.keivan.persiancalendar.Features.Notification.ApplicationService
+import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
@@ -28,13 +29,14 @@ class ApplicationController : Application() {
                 .build()
         )
 
+        //Show Sticky Notification
+        NotificationHelper.createNotificationChannel(this)
+        val notificationIntent = Intent(this, NotificationUpdateService::class.java)
+        startService(notificationIntent)
+
         //Start Application Service if Not Running
         if (!AndroidUtilities.isServiceRunning(ApplicationService::class.java))
             startService(Intent(baseContext, ApplicationService::class.java))
-
-        //Show Sticky Notification
-        val notificationIntent = Intent(this, NotificationUpdateService::class.java)
-        startService(notificationIntent)
     }
 
     companion object {

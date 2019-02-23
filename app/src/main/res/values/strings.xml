@@ -47,6 +47,8 @@
     <string name="notification_collapsed_text_with_title">%s و %d رویداد دیگر</string>
     <string name="notification_collapsed_text_without_title">%d رویداد</string>
     <string name="notification_action_dismiss_title">Dismiss</string>
+    <string name="notification_sticky_channel_name">تقویم</string>
+    <string name="notification_sticky_channel_description">تقویم نمایش داده شده در نوار اعلانات</string>
 
     <!-- Setting -->
     <string name="setting_animation">انیمیشن</string>
