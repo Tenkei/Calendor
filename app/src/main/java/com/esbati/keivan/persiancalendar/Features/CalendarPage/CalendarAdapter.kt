@@ -87,8 +87,8 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DayHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.cell_calendar, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_calendar, parent, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val animateSelection = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)

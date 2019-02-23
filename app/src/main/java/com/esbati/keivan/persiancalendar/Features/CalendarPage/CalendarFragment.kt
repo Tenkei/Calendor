@@ -44,8 +44,8 @@ class CalendarFragment: Fragment() {
             }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_calendar, container, false)?.also {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_calendar, container, false)?.also {
             mRecyclerView = it.findViewById(R.id.list) as RecyclerView
             mRecyclerView.layoutManager = GridLayoutManager(activity, 7, VERTICAL, false)
             mRecyclerView.adapter = mAdapter

@@ -30,7 +30,6 @@ import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.Repository.CalendarDataStore
 import com.esbati.keivan.persiancalendar.Repository.Repository
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
@@ -63,8 +62,8 @@ class HomeFragment : Fragment() {
     private lateinit var mBottomSheet: CalendarBottomSheet
     private lateinit var mEventActionBtn: FloatingActionButton
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_home, container, false)?.apply {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_home, container, false)?.apply {
             setupToolbar(this)
             setupPager(this)
             setupBottomSheet(this)
@@ -90,7 +89,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         runStartAnimation()
@@ -130,7 +129,7 @@ class HomeFragment : Fragment() {
         mLeftBtn.setOnClickListener { mPager.loadLeftItem() }
         mSetting.setOnClickListener {
             SettingFragment().also {
-                it.show(activity.supportFragmentManager, SettingFragment::class.java.simpleName)
+                it.show(activity!!.supportFragmentManager, SettingFragment::class.java.simpleName)
             }
         }
 
@@ -143,7 +142,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        mAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        mAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val abHeight = mAppbar.totalScrollRange.toFloat()
             val heightRatio = (abHeight - Math.abs(verticalOffset)) / abHeight //Range from 1 to 0
             val newToolbarMarginPixel = (heightRatio * AndroidUtilities.dp(48f)).toInt() //Range from 48 to 0
@@ -174,7 +173,7 @@ class HomeFragment : Fragment() {
             //Set Extra Views
             mSetting.alpha = 1 - heightRatio
             mSetting.rotation = 180 * heightRatio
-        }
+        })
     }
 
     private fun setupPager(view: View) {
@@ -182,7 +181,7 @@ class HomeFragment : Fragment() {
         mPagerAdapter = HomeAdapter(childFragmentManager)
         mPager.adapter = mPagerAdapter
 
-        mPager.addOnPageChangeListener(object : CalendarPager.OnPageChangeListener(){
+        mPager.addOnPageChangeListener(object: CalendarPager.OnPageChangeListener() {
             override fun onPageSelected(year: Int, month: Int) {
                 mDisplayedYear = year
                 mDisplayedMonth = month
@@ -223,7 +222,7 @@ class HomeFragment : Fragment() {
 
                         //Update Notification
                         val updateNotification = Intent(activity, NotificationUpdateService::class.java)
-                        activity.startService(updateNotification)
+                        activity?.startService(updateNotification)
                     } else {
                         Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
                     }
@@ -248,7 +247,7 @@ class HomeFragment : Fragment() {
 
                             //Update Notification
                             val updateNotification = Intent(activity, NotificationUpdateService::class.java)
-                            activity.startService(updateNotification)
+                            activity?.startService(updateNotification)
                         } else {
                             Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
                             Log.d("Calendar", getString(R.string.event_error_no_calendar))
