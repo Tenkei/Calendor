@@ -57,9 +57,10 @@ object NotificationHelper {
         )
 
         //Set Content Text
-        mBuilder.setContentText(
-                prepareCollapsedText(context, shownDay).trim()
-        )
+        if(prepareCollapsedText(context, shownDay).isNotBlank())
+            mBuilder.setContentText(
+                    prepareCollapsedText(context, shownDay).trim()
+            )
 
         //If more than one event is available add an expanded Inbox Style view
         if (shownDay.mGoogleEvents != null && shownDay.mGoogleEvents.size > 1) {
