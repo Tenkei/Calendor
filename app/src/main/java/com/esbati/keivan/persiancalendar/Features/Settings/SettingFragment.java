@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
@@ -133,40 +134,58 @@ public class SettingFragment extends BottomSheetDialogFragment {
         });
 
         mNotificationPriority = new TextSettingsCell(getActivity());
-        mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
-                , "" + mPriorityTitles[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
-                , false);
-        mNotificationPriority.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Show User Number Picker to Set Notification Priority
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("");
-                final NumberPicker numberPicker = new NumberPicker(getActivity());
-                numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                numberPicker.setMinValue(0);
-                numberPicker.setMaxValue(mPriorityTitles.length - 1);
-                numberPicker.setWrapSelectorWheel(false);
-                numberPicker.setDisplayedValues(mPriorityTitles);
-                numberPicker.setValue(PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY,  2));
-                builder.setView(numberPicker);
-                builder.setPositiveButton(R.string.dialog_button_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Toggle Setting
-                        PreferencesHelper.saveInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, numberPicker.getValue());
-                        mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
-                                , "" + mPriorityTitles[numberPicker.getValue()]
-                                , false);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            int channelImportanceIndex = NotificationHelper.getChannelImportance(getContext()) - 1;
+            channelImportanceIndex = channelImportanceIndex <= 0 ? 0 : channelImportanceIndex;
+            mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
+                    , mPriorityTitles[channelImportanceIndex]
+                    , false);
 
-                        //Update Notification
-                        Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                        getActivity().startService(updateNotification);
-                    }
-                });
-                builder.create().show();
-            }
-        });
+            mNotificationPriority.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NotificationHelper.openChannelSetting(getContext());
+                }
+            });
+        } else {
+            mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
+                    , mPriorityTitles[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
+                    , false);
+
+            mNotificationPriority.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Show User Number Picker to Set Notification Priority
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("");
+                    final NumberPicker numberPicker = new NumberPicker(getActivity());
+                    numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                    numberPicker.setMinValue(0);
+                    numberPicker.setMaxValue(mPriorityTitles.length - 1);
+                    numberPicker.setWrapSelectorWheel(false);
+                    numberPicker.setDisplayedValues(mPriorityTitles);
+                    numberPicker.setValue(PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY,  2));
+                    builder.setView(numberPicker);
+                    builder.setPositiveButton(R.string.dialog_button_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Toggle Setting
+                            PreferencesHelper.saveInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, numberPicker.getValue());
+                            mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
+                                    , mPriorityTitles[numberPicker.getValue()]
+                                    , false);
+
+                            //Update Notification
+                            Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
+                            getActivity().startService(updateNotification);
+                        }
+                    });
+                    builder.create().show();
+                }
+            });
+
+        }
+
         settingContainer.addView(mNotificationPriority);
         settingContainer.addView(new ShadowSectionCell(getActivity()));
 

@@ -1,5 +1,6 @@
 package com.esbati.keivan.persiancalendar.Features.Notification
 
+import android.annotation.TargetApi
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,8 +10,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.text.TextUtils
+import com.esbati.keivan.persiancalendar.BuildConfig
 
 import com.esbati.keivan.persiancalendar.Features.Home.MainActivity
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
@@ -36,14 +39,13 @@ object NotificationHelper {
             NotificationCompat.PRIORITY_MAX
     )
 
-
-    fun createNotificationChannel(context: Context) {
+    fun createNotificationChannelIfRequired(context: Context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.notification_sticky_channel_name)
             val descriptionText = context.getString(R.string.notification_sticky_channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(STICKY_NOTIFICATION_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
                 setShowBadge(false)
@@ -53,6 +55,24 @@ object NotificationHelper {
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    @JvmStatic
+    @TargetApi(26)
+    fun getChannelImportance(context: Context): Int {
+        val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.getNotificationChannel(STICKY_NOTIFICATION_CHANNEL_ID).importance
+    }
+
+    @JvmStatic
+    @TargetApi(26)
+    fun openChannelSetting(context: Context) {
+        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, BuildConfig.APPLICATION_ID)
+            putExtra(Settings.EXTRA_CHANNEL_ID, NotificationHelper.STICKY_NOTIFICATION_CHANNEL_ID)
+        }
+        context.startActivity(intent)
     }
 
     fun showStickyNotification(context: Context, shownDay: CalendarDay) {

@@ -30,7 +30,7 @@ class ApplicationController : Application() {
         )
 
         //Show Sticky Notification
-        NotificationHelper.createNotificationChannel(this)
+        NotificationHelper.createNotificationChannelIfRequired(this)
         val notificationIntent = Intent(this, NotificationUpdateService::class.java)
         startService(notificationIntent)
 
