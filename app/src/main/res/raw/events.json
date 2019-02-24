@@ -35,9 +35,6 @@
   ],
 
   "events": [
-    { "holiday": true, "year": -1, "month": 1, "day": 1, "type": "Iran",
-      "title": "آغاز عید نوروز" },
-
     { "holiday": true, "month": 1, "day": 1, "type": "Iran",
       "title": "آغاز عید نوروز" },
 
