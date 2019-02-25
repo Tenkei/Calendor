@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1033280059307:android:4666b615e6d30b45",
+        "mobilesdk_app_id": "1:1033280059307:android:e28bbf1902a5127c",
         "android_client_info": {
-          "package_name": "com.esbati.keivan.persiancalendar"
+          "package_name": "com.esbati.keivan.calendor"
         }
       },
       "oauth_client": [
