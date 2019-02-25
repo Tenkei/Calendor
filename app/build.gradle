@@ -24,15 +24,19 @@ android {
         applicationId "com.esbati.keivan.calendor"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.2.0"
+        versionCode 6
+        versionName "1.4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources false // Protect resource that are accessed dynamically
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
