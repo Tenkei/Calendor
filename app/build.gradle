@@ -21,7 +21,7 @@ repositories {
 android {
     compileSdkVersion 24
     defaultConfig {
-        applicationId "com.esbati.keivan.persiancalendar"
+        applicationId "com.esbati.keivan.calendor"
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 3
