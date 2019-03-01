@@ -16,6 +16,8 @@ import java.lang.ref.WeakReference;
 public class ApplicationService extends Service{
 
     private static WeakReference<ApplicationService> instance;
+    private NotificationBroadcastReceiver receiver;
+    private IntentFilter intentFilter;
 
     @Nullable
     public static ApplicationService getInstance() {
@@ -28,18 +30,34 @@ public class ApplicationService extends Service{
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        instance = new WeakReference<>(this);
-        Log.d(ApplicationService.class.getName(), "start");
+    public void onCreate() {
+        super.onCreate();
+        Log.d(ApplicationService.class.getSimpleName(), "created");
 
         //Register Notification Update Receiver with Date Related Broadcasts
-        IntentFilter intentFilter = new IntentFilter();
+        intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
         intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
         intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-        registerReceiver(new NotificationBroadcastReceiver(), intentFilter);
 
+        receiver = new NotificationBroadcastReceiver();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        instance = new WeakReference<>(this);
+        Log.d(ApplicationService.class.getSimpleName(), "started");
+
+        registerReceiver(receiver, intentFilter);
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(ApplicationService.class.getSimpleName(), "destroyed");
+
+        unregisterReceiver(receiver);
     }
 }
