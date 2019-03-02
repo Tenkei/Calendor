@@ -79,9 +79,7 @@ object NotificationHelper {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .notify(STICKY_NOTIFICATION_ID, notification )
 
-        //Register Alarm to Trigger in case of Broadcast Failed and Service Killed
-        registerAlarm(context)
-        enableReceiver(context)
+        ApplicationService.startService(context)
     }
 
     fun createStickyNotification(context: Context, shownDay: CalendarDay): Notification {
@@ -141,12 +139,6 @@ object NotificationHelper {
         return mBuilder.build()
     }
 
-    fun cancelNotification(context: Context) {
-        ApplicationService.stopService(context)
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-                .cancel(STICKY_NOTIFICATION_ID)
-    }
-
     private fun prepareCollapsedText(context: Context, day: CalendarDay): String {
         var title = ""
         //Find an event with title
@@ -179,38 +171,9 @@ object NotificationHelper {
         }
     }
 
-    private fun registerAlarm(context: Context) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, NotificationBroadcastReceiver::class.java)
-        val alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        // Set the alarm to start at midnight
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-        }
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, alarmIntent)
-    }
-
-    private fun enableReceiver(context: Context) {
-        val receiver = ComponentName(context, NotificationBroadcastReceiver::class.java)
-
-        context.packageManager.setComponentEnabledSetting(
-                receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-        )
-    }
-
-    private fun disableReceiver(context: Context) {
-        val receiver = ComponentName(context, NotificationBroadcastReceiver::class.java)
-
-        context.packageManager.setComponentEnabledSetting(
-                receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-        )
+    fun cancelNotification(context: Context) {
+        ApplicationService.stopService(context)
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .cancel(STICKY_NOTIFICATION_ID)
     }
 }

@@ -23,6 +23,7 @@ class NotificationUpdateService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")
 
+        //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)) {
             //Recover Today events
             val today = CalendarDay()

@@ -3,7 +3,6 @@ package com.esbati.keivan.persiancalendar.Components
 import android.app.Application
 import android.content.Context
 import com.crashlytics.android.Crashlytics
-import com.esbati.keivan.persiancalendar.Features.Notification.ApplicationService
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.R
@@ -30,9 +29,6 @@ class ApplicationController : Application() {
         //Show Sticky Notification
         NotificationHelper.createNotificationChannelIfRequired(this)
         NotificationUpdateService.enqueueUpdate(this)
-
-        //Start Application Service if Not Running
-        ApplicationService.startService(this)
     }
 
     companion object {

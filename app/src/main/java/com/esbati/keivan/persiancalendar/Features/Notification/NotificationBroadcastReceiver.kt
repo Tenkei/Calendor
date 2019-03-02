@@ -15,15 +15,12 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         val action = intent.action
         Log.d(javaClass.simpleName, "Received intent with action $action")
 
-        when(action){
-            Intent.ACTION_BOOT_COMPLETED -> ApplicationService.startService(context)
-
-            // In case of following
-            // Intent.ACTION_DATE_CHANGED
-            // Intent.ACTION_TIME_CHANGED
-            // Intent.ACTION_TIMEZONE_CHANGED
-            // Intent.ACTION_TIME_TICK
-            else -> NotificationUpdateService.enqueueUpdate(context)
-        }
+        // In case of following event proceed to update notification:
+        // Intent.ACTION_BOOT_COMPLETED
+        // Intent.ACTION_DATE_CHANGED
+        // Intent.ACTION_TIME_CHANGED
+        // Intent.ACTION_TIMEZONE_CHANGED
+        // Intent.ACTION_TIME_TICK
+        NotificationUpdateService.enqueueUpdate(context)
     }
 }
