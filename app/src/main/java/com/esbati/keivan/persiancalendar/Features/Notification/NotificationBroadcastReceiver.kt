@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
-
 /**
  * Created by Keivan Esbati on 4/10/2017.
  */
@@ -14,13 +12,18 @@ import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val event = intent.action
-        Log.d(javaClass.simpleName, "Received intent with action " + event!!)
+        val action = intent.action
+        Log.d(javaClass.simpleName, "Received intent with action $action")
 
-        //Update Notification
-        NotificationUpdateService.enqueueUpdate(context)
+        when(action){
+            Intent.ACTION_BOOT_COMPLETED -> ApplicationService.startService(context)
 
-        //Start Application Service if Not Running
-        ApplicationService.startService(context)
+            // In case of following
+            // Intent.ACTION_DATE_CHANGED
+            // Intent.ACTION_TIME_CHANGED
+            // Intent.ACTION_TIMEZONE_CHANGED
+            // Intent.ACTION_TIME_TICK
+            else -> NotificationUpdateService.enqueueUpdate(context)
+        }
     }
 }
