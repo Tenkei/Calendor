@@ -221,7 +221,7 @@ class HomeFragment : Fragment() {
                         showDate(mSelectedDay, true)
 
                         //Update Notification
-                        NotificationUpdateService.enqueueUpdate(context)
+                        NotificationUpdateService.enqueueUpdate(context!!)
                     } else {
                         Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
                     }
@@ -245,7 +245,7 @@ class HomeFragment : Fragment() {
                             showDate(mSelectedDay, true)
 
                             //Update Notification
-                            NotificationUpdateService.enqueueUpdate(context);
+                            NotificationUpdateService.enqueueUpdate(context!!)
                         } else {
                             Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
                             Log.d("Calendar", getString(R.string.event_error_no_calendar))

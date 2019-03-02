@@ -22,7 +22,6 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
         NotificationUpdateService.Companion.enqueueUpdate(context);
 
         //Start Application Service if Not Running
-        if (!AndroidUtilities.isServiceRunning(ApplicationService.class))
-            context.startService(new Intent(context, ApplicationService.class));
+        ApplicationService.Companion.startService(context);
     }
 }

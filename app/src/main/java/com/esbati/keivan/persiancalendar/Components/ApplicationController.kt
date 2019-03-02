@@ -2,13 +2,11 @@ package com.esbati.keivan.persiancalendar.Components
 
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import com.crashlytics.android.Crashlytics
 import com.esbati.keivan.persiancalendar.Features.Notification.ApplicationService
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import io.fabric.sdk.android.Fabric
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
@@ -34,8 +32,7 @@ class ApplicationController : Application() {
         NotificationUpdateService.enqueueUpdate(this)
 
         //Start Application Service if Not Running
-        if (!AndroidUtilities.isServiceRunning(ApplicationService::class.java))
-            startService(Intent(baseContext, ApplicationService::class.java))
+        ApplicationService.startService(this)
     }
 
     companion object {
