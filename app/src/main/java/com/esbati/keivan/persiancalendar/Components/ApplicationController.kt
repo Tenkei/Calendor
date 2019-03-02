@@ -31,8 +31,7 @@ class ApplicationController : Application() {
 
         //Show Sticky Notification
         NotificationHelper.createNotificationChannelIfRequired(this)
-        val notificationIntent = Intent(this, NotificationUpdateService::class.java)
-        startService(notificationIntent)
+        NotificationUpdateService.enqueueUpdate(this)
 
         //Start Application Service if Not Running
         if (!AndroidUtilities.isServiceRunning(ApplicationService::class.java))

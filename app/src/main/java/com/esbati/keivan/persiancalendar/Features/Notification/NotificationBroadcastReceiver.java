@@ -3,7 +3,6 @@ package com.esbati.keivan.persiancalendar.Features.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities;
@@ -16,15 +15,11 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String event = intent.getAction();
-        if(!TextUtils.isEmpty(event)){
-            Log.d("BroadcastReceiver", event);
-        }
+        Log.d(getClass().getSimpleName(), "Received intent with action " + event);
 
         //Update Notification
-        Intent notificationIntent = new Intent(context, NotificationUpdateService.class);
-        context.startService(notificationIntent);
+        NotificationUpdateService.enqueueUpdate(context);
 
         //Start Application Service if Not Running
         if (!AndroidUtilities.isServiceRunning(ApplicationService.class))

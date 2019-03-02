@@ -110,8 +110,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 mNotificationPriority.setEnabled(isChecked);
 
                 //Update Notification
-                Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                getActivity().startService(updateNotification);
+                NotificationUpdateService.enqueueUpdate(getContext());
             }
         });
 
@@ -128,8 +127,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 ((TextCheckCell) view).setChecked(isChecked);
 
                 //Update Notification
-                Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                getActivity().startService(updateNotification);
+                NotificationUpdateService.enqueueUpdate(getContext());
             }
         });
 
@@ -176,8 +174,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                                     , false);
 
                             //Update Notification
-                            Intent updateNotification = new Intent(getActivity(), NotificationUpdateService.class);
-                            getActivity().startService(updateNotification);
+                            NotificationUpdateService.enqueueUpdate(getContext());
                         }
                     });
                     builder.create().show();

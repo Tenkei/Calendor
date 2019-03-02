@@ -31,9 +31,15 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Features.Notification.ApplicationService"/>
-        <service android:name=".Features.Notification.NotificationUpdateService"/>
-        <service android:name=".Features.Notification.NotificationActionService"/>
+        <service android:name=".Features.Notification.ApplicationService"
+            android:exported="false"/>
+
+        <service android:name=".Features.Notification.NotificationUpdateService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
+
+        <service android:name=".Features.Notification.NotificationActionService"
+            android:exported="false"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
