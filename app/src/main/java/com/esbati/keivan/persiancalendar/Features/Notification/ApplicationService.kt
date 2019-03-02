@@ -31,10 +31,6 @@ class ApplicationService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.d(javaClass.simpleName, "Created")
-    }
-
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(javaClass.simpleName, "Started")
 
         //Recover Today events
         val today = CalendarDay()
@@ -46,6 +42,10 @@ class ApplicationService : Service() {
         //Promote service to foreground using sticky notification
         val notification = NotificationHelper.createStickyNotification(this, today)
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        Log.d(javaClass.simpleName, "Started")
         registerReceiver(broadcastReceiver, intentFilter)
 
         return Service.START_STICKY
