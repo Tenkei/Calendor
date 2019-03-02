@@ -17,7 +17,7 @@ import java.util.ArrayList
  * Created by asus on 5/2/2017.
  */
 
-class ApplicationService : Service() {
+class NotificationService : Service() {
     private var broadcastReceiver = NotificationBroadcastReceiver()
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_TIME_TICK)
@@ -61,13 +61,13 @@ class ApplicationService : Service() {
     companion object {
 
         fun startService(context: Context) {
-            if (!AndroidUtilities.isServiceRunning(ApplicationService::class.java))
-                ContextCompat.startForegroundService(context, Intent(context, ApplicationService::class.java))
+            if (!AndroidUtilities.isServiceRunning(NotificationService::class.java))
+                ContextCompat.startForegroundService(context, Intent(context, NotificationService::class.java))
         }
 
         fun stopService(context: Context){
-            if (AndroidUtilities.isServiceRunning(ApplicationService::class.java))
-                context.stopService(Intent(context, ApplicationService::class.java))
+            if (AndroidUtilities.isServiceRunning(NotificationService::class.java))
+                context.stopService(Intent(context, NotificationService::class.java))
         }
     }
 }

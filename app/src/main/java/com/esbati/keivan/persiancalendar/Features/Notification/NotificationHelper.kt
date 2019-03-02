@@ -2,10 +2,8 @@ package com.esbati.keivan.persiancalendar.Features.Notification
 
 import android.annotation.TargetApi
 import android.app.*
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
@@ -18,8 +16,6 @@ import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.Utils.ColorHelper
 import com.esbati.keivan.persiancalendar.Utils.LanguageHelper
-
-import java.util.Calendar
 
 /**
  * Created by Keivan Esbati on 4/9/2017.
@@ -79,7 +75,7 @@ object NotificationHelper {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .notify(STICKY_NOTIFICATION_ID, notification )
 
-        ApplicationService.startService(context)
+        NotificationService.startService(context)
     }
 
     fun createStickyNotification(context: Context, shownDay: CalendarDay): Notification {
@@ -172,7 +168,7 @@ object NotificationHelper {
     }
 
     fun cancelNotification(context: Context) {
-        ApplicationService.stopService(context)
+        NotificationService.stopService(context)
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .cancel(STICKY_NOTIFICATION_ID)
     }

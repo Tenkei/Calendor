@@ -32,7 +32,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Features.Notification.ApplicationService"
+        <service android:name=".Features.Notification.NotificationService"
             android:exported="false"/>
 
         <service android:name=".Features.Notification.NotificationUpdateService"
