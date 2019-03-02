@@ -1,10 +1,7 @@
 package com.esbati.keivan.persiancalendar.Features.Notification
 
 import android.annotation.TargetApi
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -29,8 +26,8 @@ import java.util.Calendar
  */
 
 object NotificationHelper {
+    const val STICKY_NOTIFICATION_ID = 16
     private const val STICKY_NOTIFICATION_CHANNEL_ID = "STICKY_NOTIFICATION_CHANNEL"
-    private const val STICKY_NOTIFICATION_ID = 16
     private val NOTIFICATION_PRIORITY = intArrayOf(
             NotificationCompat.PRIORITY_MIN,
             NotificationCompat.PRIORITY_LOW,
@@ -76,6 +73,18 @@ object NotificationHelper {
     }
 
     fun showStickyNotification(context: Context, shownDay: CalendarDay) {
+        val notification = createStickyNotification(context, shownDay)
+
+        //Show Notification
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .notify(STICKY_NOTIFICATION_ID, notification )
+
+        //Register Alarm to Trigger in case of Broadcast Failed and Service Killed
+        registerAlarm(context)
+        enableReceiver(context)
+    }
+
+    fun createStickyNotification(context: Context, shownDay: CalendarDay): Notification {
         //Setup Content Intent
         val intent = Intent(context, MainActivity::class.java)
         val requestId = System.currentTimeMillis().toInt() //unique requestID to differentiate between various notification with same Id
@@ -129,13 +138,7 @@ object NotificationHelper {
             )
         }
 
-        //Show Notification
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-                .notify(STICKY_NOTIFICATION_ID, mBuilder.build())
-
-        //Register Alarm to Trigger in case of Broadcast Failed and Service Killed
-        registerAlarm(context)
-        enableReceiver(context)
+        return mBuilder.build()
     }
 
     fun cancelNotification(context: Context) {
@@ -155,7 +158,7 @@ object NotificationHelper {
                 }
 
         //Adjust Content Text
-        return when{
+        return when {
             //If an Event with Title is found, add events count if needed
             !TextUtils.isEmpty(title) && day.mGoogleEvents.size > 1 ->
                 context.getString(
