@@ -110,7 +110,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 mNotificationPriority.setEnabled(isChecked);
 
                 //Update Notification
-                NotificationUpdateService.enqueueUpdate(getContext());
+                NotificationUpdateService.Companion.enqueueUpdate(getContext());
             }
         });
 
@@ -127,7 +127,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 ((TextCheckCell) view).setChecked(isChecked);
 
                 //Update Notification
-                NotificationUpdateService.enqueueUpdate(getContext());
+                NotificationUpdateService.Companion.enqueueUpdate(getContext());
             }
         });
 
@@ -174,7 +174,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                                     , false);
 
                             //Update Notification
-                            NotificationUpdateService.enqueueUpdate(getContext());
+                            NotificationUpdateService.Companion.enqueueUpdate(getContext());
                         }
                     });
                     builder.create().show();

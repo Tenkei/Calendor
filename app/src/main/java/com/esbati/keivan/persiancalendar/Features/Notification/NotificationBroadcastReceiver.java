@@ -19,7 +19,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
         Log.d(getClass().getSimpleName(), "Received intent with action " + event);
 
         //Update Notification
-        NotificationUpdateService.enqueueUpdate(context);
+        NotificationUpdateService.Companion.enqueueUpdate(context);
 
         //Start Application Service if Not Running
         if (!AndroidUtilities.isServiceRunning(ApplicationService.class))
