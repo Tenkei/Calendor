@@ -64,5 +64,10 @@ class ApplicationService : Service() {
             if (!AndroidUtilities.isServiceRunning(ApplicationService::class.java))
                 ContextCompat.startForegroundService(context, Intent(context, ApplicationService::class.java))
         }
+
+        fun stopService(context: Context){
+            if (AndroidUtilities.isServiceRunning(ApplicationService::class.java))
+                context.stopService(Intent(context, ApplicationService::class.java))
+        }
     }
 }

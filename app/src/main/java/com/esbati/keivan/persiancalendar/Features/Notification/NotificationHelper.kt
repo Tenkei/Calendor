@@ -142,9 +142,9 @@ object NotificationHelper {
     }
 
     fun cancelNotification(context: Context) {
+        ApplicationService.stopService(context)
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .cancel(STICKY_NOTIFICATION_ID)
-
     }
 
     private fun prepareCollapsedText(context: Context, day: CalendarDay): String {
