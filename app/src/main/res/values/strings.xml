@@ -50,6 +50,11 @@
     <string name="notification_sticky_channel_name">تقویم</string>
     <string name="notification_sticky_channel_description">تقویم نمایش داده شده در نوار اعلانات</string>
 
+    <string name="notification_broadcast_receiver_description">گیرنده تشخیص تغییر تاریخ جهت به روز رسانی تقویم نوار اعلانات</string>
+    <string name="notification_service_description">سرویس به روز نگه دارنده تقویم نوار اعلانات</string>
+    <string name="notification_update_service_description">سرویس به روز رسان تقویم نوار اعلانات</string>
+    <string name="notification_action_service_description">سرویس انجام دهنده اکشن های تقویم نوار اعلانات</string>
+
     <!-- Setting -->
     <string name="setting_animation">انیمیشن</string>
     <string name="setting_animation_selection">انیمیشن انتخاب روز</string>

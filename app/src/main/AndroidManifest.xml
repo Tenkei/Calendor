@@ -26,20 +26,24 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".Features.Notification.NotificationBroadcastReceiver">
+        <receiver android:name=".Features.Notification.NotificationBroadcastReceiver"
+            android:description="@string/notification_broadcast_receiver_description">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <service android:name=".Features.Notification.NotificationService"
+            android:description="@string/notification_service_description"
             android:exported="false"/>
 
         <service android:name=".Features.Notification.NotificationUpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE"
+            android:description="@string/notification_update_service_description"
             android:exported="false"/>
 
         <service android:name=".Features.Notification.NotificationActionService"
+            android:description="@string/notification_action_service_description"
             android:exported="false"/>
 
         <meta-data
