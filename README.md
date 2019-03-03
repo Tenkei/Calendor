@@ -5,7 +5,7 @@
 
 Calendor is a simple material calendar designed with functionality and easy of use in mind.
 All national and religious holidays are marked accurately for the current year, and will be updated for the following years.
-**[Install on Google Play](https://play.google.com/store/apps/details?id=com.esbati.keivan.persiancalendar)**
+**[Install on Google Play](https://play.google.com/store/apps/details?id=com.esbati.keivan.calendor)**
 
 ### Features
 <img src="artworks/notification.png" width="200" align="right" hspace="16">
