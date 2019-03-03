@@ -44,7 +44,7 @@ class NotificationService : Service() {
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(javaClass.simpleName, "Started")
         registerReceiver(broadcastReceiver, intentFilter)
 
