@@ -24,8 +24,8 @@ android {
         applicationId "com.esbati.keivan.calendor"
         minSdkVersion 14
         targetSdkVersion 28
-        versionName "1.4.0"
-        versionCode 6
+        versionName "1.4.1"
+        versionCode 7
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
