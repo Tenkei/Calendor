@@ -21,7 +21,7 @@ repositories {
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.esbati.keivan.calendor"
+        applicationId "com.github.tenkei.calendor"
         minSdkVersion 14
         targetSdkVersion 28
         versionName "1.4.1"

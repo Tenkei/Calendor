@@ -36,6 +36,37 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033280059307:android:51fd61ca9a605de5",
+        "android_client_info": {
+          "package_name": "com.github.tenkei.calendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033280059307-e0ninihbrq2ihuhc7ucoee0pmql4spsi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEbDHKDGZRxEAMmksmkuxX1i_sSXC5dhg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"
