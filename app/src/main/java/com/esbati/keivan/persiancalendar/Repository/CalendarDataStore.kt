@@ -60,17 +60,13 @@ object CalendarDataStore {
 
         cur!!.apply {
             while (moveToNext()) {
-                val calendar = DeviceCalendar()
+                val id = getLong(PROJECTION_ID_INDEX)
+                val displayName = getString(PROJECTION_DISPLAY_NAME_INDEX)
+                val accountName = getString(PROJECTION_ACCOUNT_NAME_INDEX)
+                val ownerName = getString(PROJECTION_OWNER_ACCOUNT_INDEX)
 
-                // Get the field values
-                calendar.id = getLong(PROJECTION_ID_INDEX)
-                calendar.displayName = getString(PROJECTION_DISPLAY_NAME_INDEX)
-                calendar.accountName = getString(PROJECTION_ACCOUNT_NAME_INDEX)
-                calendar.ownerName = getString(PROJECTION_OWNER_ACCOUNT_INDEX)
-
-                calendars.add(calendar)
+                calendars.add(DeviceCalendar(id, displayName, accountName, ownerName))
             }
-
         }.close()
 
         return calendars
