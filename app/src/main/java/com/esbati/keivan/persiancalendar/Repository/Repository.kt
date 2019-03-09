@@ -103,7 +103,7 @@ object Repository{
 
             if (day.mPersianDate.persianWeekDay == 6)
                 day.isHoliday = true
-            else if (day.mRemarks != null)
+            else
                 for (calendarEvent in day.mRemarks)
                     if (calendarEvent.isHoliday) {
                         day.isHoliday = true

@@ -1,16 +1,10 @@
 package com.esbati.keivan.persiancalendar.Features.Settings;
 
 import android.app.AlertDialog;
-import android.app.IntentService;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import com.esbati.keivan.persiancalendar.BuildConfig;
-import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper;
 import com.esbati.keivan.persiancalendar.Components.Views.Cell.HeaderCell;
 import com.esbati.keivan.persiancalendar.Components.Views.Cell.ShadowSectionCell;
 import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextCheckCell;
 import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextInfoCell;
 import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextSettingsCell;
-import com.esbati.keivan.persiancalendar.R;
+import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper;
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService;
+import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper;
 
 /**

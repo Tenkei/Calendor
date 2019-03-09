@@ -108,7 +108,7 @@ object NotificationHelper {
             )
 
         //If more than one event is available add an expanded Inbox Style view
-        if (shownDay.mEvents != null && shownDay.mEvents.size > 1) {
+        if (shownDay.mEvents.size > 1) {
             val inboxStyle = NotificationCompat.InboxStyle()
             inboxStyle.setBigContentTitle(shownDay.mPersianDate.persianLongDate)
 
@@ -138,12 +138,11 @@ object NotificationHelper {
     private fun prepareCollapsedText(context: Context, day: CalendarDay): String {
         var title = ""
         //Find an event with title
-        if (day.mEvents != null)
-            for (event in day.mEvents)
-                if (!TextUtils.isEmpty(event.title)) {
-                    title = event.title!!
-                    break
-                }
+        for (event in day.mEvents)
+            if (!TextUtils.isEmpty(event.title)) {
+                title = event.title!!
+                break
+            }
 
         //Adjust Content Text
         return when {

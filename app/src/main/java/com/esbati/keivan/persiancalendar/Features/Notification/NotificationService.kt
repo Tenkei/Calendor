@@ -1,18 +1,13 @@
 package com.esbati.keivan.persiancalendar.Features.Notification
 
-import android.Manifest
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.Repository.Repository
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
-import ir.smartlab.persindatepicker.util.PersianCalendar
-import java.util.ArrayList
 
 /**
  * Created by asus on 5/2/2017.

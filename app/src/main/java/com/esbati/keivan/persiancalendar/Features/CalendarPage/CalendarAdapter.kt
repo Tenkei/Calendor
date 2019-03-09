@@ -44,7 +44,7 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
             itemView.isEnabled = day.isCurrentMonth
 
             mDayNo.text = day.mDayNo.toString()
-            if (day.mEvents != null && day.mEvents.size > 0) {
+            if (day.mEvents.size > 0) {
                 if (!TextUtils.isEmpty(day.mEvents[0].title))
                     mEvents.text = day.mEvents[0].title
                 else
@@ -94,7 +94,7 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
             val animateSelection = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
             if (animateSelection)
                 view.stateListAnimator = AnimatorInflater
-                        .loadStateListAnimator(parent?.context, R.animator.cell_animator)
+                        .loadStateListAnimator(parent.context, R.animator.cell_animator)
         }
 
         return DayHolder(view)

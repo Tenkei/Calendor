@@ -1,7 +1,5 @@
 package com.esbati.keivan.persiancalendar.Utils;
 
-import android.text.TextUtils;
-
 /**
  * Created by asus on 4/16/2017.
  */

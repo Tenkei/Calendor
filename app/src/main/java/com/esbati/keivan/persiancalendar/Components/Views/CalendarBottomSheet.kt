@@ -11,7 +11,10 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.POJOs.UserEvent
 import com.esbati.keivan.persiancalendar.R
@@ -70,10 +73,10 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     init {
         View.inflate(this.context, R.layout.component_bottom_sheet, this)
 
-        mBottomSheet = findViewById(R.id.scroll_view) as NestedScrollView
-        mBottomSheetContainer = findViewById(R.id.bottom_sheet_content_container) as LinearLayout
-        mPersianDate = findViewById(R.id.date_shamsi) as TextView
-        mGregorianDate = findViewById(R.id.date_miladi) as TextView
+        mBottomSheet = findViewById(R.id.scroll_view)
+        mBottomSheetContainer = findViewById(R.id.bottom_sheet_content_container)
+        mPersianDate = findViewById(R.id.date_shamsi)
+        mGregorianDate = findViewById(R.id.date_miladi)
     }
 
     fun isCollapsed(): Boolean {
@@ -119,23 +122,22 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
         //Set Google Calendar Events
         mBottomSheetContainer.removeAllViews()
-        if (day.mEvents != null)
-            for (event in day.mEvents) {
-                val eventView = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false)
-                val eventTitle = eventView.findViewById(R.id.event_title) as TextView
+        for (event in day.mEvents) {
+            val eventView = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false)
+            val eventTitle = eventView.findViewById(R.id.event_title) as TextView
 
-                eventView.setBackgroundResource(R.drawable.bg_calendar_today)
-                if (!TextUtils.isEmpty(event.title))
-                    eventTitle.text = event.title
-                else
-                    eventTitle.setText(R.string.event_no_title)
+            eventView.setBackgroundResource(R.drawable.bg_calendar_today)
+            if (!TextUtils.isEmpty(event.title))
+                eventTitle.text = event.title
+            else
+                eventTitle.setText(R.string.event_no_title)
 
-                eventView.setOnClickListener { onEventClick(event)}
-                mBottomSheetContainer.addView(eventView)
-            }
+            eventView.setOnClickListener { onEventClick(event)}
+            mBottomSheetContainer.addView(eventView)
+        }
 
         //Set Calendar Events
-        if (day.mRemarks != null && day.mRemarks.size > 0) {
+        if (day.mRemarks.size > 0) {
             //Add header
             val eventHeader = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_header, mBottomSheetContainer, false)
             (eventHeader.findViewById(R.id.header_title) as TextView).text = "رویداد های روز:"
