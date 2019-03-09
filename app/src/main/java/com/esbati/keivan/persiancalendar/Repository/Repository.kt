@@ -41,7 +41,7 @@ object Repository{
 
             for (i in 0 until eventsJSON.length()) {
                 val eventJSON = eventsJSON.getJSONObject(i)
-                val event = CalendarRemark().fromJSON(eventJSON)
+                val event = CalendarRemark.fromJSON(eventJSON)
                 calendarEvents.add(event)
             }
 
