@@ -153,30 +153,27 @@ object CalendarDataStore {
         val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
 
         //Get the event ID and Add it to Google Events Pool
-        newEvent.id = uri!!.lastPathSegment!!.toLong()
-        mEvents.add(newEvent)
+        val id = uri!!.lastPathSegment!!.toLong()
+        mEvents.add(newEvent.copy(id = id))
 
         return 1
     }
 
-    private fun updateEvent(gEvent: UserEvent): Int {
+    private fun updateEvent(event: UserEvent): Int {
         //Update Event Row
         val values = ContentValues().apply {
-            put(CalendarContract.Events.TITLE, gEvent.title)
-            put(CalendarContract.Events.DESCRIPTION, gEvent.description)
+            put(CalendarContract.Events.TITLE, event.title)
+            put(CalendarContract.Events.DESCRIPTION, event.description)
         }
 
         val cr = ApplicationController.getContext().contentResolver
-        val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, gEvent.id)
+        val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
         val rows = cr.update(updateUri, values, null, null)
 
         //Update Google Events Pool
-        for (event in mEvents)
-            if (gEvent.id == event.id)
-                with(event){
-                    title = gEvent.title
-                    description = gEvent.description
-                }
+        for(i in 0 until mEvents.size)
+            if (event.id == mEvents[i].id)
+                mEvents[i] = event
 
         return rows
     }

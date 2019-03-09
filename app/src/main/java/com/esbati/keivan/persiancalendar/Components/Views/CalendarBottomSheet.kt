@@ -268,18 +268,15 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
                 val tempEvent = mSelectedEvent?.copy() ?: UserEvent(dtStart = mSelectedDay.mPersianDate.timeInMillis)
-
                 setEditEventSheet(tempEvent)
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)
                 eventActionBtn.setOnClickListener { view ->
                     AndroidUtilities.hideSoftKeyboard(view)
-
-                    //Save Event
-                    tempEvent.title = mEventTitle.text.toString()
-                    tempEvent.description = mEventDesc.text.toString()
-
-                    onEventListener?.onEventEdited(tempEvent)
+                    onEventListener?.onEventEdited(tempEvent.copy(
+                            title = mEventTitle.text.toString(),
+                            description = mEventDesc.text.toString()
+                    ))
                 }
             }
         }
