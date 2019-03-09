@@ -60,8 +60,8 @@ object Repository{
 
         val days = ArrayList<CalendarDay>()
 
-        var currentMonthDays = Constants.daysOfMonth[month - 1]
-        var previousMonthDays = Constants.daysOfMonth[(month - 2 + 12) % 12]
+        var currentMonthDays = Constants.daysOfMonth_fa[month - 1]
+        var previousMonthDays = Constants.daysOfMonth_fa[(month - 2 + 12) % 12]
 
         //Add Extra Day to current month in Case of Leap Year
         if (isLeapYear && month == 12)

@@ -187,7 +187,7 @@ class HomeFragment : Fragment() {
                 icons.recycle()
 
                 //Set Toolbar Title
-                mToolbarTitle.text = Constants.months[mDisplayedMonth - 1] + " " + mDisplayedYear
+                mToolbarTitle.text = Constants.months_fa[mDisplayedMonth - 1] + " " + mDisplayedYear
                 mToolbarSubTitle.text = (Constants.months_en[(mDisplayedMonth + 1) % 12]
                         + " - "
                         + Constants.months_en[(mDisplayedMonth + 2) % 12])
