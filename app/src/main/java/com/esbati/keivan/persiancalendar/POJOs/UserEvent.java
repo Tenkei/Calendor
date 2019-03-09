@@ -28,8 +28,8 @@ public class UserEvent {
     public UserEvent(){}
 
     public UserEvent(CalendarDay selectedDay){
-        dtStart = selectedDay.mPersianDate.getTimeInMillis();
-        mStartDate = new PersianCalendar(selectedDay.mPersianDate.getTimeInMillis());
+        dtStart = selectedDay.getMPersianDate().getTimeInMillis();
+        mStartDate = new PersianCalendar(selectedDay.getMPersianDate().getTimeInMillis());
     }
 
     public UserEvent(String title, String desc, long startMillis){
