@@ -13,7 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
-import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
+import com.esbati.keivan.persiancalendar.POJOs.UserEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.Utils.Constants
@@ -33,7 +33,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     private var mShouldUpdateBottomSheet: Boolean = false
     private var mShouldExpandBottomSheet: Boolean = false
     private lateinit var mSelectedDay: CalendarDay
-    private var mSelectedEvent: GoogleEvent? = null
+    private var mSelectedEvent: UserEvent? = null
 
     //Views
     private var mBottomSheet: NestedScrollView
@@ -91,14 +91,14 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         proceedToSetupBottomSheet(Mode.SHEET_MODE_DATE)
     }
 
-    fun showEvent(gEvent: GoogleEvent) {
+    fun showEvent(gEvent: UserEvent) {
         mShouldExpandBottomSheet = true
         mSelectedEvent = gEvent
 
         proceedToSetupBottomSheet(Mode.SHEET_MODE_VIEW_EVENT)
     }
 
-    fun editEvent(gEvent: GoogleEvent?, isEditable: Boolean) {
+    fun editEvent(gEvent: UserEvent?, isEditable: Boolean) {
         mShouldExpandBottomSheet = true
         mSelectedEvent = gEvent
 
@@ -106,7 +106,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setDateSheet(day: CalendarDay, onEventClick: (GoogleEvent) -> Unit) {
+    private fun setDateSheet(day: CalendarDay, onEventClick: (UserEvent) -> Unit) {
         //Set Date
         mPersianDate.text = day.mPersianDate.persianLongDate
         val gregorianCalendar = GregorianCalendar().apply {
@@ -119,14 +119,14 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
         //Set Google Calendar Events
         mBottomSheetContainer.removeAllViews()
-        if (day.mGoogleEvents != null)
-            for (googleEvent in day.mGoogleEvents) {
+        if (day.mEvents != null)
+            for (googleEvent in day.mEvents) {
                 val eventView = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false)
                 val eventTitle = eventView.findViewById(R.id.event_title) as TextView
 
                 eventView.setBackgroundResource(R.drawable.bg_calendar_today)
-                if (!TextUtils.isEmpty(googleEvent.mTITLE))
-                    eventTitle.text = googleEvent.mTITLE
+                if (!TextUtils.isEmpty(googleEvent.title))
+                    eventTitle.text = googleEvent.title
                 else
                     eventTitle.setText(R.string.event_no_title)
 
@@ -135,14 +135,14 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
         //Set Calendar Events
-        if (day.mCalendarEvents != null && day.mCalendarEvents.size > 0) {
+        if (day.mRemarks != null && day.mRemarks.size > 0) {
             //Add header
             val eventHeader = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_header, mBottomSheetContainer, false)
             (eventHeader.findViewById(R.id.header_title) as TextView).text = "رویداد های روز:"
             mBottomSheetContainer.addView(eventHeader)
 
             //Add events
-            for (calendarEvent in day.mCalendarEvents) {
+            for (calendarEvent in day.mRemarks) {
                 val eventView = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false)
                 val eventTitle = eventView.findViewById(R.id.event_title) as TextView
 
@@ -153,7 +153,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    private fun setShowEventSheet(gEvent: GoogleEvent, onDeleteEvent: () -> Unit) {
+    private fun setShowEventSheet(gEvent: UserEvent, onDeleteEvent: () -> Unit) {
         //Set Bottom Sheet
         mBottomSheetContainer.removeAllViews()
 
@@ -163,8 +163,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         val eventTitleIcon = eventTitle.findViewById(R.id.event_icon) as ImageView
 
         eventTitle.setBackgroundResource(R.drawable.bg_calendar_today)
-        if (!TextUtils.isEmpty(gEvent.mTITLE))
-            eventTitleText.text = gEvent.mTITLE
+        if (!TextUtils.isEmpty(gEvent.title))
+            eventTitleText.text = gEvent.title
         else
             eventTitleText.setText(R.string.event_no_title)
 
@@ -186,8 +186,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         val eventDescTV = eventDescription.findViewById(R.id.event_title) as TextView
 
         eventDescription.setBackgroundResource(R.drawable.bg_calendar_today)
-        if (!TextUtils.isEmpty(gEvent.mDESCRIPTION))
-            eventDescTV.text = gEvent.mDESCRIPTION
+        if (!TextUtils.isEmpty(gEvent.description))
+            eventDescTV.text = gEvent.description
         else
             eventDescTV.setText(R.string.event_no_desc)
 
@@ -195,7 +195,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         mBottomSheetContainer.addView(eventDescription)
     }
 
-    private fun setEditEventSheet(gEvent: GoogleEvent) {
+    private fun setEditEventSheet(gEvent: UserEvent) {
         mBottomSheetContainer.removeAllViews()
 
         val eventSheet = LayoutInflater.from(context).inflate(R.layout.cell_event_sheet, mBottomSheetContainer, false)
@@ -203,13 +203,13 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         mEventDesc = eventSheet.findViewById(R.id.event_description) as TextView
 
         //Set Event in Case of Updating Available Event
-        if (!TextUtils.isEmpty(gEvent.mTITLE))
-            mEventTitle.text = gEvent.mTITLE
+        if (!TextUtils.isEmpty(gEvent.title))
+            mEventTitle.text = gEvent.title
         else
             mEventTitle.setHint(R.string.event_no_title)
 
-        if (!TextUtils.isEmpty(gEvent.mDESCRIPTION))
-            mEventDesc.text = gEvent.mDESCRIPTION
+        if (!TextUtils.isEmpty(gEvent.description))
+            mEventDesc.text = gEvent.description
         else
             mEventDesc.setHint(R.string.event_no_desc)
 
@@ -267,7 +267,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.clone() ?: GoogleEvent(mSelectedDay)
+                val tempEvent = mSelectedEvent?.clone() ?: UserEvent(mSelectedDay)
 
                 setEditEventSheet(tempEvent)
 
@@ -276,8 +276,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
                     AndroidUtilities.hideSoftKeyboard(view)
 
                     //Save Event
-                    tempEvent.mTITLE = mEventTitle.text.toString()
-                    tempEvent.mDESCRIPTION = mEventDesc.text.toString()
+                    tempEvent.title = mEventTitle.text.toString()
+                    tempEvent.description = mEventDesc.text.toString()
 
                     onEventListener?.onEventEdited(tempEvent)
                 }
@@ -301,7 +301,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     interface OnEventListener{
-        fun onEventDeleted(deletedEvent: GoogleEvent)
-        fun onEventEdited(editedEvent: GoogleEvent)
+        fun onEventDeleted(deletedEvent: UserEvent)
+        fun onEventEdited(editedEvent: UserEvent)
     }
 }

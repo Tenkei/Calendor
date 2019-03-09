@@ -9,7 +9,7 @@ import ir.smartlab.persindatepicker.util.PersianCalendar;
  * Created by asus on 11/21/2016.
  */
 
-public class CalendarEvent {
+public class CalendarRemark {
 
     public String mTitle;
     public int mYear;
@@ -18,11 +18,11 @@ public class CalendarEvent {
     public boolean isHoliday;
     public PersianCalendar mPersianDate;
 
-    public CalendarEvent(){
+    public CalendarRemark(){
 
     }
 
-    public CalendarEvent fromJSON(JSONObject eventJSON) throws JSONException{
+    public CalendarRemark fromJSON(JSONObject eventJSON) throws JSONException{
         mTitle = eventJSON.getString("title");
         mYear = eventJSON.optInt("year", -1);
         mMonth = eventJSON.getInt("month");

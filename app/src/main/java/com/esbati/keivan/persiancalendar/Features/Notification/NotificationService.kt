@@ -35,9 +35,9 @@ class NotificationService : Service() {
         //Recover Today events
         val today = CalendarDay()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            today.mGoogleEvents = Repository.getEvents(today.mPersianDate)
+            today.mEvents = Repository.getEvents(today.mPersianDate)
         else
-            today.mGoogleEvents = ArrayList()
+            today.mEvents = ArrayList()
 
         //Promote service to foreground using sticky notification
         val notification = NotificationHelper.createStickyNotification(this, today)

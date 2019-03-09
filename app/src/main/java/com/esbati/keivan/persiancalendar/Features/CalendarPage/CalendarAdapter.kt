@@ -44,9 +44,9 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
             itemView.isEnabled = day.isCurrentMonth
 
             mCalendarDay.text = day.mDayNo.toString()
-            if (day.mGoogleEvents != null && day.mGoogleEvents.size > 0) {
-                if (!TextUtils.isEmpty(day.mGoogleEvents[0].mTITLE))
-                    mGoogleEvent.text = day.mGoogleEvents[0].mTITLE
+            if (day.mEvents != null && day.mEvents.size > 0) {
+                if (!TextUtils.isEmpty(day.mEvents[0].title))
+                    mGoogleEvent.text = day.mEvents[0].title
                 else
                     mGoogleEvent.setText(R.string.event_no_title)
             }

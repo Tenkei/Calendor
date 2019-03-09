@@ -14,8 +14,8 @@ public class CalendarDay {
     public boolean isHoliday;
     public boolean isCurrentMonth;
     public PersianCalendar mPersianDate;
-    public ArrayList<CalendarEvent> mCalendarEvents;
-    public ArrayList<GoogleEvent> mGoogleEvents;
+    public ArrayList<CalendarRemark> mRemarks;
+    public ArrayList<UserEvent> mEvents;
 
     public CalendarDay(){
         this(new PersianCalendar());

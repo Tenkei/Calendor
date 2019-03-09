@@ -108,16 +108,16 @@ object NotificationHelper {
             )
 
         //If more than one event is available add an expanded Inbox Style view
-        if (shownDay.mGoogleEvents != null && shownDay.mGoogleEvents.size > 1) {
+        if (shownDay.mEvents != null && shownDay.mEvents.size > 1) {
             val inboxStyle = NotificationCompat.InboxStyle()
             inboxStyle.setBigContentTitle(shownDay.mPersianDate.persianLongDate)
 
-            for (event in shownDay.mGoogleEvents)
+            for (event in shownDay.mEvents)
                 inboxStyle.addLine(
-                        if (!TextUtils.isEmpty(event.mTITLE))
-                            event.mTITLE
+                        if (!TextUtils.isEmpty(event.title))
+                            event.title
                         else
-                            event.mDESCRIPTION
+                            event.description
                 )
 
             mBuilder.setStyle(inboxStyle)
@@ -138,28 +138,28 @@ object NotificationHelper {
     private fun prepareCollapsedText(context: Context, day: CalendarDay): String {
         var title = ""
         //Find an event with title
-        if (day.mGoogleEvents != null)
-            for (event in day.mGoogleEvents)
-                if (!TextUtils.isEmpty(event.mTITLE)) {
-                    title = event.mTITLE
+        if (day.mEvents != null)
+            for (event in day.mEvents)
+                if (!TextUtils.isEmpty(event.title)) {
+                    title = event.title
                     break
                 }
 
         //Adjust Content Text
         return when {
             //If an Event with Title is found, add events count if needed
-            !TextUtils.isEmpty(title) && day.mGoogleEvents.size > 1 ->
+            !TextUtils.isEmpty(title) && day.mEvents.size > 1 ->
                 context.getString(
                         R.string.notification_collapsed_text_with_title
                         , title
-                        , day.mGoogleEvents.size - 1
+                        , day.mEvents.size - 1
                 )
 
             //If No Event with title is found just show event count if available
-            TextUtils.isEmpty(title) && day.mGoogleEvents.size > 0 ->
+            TextUtils.isEmpty(title) && day.mEvents.size > 0 ->
                 context.getString(
                         R.string.notification_collapsed_text_without_title
-                        , day.mGoogleEvents.size
+                        , day.mEvents.size
                 )
 
             //Show title without any change

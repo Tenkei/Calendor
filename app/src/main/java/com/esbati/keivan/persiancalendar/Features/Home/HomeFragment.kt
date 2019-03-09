@@ -1,7 +1,6 @@
 package com.esbati.keivan.persiancalendar.Features.Home
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -28,7 +27,7 @@ import com.esbati.keivan.persiancalendar.Features.CalendarPage.CalendarFragment
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.Features.Settings.SettingFragment
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
-import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
+import com.esbati.keivan.persiancalendar.POJOs.UserEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Repository.Repository
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
@@ -74,7 +73,7 @@ class HomeFragment : Fragment() {
                 mDisplayedMonth = it.persianMonth
 
                 mSelectedDay = CalendarDay(it).apply {
-                    mGoogleEvents = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
+                    mEvents = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
                             == PackageManager.PERMISSION_GRANTED)
                         Repository.getEvents(it)
                     else
@@ -211,13 +210,13 @@ class HomeFragment : Fragment() {
         mBottomSheet = view.findViewById(R.id.bottom_sheet) as CalendarBottomSheet
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object: CalendarBottomSheet.OnEventListener {
-            override fun onEventDeleted(deletedEvent: GoogleEvent) {
+            override fun onEventDeleted(deletedEvent: UserEvent) {
                 Repository.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
                     if (it == 1) {
                         refreshFragment(deletedEvent.mStartDate.persianYear, deletedEvent.mStartDate.persianMonth)
 
-                        mSelectedDay.mGoogleEvents.remove(deletedEvent)
+                        mSelectedDay.mEvents.remove(deletedEvent)
                         showDate(mSelectedDay, true)
 
                         //Update Notification
@@ -228,8 +227,8 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            override fun onEventEdited(editedEvent: GoogleEvent) {
-                if(TextUtils.isEmpty(editedEvent.mTITLE) && TextUtils.isEmpty(editedEvent.mDESCRIPTION)){
+            override fun onEventEdited(editedEvent: UserEvent) {
+                if(TextUtils.isEmpty(editedEvent.title) && TextUtils.isEmpty(editedEvent.description)){
                     Toast.makeText(context, R.string.event_error_no_content, Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -241,7 +240,7 @@ class HomeFragment : Fragment() {
                         if (it == 1) {
                             refreshFragment(editedEvent.mStartDate.persianYear, editedEvent.mStartDate.persianMonth)
 
-                            mSelectedDay.mGoogleEvents = Repository.getEvents(mSelectedDay.mPersianDate)
+                            mSelectedDay.mEvents = Repository.getEvents(mSelectedDay.mPersianDate)
                             showDate(mSelectedDay, true)
 
                             //Update Notification

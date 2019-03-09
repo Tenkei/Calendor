@@ -8,8 +8,8 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.Components.ApplicationController
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
-import com.esbati.keivan.persiancalendar.POJOs.CalendarEvent
-import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
+import com.esbati.keivan.persiancalendar.POJOs.CalendarRemark
+import com.esbati.keivan.persiancalendar.POJOs.UserEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.Utils.Constants
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -21,11 +21,11 @@ import kotlin.collections.ArrayList
 
 object Repository{
 
-    private val calendarEvents: List<CalendarEvent>
+    private val remarks: List<CalendarRemark>
 
     var nullable: Int? = null
     init {
-        calendarEvents = readEventsFromJSON()
+        remarks = readEventsFromJSON()
     }
 
     private fun readRawResource(@RawRes res: Int): String {
@@ -34,14 +34,14 @@ object Repository{
         return if (s.hasNext()) s.next() else ""
     }
 
-    private fun readEventsFromJSON(): ArrayList<CalendarEvent> {
-        val calendarEvents = ArrayList<CalendarEvent>()
+    private fun readEventsFromJSON(): ArrayList<CalendarRemark> {
+        val calendarEvents = ArrayList<CalendarRemark>()
         try {
             val eventsJSON = JSONObject(readRawResource(R.raw.events)).getJSONArray("events")
 
             for (i in 0 until eventsJSON.length()) {
                 val eventJSON = eventsJSON.getJSONObject(i)
-                val event = CalendarEvent().fromJSON(eventJSON)
+                val event = CalendarRemark().fromJSON(eventJSON)
                 calendarEvents.add(event)
             }
 
@@ -91,8 +91,8 @@ object Repository{
             day.isCurrentMonth = true
 
             //Get Events for Current Day
-            day.mCalendarEvents = this.getRemarks(day.mPersianDate)
-            day.mGoogleEvents =
+            day.mRemarks = this.getRemarks(day.mPersianDate)
+            day.mEvents =
                     if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                             == PackageManager.PERMISSION_GRANTED)
                         CalendarDataStore.getEvents(day.mPersianDate)
@@ -102,8 +102,8 @@ object Repository{
 
             if (day.mPersianDate.persianWeekDay == 6)
                 day.isHoliday = true
-            else if (day.mCalendarEvents != null)
-                for (calendarEvent in day.mCalendarEvents)
+            else if (day.mRemarks != null)
+                for (calendarEvent in day.mRemarks)
                     if (calendarEvent.isHoliday) {
                         day.isHoliday = true
                         break
@@ -120,10 +120,10 @@ object Repository{
         return days
     }
 
-    private fun getRemarks(date: PersianCalendar): ArrayList<CalendarEvent> {
-        val selectedCalendarEvents = ArrayList<CalendarEvent>()
+    private fun getRemarks(date: PersianCalendar): ArrayList<CalendarRemark> {
+        val selectedCalendarEvents = ArrayList<CalendarRemark>()
 
-        for (calendarEvent in calendarEvents)
+        for (calendarEvent in remarks)
             if (calendarEvent.mPersianDate.equals(date))
                 selectedCalendarEvents.add(calendarEvent)
 
@@ -131,12 +131,12 @@ object Repository{
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<GoogleEvent> = CalendarDataStore.getEvents(selectedDate)
+    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> = CalendarDataStore.getEvents(selectedDate)
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    fun saveEvent(event: GoogleEvent): Int = CalendarDataStore.saveEvent(event)
+    fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
 
-    fun deleteEvent(event: GoogleEvent): Int = CalendarDataStore.deleteEvent(event)
+    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event)
 }
 
 

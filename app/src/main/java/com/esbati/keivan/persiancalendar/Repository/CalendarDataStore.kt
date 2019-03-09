@@ -6,14 +6,14 @@ import android.content.ContentValues
 import android.provider.CalendarContract
 import android.support.annotation.RequiresPermission
 import com.esbati.keivan.persiancalendar.Components.ApplicationController
-import com.esbati.keivan.persiancalendar.POJOs.GoogleCalendar
-import com.esbati.keivan.persiancalendar.POJOs.GoogleEvent
+import com.esbati.keivan.persiancalendar.POJOs.DeviceCalendar
+import com.esbati.keivan.persiancalendar.POJOs.UserEvent
 import ir.smartlab.persindatepicker.util.PersianCalendar
 
 object CalendarDataStore {
 
-    private val mCalendars: ArrayList<GoogleCalendar>
-    private val mEvents: ArrayList<GoogleEvent>
+    private val mCalendars: ArrayList<DeviceCalendar>
+    private val mEvents: ArrayList<UserEvent>
 
     // The indices for the projection array above.
     private const val PROJECTION_ID_INDEX = 0
@@ -52,23 +52,23 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    private fun getCalendars(): ArrayList<GoogleCalendar> {
-        val calendars = ArrayList<GoogleCalendar>()
+    private fun getCalendars(): ArrayList<DeviceCalendar> {
+        val calendars = ArrayList<DeviceCalendar>()
 
         val cr = ApplicationController.getContext().contentResolver
         val cur = cr.query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null)
 
         cur!!.apply {
             while (moveToNext()) {
-                val gCalendar = GoogleCalendar()
+                val calendar = DeviceCalendar()
 
                 // Get the field values
-                gCalendar.calID = getLong(PROJECTION_ID_INDEX)
-                gCalendar.displayName = getString(PROJECTION_DISPLAY_NAME_INDEX)
-                gCalendar.accountName = getString(PROJECTION_ACCOUNT_NAME_INDEX)
-                gCalendar.ownerName = getString(PROJECTION_OWNER_ACCOUNT_INDEX)
+                calendar.id = getLong(PROJECTION_ID_INDEX)
+                calendar.displayName = getString(PROJECTION_DISPLAY_NAME_INDEX)
+                calendar.accountName = getString(PROJECTION_ACCOUNT_NAME_INDEX)
+                calendar.ownerName = getString(PROJECTION_OWNER_ACCOUNT_INDEX)
 
-                calendars.add(gCalendar)
+                calendars.add(calendar)
             }
 
         }.close()
@@ -77,40 +77,40 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    private fun getEvents(calendar: GoogleCalendar): ArrayList<GoogleEvent> {
-        val events = ArrayList<GoogleEvent>()
+    private fun getEvents(calendar: DeviceCalendar): ArrayList<UserEvent> {
+        val events = ArrayList<UserEvent>()
 
         // Submit the query and get a Cursor object back.
         val selection = "((" + CalendarContract.Events.CALENDAR_ID + " = ?))"
-        val selectionArgs = arrayOf("" + calendar.calID)
+        val selectionArgs = arrayOf("" + calendar.id)
 
         val cr = ApplicationController.getContext().contentResolver
         val cur = cr.query(CalendarContract.Events.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null)
 
         cur!!.apply {
             while (moveToNext()) {
-                val gEvent = GoogleEvent()
-                gEvent.mCalendar = calendar
+                val event = UserEvent()
+                event.mCalendar = calendar
 
                 // Get the field values
-                gEvent.mID = getLong(0)
-                gEvent.mORGANIZER = getString(1)
-                gEvent.mTITLE = getString(2)
-                gEvent.mEVENT_LOCATION = getString(3)
-                gEvent.mDESCRIPTION = getString(4)
-                gEvent.mDTSTART = getLong(5)
-                gEvent.mDTEND = getLong(6)
-                gEvent.mEVENT_TIMEZONE = getString(7)
-                gEvent.mEVENT_END_TIMEZONE = getString(8)
-                gEvent.mDURATION = getString(9)
-                gEvent.mALL_DAY = getString(10)
-                gEvent.mRRULE = getString(11)
-                gEvent.mRDATE = getString(12)
+                event.id = getLong(0)
+                event.organizer = getString(1)
+                event.title = getString(2)
+                event.eventLocation = getString(3)
+                event.description = getString(4)
+                event.dtStart = getLong(5)
+                event.dtEnd = getLong(6)
+                event.eventTimezone = getString(7)
+                event.eventEndTimezone = getString(8)
+                event.duration = getString(9)
+                event.allDay = getString(10)
+                event.rRule = getString(11)
+                event.rDate = getString(12)
 
-                gEvent.mStartDate = PersianCalendar(gEvent.mDTSTART)
-                gEvent.mEndDate = PersianCalendar(gEvent.mDTEND)
+                event.mStartDate = PersianCalendar(event.dtStart)
+                event.mEndDate = PersianCalendar(event.dtEnd)
 
-                events.add(gEvent)
+                events.add(event)
             }
         }.close()
 
@@ -118,8 +118,8 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<GoogleEvent> {
-        val selectedGoogleEvents = ArrayList<GoogleEvent>()
+    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> {
+        val selectedGoogleEvents = ArrayList<UserEvent>()
 
         for (gEvent in mEvents)
             if (selectedDate.equals(gEvent.mStartDate))
@@ -129,27 +129,27 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    fun saveEvent(event: GoogleEvent): Int {
+    fun saveEvent(event: UserEvent): Int {
         //Return if No Calendar is Available
         if (mCalendars.size <= 0)
             return -1
 
-        return if (event.mID != 0L)
+        return if (event.id != 0L)
             updateEvent(event)
         else
             saveSimpleEvent(event)
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    private fun saveSimpleEvent(newEvent: GoogleEvent): Int {
+    private fun saveSimpleEvent(newEvent: UserEvent): Int {
         val defaultCalendar = mCalendars[0]
 
         val values = ContentValues().apply {
-            put(CalendarContract.Events.CALENDAR_ID, defaultCalendar.calID)
-            put(CalendarContract.Events.TITLE, newEvent.mTITLE)
-            put(CalendarContract.Events.DESCRIPTION, newEvent.mDESCRIPTION)
-            put(CalendarContract.Events.DTSTART, newEvent.mDTSTART)
-            put(CalendarContract.Events.DTEND, newEvent.mDTSTART + 1000 * 60 * 60)
+            put(CalendarContract.Events.CALENDAR_ID, defaultCalendar.id)
+            put(CalendarContract.Events.TITLE, newEvent.title)
+            put(CalendarContract.Events.DESCRIPTION, newEvent.description)
+            put(CalendarContract.Events.DTSTART, newEvent.dtStart)
+            put(CalendarContract.Events.DTEND, newEvent.dtStart + 1000 * 60 * 60)
             put(CalendarContract.Events.EVENT_TIMEZONE, PersianCalendar().timeZone.displayName)
         }
 
@@ -158,38 +158,38 @@ object CalendarDataStore {
         val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
 
         //Get the event ID and Add it to Google Events Pool
-        newEvent.mID = uri!!.lastPathSegment!!.toLong()
+        newEvent.id = uri!!.lastPathSegment!!.toLong()
         mEvents.add(newEvent)
 
         return 1
     }
 
-    private fun updateEvent(gEvent: GoogleEvent): Int {
+    private fun updateEvent(gEvent: UserEvent): Int {
         //Update Event Row
         val values = ContentValues().apply {
-            put(CalendarContract.Events.TITLE, gEvent.mTITLE)
-            put(CalendarContract.Events.DESCRIPTION, gEvent.mDESCRIPTION)
+            put(CalendarContract.Events.TITLE, gEvent.title)
+            put(CalendarContract.Events.DESCRIPTION, gEvent.description)
         }
 
         val cr = ApplicationController.getContext().contentResolver
-        val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, gEvent.mID)
+        val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, gEvent.id)
         val rows = cr.update(updateUri, values, null, null)
 
         //Update Google Events Pool
         for (event in mEvents)
-            if (gEvent.mID == event.mID)
+            if (gEvent.id == event.id)
                 with(event){
-                    mTITLE = gEvent.mTITLE
-                    mDESCRIPTION = gEvent.mDESCRIPTION
+                    title = gEvent.title
+                    description = gEvent.description
                 }
 
         return rows
     }
 
-    fun deleteEvent(event: GoogleEvent): Int {
+    fun deleteEvent(event: UserEvent): Int {
         //Delete Event Row
         val cr = ApplicationController.getContext().contentResolver
-        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.mID)
+        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
         val rows = cr.delete(deleteUri, null, null)
 
         //Remove From Google Events Pool
