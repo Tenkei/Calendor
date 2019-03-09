@@ -26,14 +26,8 @@ class NotificationUpdateService : JobIntentService() {
 
         //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)) {
-            //Recover Today events
-            val today = CalendarDay(PersianCalendar())
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-                today.mEvents = Repository.getEvents(today.mPersianDate)
-            else
-                today.mEvents = ArrayList()
-
             //Show Sticky Notification
+            val today = Repository.getToday()
             NotificationHelper.showStickyNotification(this, today)
         } else {
             NotificationHelper.cancelNotification(this)

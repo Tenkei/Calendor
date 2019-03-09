@@ -91,16 +91,16 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         proceedToSetupBottomSheet(Mode.SHEET_MODE_DATE)
     }
 
-    fun showEvent(gEvent: UserEvent) {
+    fun showEvent(event: UserEvent) {
         mShouldExpandBottomSheet = true
-        mSelectedEvent = gEvent
+        mSelectedEvent = event
 
         proceedToSetupBottomSheet(Mode.SHEET_MODE_VIEW_EVENT)
     }
 
-    fun editEvent(gEvent: UserEvent?, isEditable: Boolean) {
+    fun editEvent(event: UserEvent?, isEditable: Boolean) {
         mShouldExpandBottomSheet = true
-        mSelectedEvent = gEvent
+        mSelectedEvent = event
 
         proceedToSetupBottomSheet(if (isEditable) Mode.SHEET_MODE_EDIT_EVENT else CalendarBottomSheet.Mode.SHEET_MODE_VIEW_EVENT)
     }
@@ -153,7 +153,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    private fun setShowEventSheet(gEvent: UserEvent, onDeleteEvent: () -> Unit) {
+    private fun setShowEventSheet(event: UserEvent, onDeleteEvent: () -> Unit) {
         //Set Bottom Sheet
         mBottomSheetContainer.removeAllViews()
 
@@ -163,8 +163,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         val eventTitleIcon = eventTitle.findViewById(R.id.event_icon) as ImageView
 
         eventTitle.setBackgroundResource(R.drawable.bg_calendar_today)
-        if (!TextUtils.isEmpty(gEvent.title))
-            eventTitleText.text = gEvent.title
+        if (!TextUtils.isEmpty(event.title))
+            eventTitleText.text = event.title
         else
             eventTitleText.setText(R.string.event_no_title)
 
@@ -186,8 +186,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         val eventDescTV = eventDescription.findViewById(R.id.event_title) as TextView
 
         eventDescription.setBackgroundResource(R.drawable.bg_calendar_today)
-        if (!TextUtils.isEmpty(gEvent.description))
-            eventDescTV.text = gEvent.description
+        if (!TextUtils.isEmpty(event.description))
+            eventDescTV.text = event.description
         else
             eventDescTV.setText(R.string.event_no_desc)
 
@@ -195,7 +195,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         mBottomSheetContainer.addView(eventDescription)
     }
 
-    private fun setEditEventSheet(gEvent: UserEvent) {
+    private fun setEditEventSheet(event: UserEvent) {
         mBottomSheetContainer.removeAllViews()
 
         val eventSheet = LayoutInflater.from(context).inflate(R.layout.cell_event_sheet, mBottomSheetContainer, false)
@@ -203,13 +203,13 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         mEventDesc = eventSheet.findViewById(R.id.event_description) as TextView
 
         //Set Event in Case of Updating Available Event
-        if (!TextUtils.isEmpty(gEvent.title))
-            mEventTitle.text = gEvent.title
+        if (!TextUtils.isEmpty(event.title))
+            mEventTitle.text = event.title
         else
             mEventTitle.setHint(R.string.event_no_title)
 
-        if (!TextUtils.isEmpty(gEvent.description))
-            mEventDesc.text = gEvent.description
+        if (!TextUtils.isEmpty(event.description))
+            mEventDesc.text = event.description
         else
             mEventDesc.setHint(R.string.event_no_desc)
 

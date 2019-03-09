@@ -72,13 +72,7 @@ class HomeFragment : Fragment() {
                 mDisplayedYear = it.persianYear
                 mDisplayedMonth = it.persianMonth
 
-                mSelectedDay = CalendarDay(it).apply {
-                    mEvents = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
-                            == PackageManager.PERMISSION_GRANTED)
-                        Repository.getEvents(it)
-                    else
-                        ArrayList()
-                }
+                mSelectedDay = Repository.getToday()
             }
 
             //Set Viewpager to Show Current Month

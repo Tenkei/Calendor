@@ -116,9 +116,9 @@ object CalendarDataStore {
     fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> {
         val selectedGoogleEvents = ArrayList<UserEvent>()
 
-        for (gEvent in mEvents)
-            if (selectedDate.equals(gEvent.mStartDate))
-                selectedGoogleEvents.add(gEvent)
+        for (event in mEvents)
+            if (selectedDate.equals(event.mStartDate))
+                selectedGoogleEvents.add(event)
 
         return selectedGoogleEvents
     }

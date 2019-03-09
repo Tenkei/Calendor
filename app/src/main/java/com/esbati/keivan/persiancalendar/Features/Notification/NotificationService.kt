@@ -33,14 +33,8 @@ class NotificationService : Service() {
         super.onCreate()
         Log.d(javaClass.simpleName, "Created")
 
-        //Recover Today events
-        val today = CalendarDay(PersianCalendar())
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            today.mEvents = Repository.getEvents(today.mPersianDate)
-        else
-            today.mEvents = ArrayList()
-
         //Promote service to foreground using sticky notification
+        val today = Repository.getToday()
         val notification = NotificationHelper.createStickyNotification(this, today)
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
     }

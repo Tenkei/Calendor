@@ -23,14 +23,12 @@ object Repository{
 
     private val remarks: List<CalendarRemark>
 
-    var nullable: Int? = null
     init {
         remarks = readEventsFromJSON()
     }
 
     private fun readRawResource(@RawRes res: Int): String {
         val s = Scanner(ApplicationController.getContext().resources.openRawResource(res)).useDelimiter("\\A")
-        var no: Int = nullable ?: 0
         return if (s.hasNext()) s.next() else ""
     }
 
@@ -123,6 +121,15 @@ object Repository{
 
 
         return days
+    }
+
+    fun getToday(): CalendarDay {
+        val today = CalendarDay(PersianCalendar())
+        if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
+                == PackageManager.PERMISSION_GRANTED)
+            today.mEvents = Repository.getEvents(today.mPersianDate)
+
+        return today
     }
 
     private fun getRemarks(date: PersianCalendar): ArrayList<CalendarRemark> {
