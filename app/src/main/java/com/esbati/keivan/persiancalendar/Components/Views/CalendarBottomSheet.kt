@@ -267,7 +267,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.clone() ?: UserEvent(mSelectedDay)
+                val tempEvent = mSelectedEvent?.copy() ?: UserEvent(dtStart = mSelectedDay.mPersianDate.timeInMillis)
 
                 setEditEventSheet(tempEvent)
 

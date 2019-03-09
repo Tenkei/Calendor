@@ -85,28 +85,27 @@ object CalendarDataStore {
 
         cur!!.apply {
             while (moveToNext()) {
-                val event = UserEvent()
-                event.mCalendar = calendar
+                val id = getLong(0)
+                val organizer = getString(1)
+                val title = getString(2)
+                val eventLocation = getString(3)
+                val description = getString(4)
+                val dtStart = getLong(5)
+                val dtEnd = getLong(6)
+                val eventTimezone = getString(7)
+                val eventEndTimezone = getString(8)
+                val duration = getString(9)
+                val allDay = getString(10)
+                val rRule = getString(11)
+                val rDate = getString(12)
 
-                // Get the field values
-                event.id = getLong(0)
-                event.organizer = getString(1)
-                event.title = getString(2)
-                event.eventLocation = getString(3)
-                event.description = getString(4)
-                event.dtStart = getLong(5)
-                event.dtEnd = getLong(6)
-                event.eventTimezone = getString(7)
-                event.eventEndTimezone = getString(8)
-                event.duration = getString(9)
-                event.allDay = getString(10)
-                event.rRule = getString(11)
-                event.rDate = getString(12)
-
-                event.mStartDate = PersianCalendar(event.dtStart)
-                event.mEndDate = PersianCalendar(event.dtEnd)
-
-                events.add(event)
+                events.add(
+                        UserEvent(id, organizer, title
+                                , eventLocation, description
+                                , dtStart, dtEnd, eventTimezone, eventEndTimezone
+                                , duration, allDay, rRule, rDate
+                        )
+                )
             }
         }.close()
 

@@ -141,7 +141,7 @@ object NotificationHelper {
         if (day.mEvents != null)
             for (event in day.mEvents)
                 if (!TextUtils.isEmpty(event.title)) {
-                    title = event.title
+                    title = event.title!!
                     break
                 }
 
