@@ -13,10 +13,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".Components.ApplicationController"
+        android:name=".components.ApplicationController"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Features.Home.MainActivity"
+        <activity android:name=".features.home.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Splash"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan">
@@ -27,23 +27,23 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".Features.Notification.NotificationBroadcastReceiver"
+        <receiver android:name=".features.notification.NotificationBroadcastReceiver"
             android:description="@string/notification_broadcast_receiver_description">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".Features.Notification.NotificationService"
+        <service android:name=".features.notification.NotificationService"
             android:description="@string/notification_service_description"
             android:exported="false"/>
 
-        <service android:name=".Features.Notification.NotificationUpdateService"
+        <service android:name=".features.notification.NotificationUpdateService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:description="@string/notification_update_service_description"
             android:exported="false"/>
 
-        <service android:name=".Features.Notification.NotificationActionService"
+        <service android:name=".features.notification.NotificationActionService"
             android:description="@string/notification_action_service_description"
             android:exported="false"/>
 

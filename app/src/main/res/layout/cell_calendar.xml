@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.esbati.keivan.persiancalendar.Components.Views.SquareContainer
+<com.esbati.keivan.persiancalendar.components.views.SquareContainer
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:focusableInTouchMode="true"
     android:focusable="true"
@@ -27,4 +27,4 @@
         android:lines="1"
         android:ellipsize="end"
         android:textSize="8dp"/>
-</com.esbati.keivan.persiancalendar.Components.Views.SquareContainer>
+</com.esbati.keivan.persiancalendar.components.views.SquareContainer>
