@@ -120,17 +120,17 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         //Set Google Calendar Events
         mBottomSheetContainer.removeAllViews()
         if (day.mEvents != null)
-            for (googleEvent in day.mEvents) {
+            for (event in day.mEvents) {
                 val eventView = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_day, mBottomSheetContainer, false)
                 val eventTitle = eventView.findViewById(R.id.event_title) as TextView
 
                 eventView.setBackgroundResource(R.drawable.bg_calendar_today)
-                if (!TextUtils.isEmpty(googleEvent.title))
-                    eventTitle.text = googleEvent.title
+                if (!TextUtils.isEmpty(event.title))
+                    eventTitle.text = event.title
                 else
                     eventTitle.setText(R.string.event_no_title)
 
-                eventView.setOnClickListener { onEventClick(googleEvent)}
+                eventView.setOnClickListener { onEventClick(event)}
                 mBottomSheetContainer.addView(eventView)
             }
 
@@ -247,8 +247,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     private fun setBottomSheetMode(mode: CalendarBottomSheet.Mode) {
         when (mode) {
             CalendarBottomSheet.Mode.SHEET_MODE_DATE -> {
-                setDateSheet(mSelectedDay) { googleEvent ->
-                    showEvent(googleEvent)
+                setDateSheet(mSelectedDay) { event ->
+                    showEvent(event)
                 }
 
                 eventActionBtn.setImageResource(R.drawable.ic_calendar_plus_white_24dp)

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:id="@+id/calendar_day"
+        android:id="@+id/calendar_day_no"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|left"
@@ -17,7 +17,7 @@
         android:text="1th"/>
 
     <TextView
-        android:id="@+id/google_event"
+        android:id="@+id/calendar_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

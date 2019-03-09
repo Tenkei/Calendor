@@ -114,13 +114,13 @@ object CalendarDataStore {
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> {
-        val selectedGoogleEvents = ArrayList<UserEvent>()
+        val selectedEvents = ArrayList<UserEvent>()
 
         for (event in mEvents)
             if (selectedDate.equals(event.mStartDate))
-                selectedGoogleEvents.add(event)
+                selectedEvents.add(event)
 
-        return selectedGoogleEvents
+        return selectedEvents
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
