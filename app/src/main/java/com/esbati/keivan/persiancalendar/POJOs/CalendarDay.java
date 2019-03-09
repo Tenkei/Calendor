@@ -17,18 +17,10 @@ public class CalendarDay {
     public ArrayList<CalendarRemark> mRemarks;
     public ArrayList<UserEvent> mEvents;
 
-    public CalendarDay(){
-        this(new PersianCalendar());
-    }
-
     public CalendarDay(PersianCalendar persianCalendar){
         mPersianDate = persianCalendar;
 
         if(mPersianDate != null)
             mDayNo = mPersianDate.getPersianDay();
-    }
-
-    public CalendarDay(int day){
-        mDayNo = day;
     }
 }

@@ -11,6 +11,7 @@ import android.util.Log
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.Repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.Repository.Repository
+import ir.smartlab.persindatepicker.util.PersianCalendar
 
 import java.util.ArrayList
 
@@ -26,7 +27,7 @@ class NotificationUpdateService : JobIntentService() {
         //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)) {
             //Recover Today events
-            val today = CalendarDay()
+            val today = CalendarDay(PersianCalendar())
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
                 today.mEvents = Repository.getEvents(today.mPersianDate)
             else

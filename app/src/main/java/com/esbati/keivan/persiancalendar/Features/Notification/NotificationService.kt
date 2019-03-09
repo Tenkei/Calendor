@@ -11,6 +11,7 @@ import android.util.Log
 import com.esbati.keivan.persiancalendar.POJOs.CalendarDay
 import com.esbati.keivan.persiancalendar.Repository.Repository
 import com.esbati.keivan.persiancalendar.Utils.AndroidUtilities
+import ir.smartlab.persindatepicker.util.PersianCalendar
 import java.util.ArrayList
 
 /**
@@ -33,7 +34,7 @@ class NotificationService : Service() {
         Log.d(javaClass.simpleName, "Created")
 
         //Recover Today events
-        val today = CalendarDay()
+        val today = CalendarDay(PersianCalendar())
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
             today.mEvents = Repository.getEvents(today.mPersianDate)
         else

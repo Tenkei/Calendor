@@ -81,7 +81,10 @@ object Repository{
         //Add Trailing Days from Last Month if Needed
         if (dayOfWeek > 0)
             for (i in dayOfWeek - 1 downTo 0)
-                days.add(CalendarDay(previousMonthDays - i))
+                days.add(CalendarDay(PersianCalendar().setPersianDate(
+                        1, 1, previousMonthDays - i
+                )))
+
 
 
         //Add Month Days
@@ -113,9 +116,11 @@ object Repository{
         }
 
         //Add Leading Month Days
-        for (i in 1..(7 - days.size % 7)) {
-            days.add(CalendarDay(i))
-        }
+        for (i in 1..(7 - days.size % 7))
+            days.add(CalendarDay(PersianCalendar().setPersianDate(
+                    1, 1, i
+            )))
+
 
         return days
     }
