@@ -13,11 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import com.esbati.keivan.persiancalendar.BuildConfig;
-import com.esbati.keivan.persiancalendar.Components.Views.Cell.HeaderCell;
-import com.esbati.keivan.persiancalendar.Components.Views.Cell.ShadowSectionCell;
-import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextCheckCell;
-import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextInfoCell;
-import com.esbati.keivan.persiancalendar.Components.Views.Cell.TextSettingsCell;
+import com.esbati.keivan.persiancalendar.Components.Views.HeaderCell;
+import com.esbati.keivan.persiancalendar.Components.Views.ShadowSectionCell;
+import com.esbati.keivan.persiancalendar.Components.Views.TextCheckCell;
+import com.esbati.keivan.persiancalendar.Components.Views.TextInfoCell;
+import com.esbati.keivan.persiancalendar.Components.Views.TextSettingsCell;
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationHelper;
 import com.esbati.keivan.persiancalendar.Features.Notification.NotificationUpdateService;
 import com.esbati.keivan.persiancalendar.R;
