@@ -170,7 +170,7 @@ object CalendarDataStore {
         val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
         val rows = cr.update(updateUri, values, null, null)
 
-        //Update Google Events Pool
+        //Update Events Pool
         for(i in 0 until mEvents.size)
             if (event.id == mEvents[i].id)
                 mEvents[i] = event
@@ -178,14 +178,14 @@ object CalendarDataStore {
         return rows
     }
 
-    fun deleteEvent(event: UserEvent): Int {
+    fun deleteEvent(eventId: Long): Int {
         //Delete Event Row
         val cr = ApplicationController.getContext().contentResolver
-        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
+        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
         val rows = cr.delete(deleteUri, null, null)
 
-        //Remove From Google Events Pool
-        mEvents.remove(event)
+        //Remove From Events Pool
+        mEvents.removeAll { it.id == eventId }
 
         return rows
     }

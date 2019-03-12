@@ -145,7 +145,7 @@ object Repository{
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
 
-    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event)
+    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event.id)
 }
 
 
