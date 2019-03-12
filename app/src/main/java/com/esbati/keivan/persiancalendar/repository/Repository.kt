@@ -88,24 +88,19 @@ object Repository{
 
         //Add Month Days
         for (i in 1..currentMonthDays) {
-            val day = CalendarDay(PersianCalendar().setPersianDate(year, month, i))
+            var date = PersianCalendar().setPersianDate(year, month, i)
+            val day = CalendarDay(date)
             day.isToday = i == mToday && containToday
             day.isCurrentMonth = true
 
             //Get Events for Current Day
-            day.mRemarks = this.getRemarks(
-                    day.mPersianDate.persianYear
-                    , day.mPersianDate.persianMonth
-                    , day.mPersianDate.persianDay)
+            day.mRemarks = this.getRemarks(day.mYear, day.mMonth, day.mDay)
             if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                     == PackageManager.PERMISSION_GRANTED)
-                day.mEvents = getEvents(
-                        day.mPersianDate.persianYear
-                        , day.mPersianDate.persianMonth
-                        , day.mPersianDate.persianDay)
+                day.mEvents = getEvents(day.mYear, day.mMonth, day.mDay)
 
 
-            if (day.mPersianDate.persianWeekDay == 6)
+            if (date.persianWeekDay == 6)
                 day.isHoliday = true
             else
                 for (calendarEvent in day.mRemarks)
@@ -129,13 +124,10 @@ object Repository{
 
     fun getToday(): CalendarDay {
         val today = CalendarDay(PersianCalendar())
+        today.mRemarks = getRemarks(today.mYear, today.mMonth, today.mDay)
         if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED)
-            today.mEvents = Repository.getEvents(
-                today.mPersianDate.persianYear
-                , today.mPersianDate.persianMonth
-                , today.mPersianDate.persianDay
-            )
+            today.mEvents = getEvents(today.mYear, today.mMonth, today.mDay)
 
         return today
     }
@@ -146,6 +138,11 @@ object Repository{
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
             CalendarDataStore.getEvents(year, month, day)
+
+    fun createEventFor(day: CalendarDay): UserEvent {
+        val date = PersianCalendar().setPersianDate(day.mYear, day.mMonth, day.mDay)
+        return UserEvent(dtStart = date.timeInMillis)
+    }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)

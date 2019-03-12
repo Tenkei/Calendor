@@ -68,12 +68,9 @@ class HomeFragment : Fragment() {
             setupBottomSheet(this)
 
             //Setup Initial Day
-            PersianCalendar().let {
-                mDisplayedYear = it.persianYear
-                mDisplayedMonth = it.persianMonth
-
-                mSelectedDay = Repository.getToday()
-            }
+            mSelectedDay = Repository.getToday()
+            mDisplayedYear = mSelectedDay.mYear
+            mDisplayedMonth = mSelectedDay.mMonth
 
             //Set Viewpager to Show Current Month
             mPager.isRtL = true
@@ -235,10 +232,7 @@ class HomeFragment : Fragment() {
                         if (it == 1) {
                             refreshFragment(editedEvent.year, editedEvent.month)
 
-                            mSelectedDay.mEvents = Repository.getEvents(
-                                    mSelectedDay.mPersianDate.persianYear
-                                    , mSelectedDay.mPersianDate.persianMonth
-                                    , mSelectedDay.mPersianDate.persianDay)
+                            mSelectedDay.mEvents = Repository.getEvents(mSelectedDay.mYear, mSelectedDay.mMonth, mSelectedDay.mDay)
                             showDate(mSelectedDay, true)
 
                             //Update Notification

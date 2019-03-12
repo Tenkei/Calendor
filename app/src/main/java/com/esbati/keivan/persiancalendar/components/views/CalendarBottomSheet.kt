@@ -18,6 +18,7 @@ import android.widget.TextView
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.utils.Constants
 import java.util.*
@@ -111,14 +112,8 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     @SuppressLint("SetTextI18n")
     private fun setDateSheet(day: CalendarDay, onEventClick: (UserEvent) -> Unit) {
         //Set Date
-        mPersianDate.text = day.mPersianDate.persianLongDate
-        val gregorianCalendar = GregorianCalendar().apply {
-            time = day.mPersianDate.time
-        }
-        mGregorianDate.text = Constants.weekdays_en[gregorianCalendar.get(Calendar.DAY_OF_WEEK) - 1] + ", " +
-                Constants.months_en[gregorianCalendar.get(Calendar.MONTH)] + " " +
-                gregorianCalendar.get(Calendar.DAY_OF_MONTH) + " " +
-                gregorianCalendar.get(Calendar.YEAR)
+        mPersianDate.text = day.formattedDate
+        mGregorianDate.text = day.formattedDateSecondary
 
         //Set Google Calendar Events
         mBottomSheetContainer.removeAllViews()
@@ -269,7 +264,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.copy() ?: UserEvent(dtStart = mSelectedDay.mPersianDate.timeInMillis)
+                val tempEvent = mSelectedEvent?.copy() ?: Repository.createEventFor(mSelectedDay)
                 setEditEventSheet(tempEvent)
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)
