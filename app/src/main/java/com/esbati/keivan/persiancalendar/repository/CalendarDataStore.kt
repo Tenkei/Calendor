@@ -86,26 +86,13 @@ object CalendarDataStore {
         cur!!.apply {
             while (moveToNext()) {
                 val id = getLong(0)
-                val organizer = getString(1)
                 val title = getString(2)
-                val eventLocation = getString(3)
                 val description = getString(4)
                 val dtStart = getLong(5)
                 val dtEnd = getLong(6)
                 val eventTimezone = getString(7)
-                val eventEndTimezone = getString(8)
-                val duration = getString(9)
-                val allDay = getString(10)
-                val rRule = getString(11)
-                val rDate = getString(12)
 
-                events.add(
-                        UserEvent(id, organizer, title
-                                , eventLocation, description
-                                , dtStart, dtEnd, eventTimezone, eventEndTimezone
-                                , duration, allDay, rRule, rDate
-                        )
-                )
+                events.add(UserEvent(id, title, description, dtStart, dtEnd, eventTimezone))
             }
         }.close()
 
