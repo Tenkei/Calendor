@@ -14,5 +14,11 @@ data class UserEvent(
         val dtEnd: Long? = 0,
         val eventTimezone: String? = null)
 {
-    val mStartDate: PersianCalendar = PersianCalendar(dtStart)
+    val year: Int = PersianCalendar(dtStart).persianYear
+    val month: Int = PersianCalendar(dtStart).persianMonth
+    val day: Int = PersianCalendar(dtStart).persianDay
+
+    fun inTheSameDate(year: Int, month: Int, day: Int): Boolean {
+        return this.year == year && this.month == month && this.day == day
+    }
 }

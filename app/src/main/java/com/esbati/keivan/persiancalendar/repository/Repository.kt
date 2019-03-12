@@ -22,6 +22,7 @@ import kotlin.collections.ArrayList
 object Repository{
 
     private val remarks: List<CalendarRemark>
+    private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
 
     init {
         remarks = readEventsFromJSON()
@@ -96,12 +97,12 @@ object Repository{
                     day.mPersianDate.persianYear
                     , day.mPersianDate.persianMonth
                     , day.mPersianDate.persianDay)
-            day.mEvents =
-                    if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
-                            == PackageManager.PERMISSION_GRANTED)
-                        CalendarDataStore.getEvents(day.mPersianDate)
-                    else
-                        ArrayList()
+            if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                    == PackageManager.PERMISSION_GRANTED)
+                day.mEvents = getEvents(
+                        day.mPersianDate.persianYear
+                        , day.mPersianDate.persianMonth
+                        , day.mPersianDate.persianDay)
 
 
             if (day.mPersianDate.persianWeekDay == 6)
@@ -130,7 +131,11 @@ object Repository{
         val today = CalendarDay(PersianCalendar())
         if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED)
-            today.mEvents = Repository.getEvents(today.mPersianDate)
+            today.mEvents = Repository.getEvents(
+                today.mPersianDate.persianYear
+                , today.mPersianDate.persianMonth
+                , today.mPersianDate.persianDay
+            )
 
         return today
     }
@@ -139,8 +144,8 @@ object Repository{
             = remarks.filter { it.inTheSameDate(year, month, day) } as ArrayList
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent>
-            = CalendarDataStore.getEvents(selectedDate)
+    fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
+            CalendarDataStore.getEvents(year, month, day)
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)

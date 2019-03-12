@@ -100,11 +100,11 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> {
+    fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
         val selectedEvents = ArrayList<UserEvent>()
 
         for (event in mEvents)
-            if (selectedDate.equals(event.mStartDate))
+            if (event.inTheSameDate(year, month, day))
                 selectedEvents.add(event)
 
         return selectedEvents

@@ -209,7 +209,7 @@ class HomeFragment : Fragment() {
                 Repository.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
                     if (it == 1) {
-                        refreshFragment(deletedEvent.mStartDate.persianYear, deletedEvent.mStartDate.persianMonth)
+                        refreshFragment(deletedEvent.year, deletedEvent.month)
 
                         mSelectedDay.mEvents.remove(deletedEvent)
                         showDate(mSelectedDay, true)
@@ -233,9 +233,12 @@ class HomeFragment : Fragment() {
                     Repository.saveEvent(editedEvent).also {
                         //Refresh UI and show Date if Event Successfully added
                         if (it == 1) {
-                            refreshFragment(editedEvent.mStartDate.persianYear, editedEvent.mStartDate.persianMonth)
+                            refreshFragment(editedEvent.year, editedEvent.month)
 
-                            mSelectedDay.mEvents = Repository.getEvents(mSelectedDay.mPersianDate)
+                            mSelectedDay.mEvents = Repository.getEvents(
+                                    mSelectedDay.mPersianDate.persianYear
+                                    , mSelectedDay.mPersianDate.persianMonth
+                                    , mSelectedDay.mPersianDate.persianDay)
                             showDate(mSelectedDay, true)
 
                             //Update Notification
