@@ -80,6 +80,7 @@ class HomeFragment : Fragment() {
             mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth)
             showDate(mSelectedDay, false)
         }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

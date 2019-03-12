@@ -124,11 +124,9 @@ public class PersianCalendar extends GregorianCalendar {
 	private String delimiter = "/";
 
 	private long convertToMilis(long julianDate) {
-		//Subtract timezone Difference when Converting Date to Millis since Calendar is set in GMT
-		long zone_offset = TimeZone.getDefault().getOffset(Calendar.ZONE_OFFSET) + TimeZone.getDefault().getDSTSavings();
-		return PersianCalendarConstants.MILLIS_JULIAN_EPOCH + julianDate * PersianCalendarConstants.MILLIS_OF_A_DAY
-				+ PersianCalendarUtils.ceil(getTimeInMillis() - PersianCalendarConstants.MILLIS_JULIAN_EPOCH, PersianCalendarConstants.MILLIS_OF_A_DAY)
-				- zone_offset;
+		return PersianCalendarConstants.MILLIS_JULIAN_EPOCH
+				+ julianDate * PersianCalendarConstants.MILLIS_OF_A_DAY
+				+ PersianCalendarUtils.ceil(getTimeInMillis() - PersianCalendarConstants.MILLIS_JULIAN_EPOCH, PersianCalendarConstants.MILLIS_OF_A_DAY);
 	}
 
 	/**
@@ -163,8 +161,8 @@ public class PersianCalendar extends GregorianCalendar {
 	 */
 	protected void calculatePersianDate() {
 		//Add Timezone Difference when Converting Millis to Date
-		long zone_offset = TimeZone.getDefault().getOffset(Calendar.ZONE_OFFSET) + TimeZone.getDefault().getDSTSavings();
-		long julianDate = ((long) Math.floor((getTimeInMillis() + zone_offset - PersianCalendarConstants.MILLIS_JULIAN_EPOCH)) / PersianCalendarConstants.MILLIS_OF_A_DAY);
+		long ZONE_OFFSET = TimeZone.getDefault().getOffset(getTimeInMillis());
+		long julianDate = ((long) Math.floor((getTimeInMillis() + ZONE_OFFSET - PersianCalendarConstants.MILLIS_JULIAN_EPOCH)) / PersianCalendarConstants.MILLIS_OF_A_DAY);
 		long PersianRowDate = PersianCalendarUtils.julianToPersian(julianDate);
 		long year = PersianRowDate >> 16;
 		int month = (int) (PersianRowDate & 0xff00) >> 8;
