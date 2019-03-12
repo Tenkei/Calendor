@@ -92,7 +92,10 @@ object Repository{
             day.isCurrentMonth = true
 
             //Get Events for Current Day
-            day.mRemarks = this.getRemarks(day.mPersianDate)
+            day.mRemarks = this.getRemarks(
+                    day.mPersianDate.persianYear
+                    , day.mPersianDate.persianMonth
+                    , day.mPersianDate.persianDay)
             day.mEvents =
                     if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                             == PackageManager.PERMISSION_GRANTED)
@@ -132,18 +135,12 @@ object Repository{
         return today
     }
 
-    private fun getRemarks(date: PersianCalendar): ArrayList<CalendarRemark> {
-        val selectedCalendarEvents = ArrayList<CalendarRemark>()
-
-        for (calendarEvent in remarks)
-            if (calendarEvent.mPersianDate.equals(date))
-                selectedCalendarEvents.add(calendarEvent)
-
-        return selectedCalendarEvents
-    }
+    private fun getRemarks(year: Int, month: Int, day: Int): ArrayList<CalendarRemark>
+            = remarks.filter { it.inTheSameDate(year, month, day) } as ArrayList
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> = CalendarDataStore.getEvents(selectedDate)
+    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent>
+            = CalendarDataStore.getEvents(selectedDate)
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
