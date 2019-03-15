@@ -9,6 +9,7 @@ import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import ir.smartlab.persindatepicker.util.PersianCalendar
+import java.util.*
 
 object CalendarDataStore {
 
@@ -132,7 +133,7 @@ object CalendarDataStore {
             put(CalendarContract.Events.DESCRIPTION, newEvent.description)
             put(CalendarContract.Events.DTSTART, newEvent.dtStart)
             put(CalendarContract.Events.DTEND, newEvent.dtStart + 1000 * 60 * 60)
-            put(CalendarContract.Events.EVENT_TIMEZONE, PersianCalendar().timeZone.displayName)
+            put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
         }
 
         // Submit the query and get a Cursor object back.
