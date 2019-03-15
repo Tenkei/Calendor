@@ -28,7 +28,11 @@ object Repository{
 
     init {
         remarks = readEventsFromJSON()
-        mCalendar = PersianCalendar()
+        mCalendar = PersianCalendar().apply {
+            // Set time at the middle of the day to prevent shift in days
+            // for dates like yyyy/1/1 caused by DST
+            set(Calendar.HOUR_OF_DAY, 12)
+        }
     }
 
     private fun readRawResource(@RawRes res: Int): String {
