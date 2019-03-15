@@ -68,21 +68,20 @@ class HomeFragment : Fragment() {
             setupBottomSheet(this)
 
             //Setup Initial Day
-            mSelectedDay = Repository.getToday()
-            mDisplayedYear = mSelectedDay.mYear
-            mDisplayedMonth = mSelectedDay.mMonth
+            mSelectedDay = Repository.getToday().also {
+                mDisplayedYear = it.mYear
+                mDisplayedMonth = it.mMonth
+            }
 
             //Set Viewpager to Show Current Month
             mPager.isRtL = true
             mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth)
             showDate(mSelectedDay, false)
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         runStartAnimation()
     }
 
@@ -232,7 +231,12 @@ class HomeFragment : Fragment() {
                         if (it == 1) {
                             refreshFragment(editedEvent.year, editedEvent.month)
 
-                            mSelectedDay.mEvents = Repository.getEvents(mSelectedDay.mYear, mSelectedDay.mMonth, mSelectedDay.mDay)
+                            mSelectedDay.mEvents.clear()
+                            mSelectedDay.mEvents.addAll(Repository.getEvents(
+                                    mSelectedDay.mYear
+                                    , mSelectedDay.mMonth
+                                    , mSelectedDay.mDay
+                            ))
                             showDate(mSelectedDay, true)
 
                             //Update Notification
