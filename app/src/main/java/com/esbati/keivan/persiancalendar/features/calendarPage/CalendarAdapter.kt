@@ -43,7 +43,7 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
             val context = itemView.context
             itemView.isEnabled = day.isCurrentMonth
 
-            mDayNo.text = day.mDayNo.toString()
+            mDayNo.text = day.mDay.toString()
             if (day.mEvents.size > 0) {
                 if (!TextUtils.isEmpty(day.mEvents[0].title))
                     mEvents.text = day.mEvents[0].title

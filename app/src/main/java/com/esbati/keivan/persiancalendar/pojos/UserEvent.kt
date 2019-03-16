@@ -8,18 +8,17 @@ import ir.smartlab.persindatepicker.util.PersianCalendar
 
 data class UserEvent(
         val id: Long = 0,
-        val organizer: String? = null,
         val title: String? = null,
-        val eventLocation: String? = null,
         val description: String? = null,
         val dtStart: Long,
         val dtEnd: Long? = 0,
-        val eventTimezone: String? = null,
-        val eventEndTimezone: String? = null,
-        val duration: String? = null,
-        val allDay: String? = null,
-        val rRule: String? = null,
-        val rDate: String? = null)
+        val eventTimezone: String? = null)
 {
-    val mStartDate: PersianCalendar = PersianCalendar(dtStart)
+    val year: Int = PersianCalendar(dtStart).persianYear
+    val month: Int = PersianCalendar(dtStart).persianMonth
+    val day: Int = PersianCalendar(dtStart).persianDay
+
+    fun inTheSameDate(year: Int, month: Int, day: Int): Boolean {
+        return this.year == year && this.month == month && this.day == day
+    }
 }

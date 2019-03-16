@@ -1,23 +1,19 @@
 package com.esbati.keivan.persiancalendar.pojos
 
-import java.util.ArrayList
-
-import ir.smartlab.persindatepicker.util.PersianCalendar
+import java.util.*
 
 /**
  * Created by asus on 11/20/2016.
  */
 
-class CalendarDay(var mPersianDate: PersianCalendar) {
-
-    var mDayNo: Int = 0
-    var isToday: Boolean = false
-    var isHoliday: Boolean = false
-    var isCurrentMonth: Boolean = false
-    var mRemarks: ArrayList<CalendarRemark> = ArrayList()
-    var mEvents: ArrayList<UserEvent> = ArrayList()
-
-    init {
-        mDayNo = mPersianDate.persianDay
-    }
-}
+class CalendarDay(
+    val mYear: Int,
+    val mMonth: Int,
+    val mDay: Int,
+    val isToday: Boolean = false,
+    val isHoliday: Boolean = false,
+    val isCurrentMonth: Boolean = false,
+    val formattedDate: String = "",
+    val formattedDateSecondary: String = "",
+    val mRemarks: ArrayList<CalendarRemark> = ArrayList(),
+    val mEvents: ArrayList<UserEvent> = ArrayList())

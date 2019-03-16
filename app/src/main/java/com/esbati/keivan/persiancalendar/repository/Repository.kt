@@ -21,10 +21,18 @@ import kotlin.collections.ArrayList
 
 object Repository{
 
+    private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
+
     private val remarks: List<CalendarRemark>
+    private val mCalendar: PersianCalendar
 
     init {
         remarks = readEventsFromJSON()
+        mCalendar = PersianCalendar().apply {
+            // Set time at the middle of the day to prevent shift in days
+            // for dates like yyyy/1/1 caused by DST
+            set(Calendar.HOUR_OF_DAY, 12)
+        }
     }
 
     private fun readRawResource(@RawRes res: Int): String {
@@ -51,15 +59,15 @@ object Repository{
     }
 
     fun prepareDays(year: Int, month: Int): List<CalendarDay> {
-        val calendar = PersianCalendar()
-        val containToday = calendar.persianYear == year && calendar.persianMonth == month
-        val mToday = calendar.persianDay
-        calendar.setPersianDate(year, month, 1)
-        val isLeapYear = calendar.isPersianLeapYear
-        val dayOfWeek = calendar.persianWeekDay % 7
+        val todayCalendar = (mCalendar.clone() as PersianCalendar).apply {
+            timeInMillis = System.currentTimeMillis()
+        }
+        val mToday = todayCalendar.persianDay
+        val containToday = todayCalendar.persianYear == year && todayCalendar.persianMonth == month
 
-        val days = ArrayList<CalendarDay>()
-
+        val currentYearCalendar = (mCalendar.clone() as PersianCalendar).setPersianDate(year, month, 1)
+        val isLeapYear = currentYearCalendar.isPersianLeapYear
+        val dayOfWeek = currentYearCalendar.persianWeekDay % 7
         var currentMonthDays = Constants.daysOfMonth_fa[month - 1]
         var previousMonthDays = Constants.daysOfMonth_fa[(month - 2 + 12) % 12]
 
@@ -68,87 +76,89 @@ object Repository{
             currentMonthDays++
 
         //Add Extra Day to Previous Month in Case of Leap Year
-        if (month == 1) {
-            val lastYearCalendar = PersianCalendar()
-            lastYearCalendar.setPersianDate(year - 1, month, 1)
-
-            if (lastYearCalendar.isPersianLeapYear)
+        val lastYearCalendar = (mCalendar.clone() as PersianCalendar).setPersianDate(year - 1, month, 1)
+        if (month == 1 && lastYearCalendar.isPersianLeapYear)
                 previousMonthDays++
-        }
 
+        val days = ArrayList<CalendarDay>()
         //Add Trailing Days from Last Month if Needed
         if (dayOfWeek > 0)
             for (i in dayOfWeek - 1 downTo 0)
-                days.add(CalendarDay(PersianCalendar().setPersianDate(
-                        1, 1, previousMonthDays - i
-                )))
-
-
+                days.add(CalendarDay(year, month - 1, previousMonthDays - i))
 
         //Add Month Days
         for (i in 1..currentMonthDays) {
-            val day = CalendarDay(PersianCalendar().setPersianDate(year, month, i))
-            day.isToday = i == mToday && containToday
-            day.isCurrentMonth = true
+            val currentDayCalendar = (mCalendar.clone() as PersianCalendar).setPersianDate(year, month, i)
+            val georgianDate = GregorianCalendar().run {
+                time = currentDayCalendar.time
+                "${Constants.weekdays_en[get(Calendar.DAY_OF_WEEK) - 1]}, ${Constants.months_en[get(Calendar.MONTH)]} ${get(Calendar.DAY_OF_MONTH)} ${get(Calendar.YEAR)}"
+            }
 
-            //Get Events for Current Day
-            day.mRemarks = this.getRemarks(day.mPersianDate)
-            day.mEvents =
-                    if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
-                            == PackageManager.PERMISSION_GRANTED)
-                        CalendarDataStore.getEvents(day.mPersianDate)
-                    else
-                        ArrayList()
+            val dayRemarks = getRemarks(year, month, i)
+            val dayEvents = getEventsIfPermissionIsAvailable(year, month, i)
+            val isToday = i == mToday && containToday
+            val isHoliday = currentDayCalendar.persianWeekDay == 6 || dayRemarks.any { it.isHoliday }
 
-
-            if (day.mPersianDate.persianWeekDay == 6)
-                day.isHoliday = true
-            else
-                for (calendarEvent in day.mRemarks)
-                    if (calendarEvent.isHoliday) {
-                        day.isHoliday = true
-                        break
-                    }
-
-            days.add(day)
+            days.add(
+                    CalendarDay(year, month, i
+                            , isToday, isHoliday, true
+                            , currentDayCalendar.persianLongDate, georgianDate
+                            , dayRemarks, dayEvents)
+            )
         }
 
         //Add Leading Month Days
         for (i in 1..(7 - days.size % 7))
-            days.add(CalendarDay(PersianCalendar().setPersianDate(
-                    1, 1, i
-            )))
-
+            days.add(CalendarDay(year, month + 1, i))
 
         return days
     }
 
     fun getToday(): CalendarDay {
-        val today = CalendarDay(PersianCalendar())
-        if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
-                == PackageManager.PERMISSION_GRANTED)
-            today.mEvents = Repository.getEvents(today.mPersianDate)
+        val date = (mCalendar.clone() as PersianCalendar).apply {
+            timeInMillis = System.currentTimeMillis()
+        }
 
-        return today
+        val georgianDate = GregorianCalendar().run {
+            time = date.time
+            "${Constants.weekdays_en[get(Calendar.DAY_OF_WEEK) - 1]}, ${Constants.months_en[get(Calendar.MONTH)]} ${get(Calendar.DAY_OF_MONTH)} ${get(Calendar.YEAR)}"
+        }
+
+        return CalendarDay(date.persianYear, date.persianMonth, date.persianDay
+                , true, true, true
+                , date.persianLongDate, georgianDate
+                , getRemarks(date.persianYear, date.persianMonth, date.persianDay)
+                , getEventsIfPermissionIsAvailable(date.persianYear, date.persianMonth, date.persianDay)
+        )
     }
 
-    private fun getRemarks(date: PersianCalendar): ArrayList<CalendarRemark> {
-        val selectedCalendarEvents = ArrayList<CalendarRemark>()
-
-        for (calendarEvent in remarks)
-            if (calendarEvent.mPersianDate.equals(date))
-                selectedCalendarEvents.add(calendarEvent)
-
-        return selectedCalendarEvents
-    }
+    private fun getRemarks(year: Int, month: Int, day: Int): ArrayList<CalendarRemark>
+            = remarks.filter { it.inTheSameDate(year, month, day) } as ArrayList
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> = CalendarDataStore.getEvents(selectedDate)
+    fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
+            CalendarDataStore.getEvents(year, month, day)
+
+    private fun getEventsIfPermissionIsAvailable(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
+        return if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
+                == PackageManager.PERMISSION_GRANTED)
+                    Repository.getEvents(year, month, day)
+                else
+                    ArrayList()
+    }
+
+    fun createEventFor(day: CalendarDay): UserEvent {
+        val date = (mCalendar.clone() as PersianCalendar).apply {
+            setPersianDate(day.mYear, day.mMonth, day.mDay)
+        }
+
+        return UserEvent(dtStart = date.timeInMillis)
+    }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
     fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
 
-    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event)
+    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event.id)
 }
 
 

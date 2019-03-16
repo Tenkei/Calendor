@@ -9,6 +9,7 @@ import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import ir.smartlab.persindatepicker.util.PersianCalendar
+import java.util.*
 
 object CalendarDataStore {
 
@@ -86,26 +87,13 @@ object CalendarDataStore {
         cur!!.apply {
             while (moveToNext()) {
                 val id = getLong(0)
-                val organizer = getString(1)
                 val title = getString(2)
-                val eventLocation = getString(3)
                 val description = getString(4)
                 val dtStart = getLong(5)
                 val dtEnd = getLong(6)
                 val eventTimezone = getString(7)
-                val eventEndTimezone = getString(8)
-                val duration = getString(9)
-                val allDay = getString(10)
-                val rRule = getString(11)
-                val rDate = getString(12)
 
-                events.add(
-                        UserEvent(id, organizer, title
-                                , eventLocation, description
-                                , dtStart, dtEnd, eventTimezone, eventEndTimezone
-                                , duration, allDay, rRule, rDate
-                        )
-                )
+                events.add(UserEvent(id, title, description, dtStart, dtEnd, eventTimezone))
             }
         }.close()
 
@@ -113,11 +101,11 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(selectedDate: PersianCalendar): ArrayList<UserEvent> {
+    fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
         val selectedEvents = ArrayList<UserEvent>()
 
         for (event in mEvents)
-            if (selectedDate.equals(event.mStartDate))
+            if (event.inTheSameDate(year, month, day))
                 selectedEvents.add(event)
 
         return selectedEvents
@@ -145,7 +133,7 @@ object CalendarDataStore {
             put(CalendarContract.Events.DESCRIPTION, newEvent.description)
             put(CalendarContract.Events.DTSTART, newEvent.dtStart)
             put(CalendarContract.Events.DTEND, newEvent.dtStart + 1000 * 60 * 60)
-            put(CalendarContract.Events.EVENT_TIMEZONE, PersianCalendar().timeZone.displayName)
+            put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
         }
 
         // Submit the query and get a Cursor object back.
@@ -170,7 +158,7 @@ object CalendarDataStore {
         val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
         val rows = cr.update(updateUri, values, null, null)
 
-        //Update Google Events Pool
+        //Update Events Pool
         for(i in 0 until mEvents.size)
             if (event.id == mEvents[i].id)
                 mEvents[i] = event
@@ -178,14 +166,14 @@ object CalendarDataStore {
         return rows
     }
 
-    fun deleteEvent(event: UserEvent): Int {
+    fun deleteEvent(eventId: Long): Int {
         //Delete Event Row
         val cr = ApplicationController.getContext().contentResolver
-        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
+        val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
         val rows = cr.delete(deleteUri, null, null)
 
-        //Remove From Google Events Pool
-        mEvents.remove(event)
+        //Remove From Events Pool
+        mEvents.removeAll { it.id == eventId }
 
         return rows
     }

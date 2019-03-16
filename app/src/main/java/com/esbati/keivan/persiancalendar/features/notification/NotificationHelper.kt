@@ -88,8 +88,8 @@ object NotificationHelper {
         val notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
         val mBuilder = NotificationCompat.Builder(context, STICKY_NOTIFICATION_CHANNEL_ID)
                 .setPriority(notificationPriority)
-                .setColor(ColorHelper.getSeasonColor(shownDay.mPersianDate.persianMonth))
-                .setSmallIcon(R.drawable.icon01 + shownDay.mDayNo - 1)
+                .setColor(ColorHelper.getSeasonColor(shownDay.mMonth))
+                .setSmallIcon(R.drawable.icon01 + shownDay.mDay - 1)
                 .setContentIntent(pIntent)
                 .setWhen(0)
                 .setShowWhen(false)
@@ -98,7 +98,7 @@ object NotificationHelper {
 
         //Setup Title Text
         mBuilder.setContentTitle(
-                LanguageHelper.formatStringInPersian(shownDay.mPersianDate.persianLongDate)
+                LanguageHelper.formatStringInPersian(shownDay.formattedDate)
         )
 
         //Set Content Text
@@ -110,7 +110,7 @@ object NotificationHelper {
         //If more than one event is available add an expanded Inbox Style view
         if (shownDay.mEvents.size > 1) {
             val inboxStyle = NotificationCompat.InboxStyle()
-            inboxStyle.setBigContentTitle(shownDay.mPersianDate.persianLongDate)
+            inboxStyle.setBigContentTitle(shownDay.formattedDate)
 
             for (event in shownDay.mEvents)
                 inboxStyle.addLine(
