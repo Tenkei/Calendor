@@ -4,25 +4,41 @@ sudo: false
 
 android:
   components:
-  - tools
-  - build-tools-28.0.3
-  - android-23
-  - android-28
-  - extra-google-google_play_services
-  - extra-google-m2repository
-  - extra-android-m2repository
-  - extra-android-support
-  - sys-img-armeabi-v7a-google_apis-21
+    - tools
+    - platform-tools
+    - build-tools-28.0.3
+    - android-23
+    - android-28
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - extra-android-support
+  
 before_install:
   - chmod +x gradlew
+
 script:
   - ./gradlew build check
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+  
+deploy:
+  provider: releases
+  api_key:
+    secure: kmAAxO01zPXQej3cYNJkMqHkbr+pXdY+UDSZJXbZxJyanm820GpJZH4DmTvvrrIv0byQjkH/f+V6hTr6fj8M1uzjH1WT9n003iuylSzpMVFR5aCrkIvSW3xmkeSYtJ57c1CL4DRmJwKcgWdOTHDHbdq1cXzZ7jZJvaXXrd1hpK35qkhwR4W7WtacOEeW10QWTJhXzqXseCaRQ+AxdNaDtI9scJPOkJ4XWcQ/dkeW9hcgY9d8xHGVgeZn8/duIH7G5364Ctx6grcEut1MZC9eIYse2FKuqgatEzvMcNpnbC4/fZa8ZdPKgxtf987ZOotbUfbKKITRfCUt/DVV5ywGKM7wvkxWlZd9BO++VWaEOOrrGaG8QwnILhEMQTXNL93sF2s2OLbrq4ZPkdz7kCXC+YuxLxh1xVD/Mso+lGpH0pkMIC8uqL7WlEYqiBV+vGpOPX+MesihWbX3HFTqzdcMRqKfe0vHGOZo0B4PGeGRD/F6Fjs/RTrbqOhfCB+sz5yn2gffNa224ylWEER2b5g/pRUzTqjMU1bI2t0dNhjQE9dHfcs6cVMMAuV7lMM5SYp74BG1i2dSP6bkXyDs9zlfo+2FlLhfEWU6TqmgE4GIWKifUXW1Cvr85+GZ61BVZVR3s2RXilKUABtGWMV/NXX2eDMjCYohVsMANRL6K6748jI=
+  file: app/release/app-release.apk
+  name: $TRAVIS_COMMIT_MESSAGE
+  body: "Changelog: $TRAVIS_COMMIT_RANGE"
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: Tenkei/Calendor
+    branch: master
