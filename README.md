@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Tenkei/Calendor.svg?branch=master)](https://travis-ci.com/Tenkei/Calendor) [![GitHub release](https://img.shields.io/github/release/Tenkei/Calendor.svg)](https://GitHub.com/Tenkei/Calendor/releases/) [![GitHub license](https://img.shields.io/github/license/Tenkei/Calendor.svg)](https://github.com/Tenkei/Calendor/blob/master/LICENSE)
+
 # Calendor 1.0
 *Design and inspiration.*
 
