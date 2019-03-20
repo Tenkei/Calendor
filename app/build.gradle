@@ -24,8 +24,8 @@ android {
         applicationId "com.github.tenkei.calendor"
         minSdkVersion 14
         targetSdkVersion 28
-        versionName "1.4.2"
-        versionCode 8
+        versionName "1.4.3"
+        versionCode 9
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
