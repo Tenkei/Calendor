@@ -68,7 +68,7 @@
                             android:text="آبان"
                             android:textSize="16sp"
                             android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum)_Bold.ttf"/>
+                            android:fontFamily="@font/iransans_fa_num_bold"/>
                         <TextView
                             android:id="@+id/toolbar_sub_title"
                             android:layout_width="wrap_content"
@@ -77,7 +77,7 @@
                             android:text="June - July"
                             android:textSize="13sp"
                             android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum).ttf"/>
+                            android:fontFamily="@font/iransans_fa_num"/>
                     </LinearLayout>
 
                     <ImageView

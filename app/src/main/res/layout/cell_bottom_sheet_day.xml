@@ -15,9 +15,11 @@
         android:paddingBottom="2dp"
         android:textSize="13sp"
         android:textColor="@android:color/white"
+        android:fontFamily="@font/iran_sans"
         android:maxLines="2"
         android:ellipsize="end"
-        tools:text="Event Title"/>
+        tools:text="Event Title"
+        tools:ignore="UnusedAttribute" />
 
     <ImageView
         tools:visibility="visible"

@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.esbati.keivan.persiancalendar.components.views.SquareContainer
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
+<com.esbati.keivan.persiancalendar.components.views.SquareContainer xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/calendar_background"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
     <TextView
         android:id="@+id/calendar_day_no"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|left"
-        android:layout_marginRight="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginTop="2dp"
-        android:text="1th"/>
+        android:layout_marginRight="4dp"
+        android:fontFamily="@font/iransans_fa_num"
+        android:text="1th"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/calendar_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginRight="2dp"
         android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:layout_marginBottom="-2dp"
-        android:lines="1"
         android:ellipsize="end"
-        android:textSize="8dp"/>
+        android:fontFamily="@font/iransans_fa_num_ultralight"
+        android:lines="1"
+        android:textSize="8dp"
+        tools:ignore="UnusedAttribute" />
 </com.esbati.keivan.persiancalendar.components.views.SquareContainer>
