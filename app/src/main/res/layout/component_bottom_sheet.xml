@@ -37,8 +37,7 @@
                     android:layout_marginTop="-4dp"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:fontFamily="@font/iran_sans"
-                    tools:ignore="UnusedAttribute" />
+                    app:fontFamily="@font/iran_sans"/>
             </LinearLayout>
 
             <LinearLayout
