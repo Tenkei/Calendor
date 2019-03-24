@@ -62,9 +62,8 @@
                             android:layout_height="wrap_content"
                             android:text="آبان"
                             android:textSize="16sp"
-                            android:textColor="@android:color/white"
-                            android:fontFamily="@font/iransans_fa_num_bold"
-                            tools:ignore="UnusedAttribute" />
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
                         <TextView
                             android:id="@+id/toolbar_sub_title"
                             android:layout_width="wrap_content"
@@ -72,9 +71,7 @@
                             android:layout_marginTop="-4dp"
                             android:text="June - July"
                             android:textSize="13sp"
-                            android:textColor="@android:color/white"
-                            android:fontFamily="@font/iransans_fa_num"
-                            tools:ignore="UnusedAttribute" />
+                            android:textColor="@android:color/white"/>
                     </LinearLayout>
 
                     <ImageView

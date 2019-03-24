@@ -15,9 +15,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="2dp"
         android:layout_marginRight="4dp"
-        android:fontFamily="@font/iransans_fa_num"
-        android:text="1th"
-        tools:ignore="UnusedAttribute" />
+        android:text="1th"/>
 
     <TextView
         android:id="@+id/calendar_events"
@@ -28,8 +26,6 @@
         android:layout_marginRight="2dp"
         android:layout_marginBottom="-2dp"
         android:ellipsize="end"
-        android:fontFamily="@font/iransans_fa_num_ultralight"
         android:lines="1"
-        android:textSize="8dp"
-        tools:ignore="UnusedAttribute" />
+        android:textSize="8dp"/>
 </com.esbati.keivan.persiancalendar.components.views.SquareContainer>
