@@ -6,6 +6,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Typeface
+import android.os.Build
 import android.support.annotation.FontRes
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
@@ -80,32 +81,26 @@ fun AlertDialog.Builder.showThemedDialog(): AlertDialog {
 
 fun AlertDialog.showThemedDialog() {
     show()
-    setDefaultTheme()
+    applyDefaultTheme()
 }
 
-@SuppressLint("NewApi")
-fun AlertDialog.setDefaultTheme(): AlertDialog {
-    findViewById<TextView>(R.id.alertTitle)?.layoutDirection = View.LAYOUT_DIRECTION_RTL
-    setDialogFont(
-            title = R.font.iransans_fa_num_bold,
-            buttons = R.font.iran_sans,
-            message = R.font.iran_sans)
+fun AlertDialog.applyDefaultTheme(): AlertDialog {
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
+        findViewById<TextView>(R.id.alertTitle)?.layoutDirection = View.LAYOUT_DIRECTION_RTL
+
+    applyFont()
     return this
 }
 
-fun AlertDialog.setDialogFont(@FontRes title: Int = -1,
-                              @FontRes message: Int = -1,
-                              @FontRes buttons: Int = -1): AlertDialog {
+fun AlertDialog.applyFont(@FontRes title: Int = R.font.iransans_fa_num_bold,
+                              @FontRes message: Int = R.font.iran_sans,
+                              @FontRes buttons: Int = R.font.iran_sans): AlertDialog {
 
-    if (message != -1)
-        findViewById<TextView>(android.R.id.message)?.typeface = ResourcesCompat.getFont(context, message)
-    if (buttons != -1) {
-        findViewById<TextView>(android.R.id.button1)?.typeface = ResourcesCompat.getFont(context, buttons)
-        findViewById<TextView>(android.R.id.button2)?.typeface = ResourcesCompat.getFont(context, buttons)
-        findViewById<TextView>(android.R.id.button3)?.typeface = ResourcesCompat.getFont(context, buttons)
-    }
-    if (title != -1)
-        findViewById<TextView>(R.id.alertTitle)?.typeface = ResourcesCompat.getFont(context, title)
+    findViewById<TextView>(R.id.alertTitle)?.typeface = ResourcesCompat.getFont(context, title)
+    findViewById<TextView>(android.R.id.message)?.typeface = ResourcesCompat.getFont(context, message)
+    findViewById<TextView>(android.R.id.button1)?.typeface = ResourcesCompat.getFont(context, buttons)
+    findViewById<TextView>(android.R.id.button2)?.typeface = ResourcesCompat.getFont(context, buttons)
+    findViewById<TextView>(android.R.id.button3)?.typeface = ResourcesCompat.getFont(context, buttons)
 
     return this
 }
