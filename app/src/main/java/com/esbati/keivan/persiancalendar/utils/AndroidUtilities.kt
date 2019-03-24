@@ -72,6 +72,17 @@ object AndroidUtilities {
     }
 }
 
+fun AlertDialog.Builder.showThemedDialog(): AlertDialog {
+    val dialog = this.create()
+    dialog.showThemedDialog()
+    return dialog
+}
+
+fun AlertDialog.showThemedDialog() {
+    show()
+    setDefaultTheme()
+}
+
 @SuppressLint("NewApi")
 fun AlertDialog.setDefaultTheme(): AlertDialog {
     findViewById<TextView>(R.id.alertTitle)?.layoutDirection = View.LAYOUT_DIRECTION_RTL
@@ -97,21 +108,6 @@ fun AlertDialog.setDialogFont(@FontRes title: Int = -1,
         findViewById<TextView>(R.id.alertTitle)?.typeface = ResourcesCompat.getFont(context, title)
 
     return this
-}
-
-@SuppressLint("NewApi")
-fun AlertDialog.showThemedDialog(): AlertDialog {
-    show()
-    //Set Title Gravity
-    setDefaultTheme()
-    return this
-}
-
-@SuppressLint("NewApi")
-fun AlertDialog.Builder.showThemedDialog(): AlertDialog {
-    val dialog = show()
-    dialog.setDefaultTheme()
-    return dialog
 }
 
 

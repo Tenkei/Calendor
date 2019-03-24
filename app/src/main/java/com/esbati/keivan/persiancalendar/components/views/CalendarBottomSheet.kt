@@ -166,7 +166,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
         eventTitleIcon.visibility = View.VISIBLE
         eventTitleIcon.setOnClickListener {
-            val dialog = AlertDialog.Builder(context)
+            AlertDialog.Builder(context)
                     //.setView(mDialogView)
                     .setTitle(resources.getString(R.string.dialog_delete_event_title))
                     .setMessage(resources.getString(R.string.dialog_delete_event_body))
