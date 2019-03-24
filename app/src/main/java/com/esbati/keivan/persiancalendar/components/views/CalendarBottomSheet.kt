@@ -1,12 +1,12 @@
 package com.esbati.keivan.persiancalendar.components.views
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.widget.NestedScrollView
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -20,8 +20,7 @@ import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
-import com.esbati.keivan.persiancalendar.utils.Constants
-import java.util.*
+import com.esbati.keivan.persiancalendar.utils.showThemedDialog
 
 /**
  * Created by asus on 11/25/2016.
@@ -174,8 +173,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
                     .setNegativeButton(resources.getString(R.string.dialog_button_return), null)
                     .setPositiveButton(resources.getString(R.string.dialog_button_confirm)) { _, _ ->
                         onDeleteEvent()
-                    }.create()
-            AndroidUtilities.showRTLDialog(dialog)
+                    }.showThemedDialog()
         }
 
         //Set Event Description

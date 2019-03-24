@@ -2,6 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:focusableInTouchMode="true"
     android:descendantFocusability="beforeDescendants"
     android:layout_width="match_parent"
@@ -23,24 +24,38 @@
                 android:layout_height="48dp">
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_1"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_2"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_3"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_4"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_5"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_6"/>
                 <TextView
                     style="@style/CalendarWeekDays"
+                    android:fontFamily="@font/iransans_fa_num_bold"
+                    tools:ignore="UnusedAttribute"
                     android:text="@string/weekday_7"/>
             </LinearLayout>
 

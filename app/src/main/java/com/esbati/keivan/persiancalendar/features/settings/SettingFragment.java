@@ -1,6 +1,7 @@
 package com.esbati.keivan.persiancalendar.features.settings;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import com.esbati.keivan.persiancalendar.BuildConfig;
+import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.components.views.HeaderCell;
 import com.esbati.keivan.persiancalendar.components.views.ShadowSectionCell;
 import com.esbati.keivan.persiancalendar.components.views.TextCheckCell;
@@ -20,8 +22,9 @@ import com.esbati.keivan.persiancalendar.components.views.TextInfoCell;
 import com.esbati.keivan.persiancalendar.components.views.TextSettingsCell;
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper;
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService;
-import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by asus on 4/16/2017.
@@ -47,27 +50,27 @@ public class SettingFragment extends BottomSheetDialogFragment {
     public final static String[] mPriorityTitles = {"کمترین", "پایین", "پیش فرض", "بالا", "بیشترین"};
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_setting, container, false);
 
         setupView(rootView);
         return rootView;
     }
 
-    private void setupView(View rootView){
-        mSettingContainer = (LinearLayout)rootView.findViewById(R.id.main_container);
+    private void setupView(View rootView) {
+        mSettingContainer = rootView.findViewById(R.id.main_container);
         addSettings(mSettingContainer);
     }
 
-    private void addSettings(LinearLayout settingContainer){
-
+    private void addSettings(LinearLayout settingContainer) {
+        Context activity =  settingContainer.getContext();
         //Sticky Notification
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            mAnimation = new HeaderCell(getActivity());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mAnimation = new HeaderCell(activity);
             mAnimation.setText(getString(R.string.setting_animation));
             settingContainer.addView(mAnimation);
 
-            mSelectionAnimation = new TextCheckCell(getActivity());
+            mSelectionAnimation = new TextCheckCell(activity);
             mSelectionAnimation.setTextAndCheck(getString(R.string.setting_animation_selection)
                     , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
                     , false);
@@ -81,15 +84,15 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 }
             });
 
-            settingContainer.addView(new ShadowSectionCell(getActivity()));
+            settingContainer.addView(new ShadowSectionCell(activity));
         }
 
         //Sticky Notification
-        mStickyNotification = new HeaderCell(getActivity());
+        mStickyNotification = new HeaderCell(activity);
         mStickyNotification.setText(getString(R.string.setting_sticky_notification));
         settingContainer.addView(mStickyNotification);
 
-        mShowNotification = new TextCheckCell(getActivity());
+        mShowNotification = new TextCheckCell(activity);
         mShowNotification.setTextAndCheck(getString(R.string.setting_sticky_notification_display)
                 , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
                 , true);
@@ -104,11 +107,11 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 mNotificationPriority.setEnabled(isChecked);
 
                 //Update Notification
-                NotificationUpdateService.Companion.enqueueUpdate(getContext());
+                NotificationUpdateService.Companion.enqueueUpdate(view.getContext());
             }
         });
 
-        mNotificationAction = new TextCheckCell(getActivity());
+        mNotificationAction = new TextCheckCell(activity);
         mNotificationAction.setTextAndCheck(getString(R.string.setting_sticky_notification_actions)
                 , PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)
                 , true);
@@ -121,13 +124,13 @@ public class SettingFragment extends BottomSheetDialogFragment {
                 ((TextCheckCell) view).setChecked(isChecked);
 
                 //Update Notification
-                NotificationUpdateService.Companion.enqueueUpdate(getContext());
+                NotificationUpdateService.Companion.enqueueUpdate(view.getContext());
             }
         });
 
-        mNotificationPriority = new TextSettingsCell(getActivity());
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            int channelImportanceIndex = NotificationHelper.getChannelImportance(getContext()) - 1;
+        mNotificationPriority = new TextSettingsCell(activity);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int channelImportanceIndex = NotificationHelper.getChannelImportance(activity) - 1;
             channelImportanceIndex = channelImportanceIndex <= 0 ? 0 : channelImportanceIndex;
             mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority)
                     , mPriorityTitles[channelImportanceIndex]
@@ -136,7 +139,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
             mNotificationPriority.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    NotificationHelper.openChannelSetting(getContext());
+                    NotificationHelper.openChannelSetting(view.getContext());
                 }
             });
         } else {
@@ -156,7 +159,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
                     numberPicker.setMaxValue(mPriorityTitles.length - 1);
                     numberPicker.setWrapSelectorWheel(false);
                     numberPicker.setDisplayedValues(mPriorityTitles);
-                    numberPicker.setValue(PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY,  2));
+                    numberPicker.setValue(PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2));
                     builder.setView(numberPicker);
                     builder.setPositiveButton(R.string.dialog_button_confirm, new DialogInterface.OnClickListener() {
                         @Override
@@ -168,7 +171,10 @@ public class SettingFragment extends BottomSheetDialogFragment {
                                     , false);
 
                             //Update Notification
-                            NotificationUpdateService.Companion.enqueueUpdate(getContext());
+                            Context context = getContext();
+                            if (context != null) {
+                                NotificationUpdateService.Companion.enqueueUpdate(context);
+                            }
                         }
                     });
                     builder.create().show();
@@ -178,7 +184,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
         }
 
         settingContainer.addView(mNotificationPriority);
-        settingContainer.addView(new ShadowSectionCell(getActivity()));
+        settingContainer.addView(new ShadowSectionCell(activity));
 
         //Setup Notification Options
         boolean isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true);
@@ -186,7 +192,7 @@ public class SettingFragment extends BottomSheetDialogFragment {
         mNotificationPriority.setEnabled(isChecked);
 
         //Application Version
-        TextInfoCell mApplicationVersion = new TextInfoCell(getActivity());
+        TextInfoCell mApplicationVersion = new TextInfoCell(activity);
         mApplicationVersion.setBackgroundResource(R.color.colorPrimary);
         mApplicationVersion.setTextColor(Color.WHITE);
         mApplicationVersion.setText(getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME);

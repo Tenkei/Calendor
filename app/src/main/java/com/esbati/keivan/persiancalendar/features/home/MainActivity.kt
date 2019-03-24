@@ -1,27 +1,21 @@
 package com.esbati.keivan.persiancalendar.features.home
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
+import com.esbati.keivan.persiancalendar.utils.showThemedDialog
 
 private const val PERMISSIONS_REQUEST_READ_CALENDAR = 76
 
 class MainActivity : AppCompatActivity() {
-
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme_NoActionBar)
@@ -43,7 +37,7 @@ class MainActivity : AppCompatActivity() {
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CALENDAR)) {
 
                 // Permission Request Explanation
-                val dialog = AlertDialog.Builder(this)
+                AlertDialog.Builder(this)
                         .setTitle(resources.getString(R.string.dialog_calendar_rationale_title))
                         .setMessage(resources.getString(R.string.dialog_calendar_rationale_body))
                         .setNegativeButton(resources.getString(R.string.dialog_button_return), null)
@@ -52,8 +46,8 @@ class MainActivity : AppCompatActivity() {
                             ActivityCompat.requestPermissions(this@MainActivity,
                                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                                     PERMISSIONS_REQUEST_READ_CALENDAR)
-                        }.create()
-                AndroidUtilities.showRTLDialog(dialog)
+                        }
+                        .showThemedDialog()
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this,
@@ -80,14 +74,14 @@ class MainActivity : AppCompatActivity() {
             return
         } else {
             //Exit Confirmation Dialog
-            val dialog = AlertDialog.Builder(this)
+            AlertDialog.Builder(this)
                     .setTitle(resources.getString(R.string.dialog_exit_title))
                     .setMessage(resources.getString(R.string.dialog_exit_body))
                     .setNegativeButton(resources.getString(R.string.dialog_button_return), null)
                     .setPositiveButton(resources.getString(R.string.dialog_button_exit)) {
                         _, _ -> super@MainActivity.onBackPressed()
-                    }.create()
-            AndroidUtilities.showRTLDialog(dialog)
+                    }
+                    .showThemedDialog()
         }
     }
 

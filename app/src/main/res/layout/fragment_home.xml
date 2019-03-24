@@ -1,6 +1,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -62,7 +63,8 @@
                             android:text="آبان"
                             android:textSize="16sp"
                             android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum)_Bold.ttf"/>
+                            android:fontFamily="@font/iransans_fa_num_bold"
+                            tools:ignore="UnusedAttribute" />
                         <TextView
                             android:id="@+id/toolbar_sub_title"
                             android:layout_width="wrap_content"
@@ -71,7 +73,8 @@
                             android:text="June - July"
                             android:textSize="13sp"
                             android:textColor="@android:color/white"
-                            fontPath="fonts/IRANSans(FaNum).ttf"/>
+                            android:fontFamily="@font/iransans_fa_num"
+                            tools:ignore="UnusedAttribute" />
                     </LinearLayout>
 
                     <ImageView

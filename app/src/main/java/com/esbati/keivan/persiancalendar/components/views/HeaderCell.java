@@ -9,11 +9,13 @@
 package com.esbati.keivan.persiancalendar.components.views;
 
 import android.content.Context;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.esbati.keivan.persiancalendar.R;
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
 
@@ -26,7 +28,7 @@ public class HeaderCell extends FrameLayout {
 
         textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/IRANSans(FaNum)_Medium.ttf"));
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.iran_sans));
         textView.setTextColor(0xff3e90cf);
         textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.TOP, 17, 15, 17, 0));
