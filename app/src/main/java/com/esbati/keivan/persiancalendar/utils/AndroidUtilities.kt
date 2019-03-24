@@ -21,28 +21,10 @@ import java.util.*
 object AndroidUtilities {
 
     private val density = ApplicationController.getContext().resources.displayMetrics.density
-    private val typefaceCache = Hashtable<String, Typeface>()
 
     @JvmStatic
     fun dp(value: Float): Int {
         return if (value == 0f) 0 else Math.ceil((density * value).toDouble()).toInt()
-    }
-
-    @JvmStatic
-    fun getTypeface(assetPath: String): Typeface? {
-        synchronized(typefaceCache) {
-            if (!typefaceCache.containsKey(assetPath)) {
-                try {
-                    val t = Typeface.createFromAsset(ApplicationController.getContext().assets, assetPath)
-                    typefaceCache[assetPath] = t
-                } catch (e: Exception) {
-                    Log.e("Typefaces", "Could not get typeface '" + assetPath + "' because " + e.message)
-                    return null
-                }
-
-            }
-            return typefaceCache[assetPath]
-        }
     }
 
     @JvmStatic
