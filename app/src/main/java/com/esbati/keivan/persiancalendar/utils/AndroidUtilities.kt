@@ -74,9 +74,7 @@ object AndroidUtilities {
 
 @SuppressLint("NewApi")
 fun AlertDialog.setDefaultTheme(): AlertDialog {
-    val alertTitle = ApplicationController.getContext().resources.getIdentifier("alertTitle", "id", "android")
-    val messageText = findViewById<TextView>(alertTitle)
-    messageText?.layoutDirection = View.LAYOUT_DIRECTION_RTL
+    findViewById<TextView>(R.id.alertTitle)?.layoutDirection = View.LAYOUT_DIRECTION_RTL
     setDialogFont(
             title = R.font.iransans_fa_num_bold,
             buttons = R.font.iran_sans,
