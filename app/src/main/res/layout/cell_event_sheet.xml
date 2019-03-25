@@ -19,8 +19,7 @@
         android:drawablePadding="8dp"
         android:drawableRight="@drawable/ic_tag_grey600_18dp"
         android:background="@null"
-        app:fontFamily="@font/iran_sans"
-        tools:ignore="UnusedAttribute" />
+        app:fontFamily="@font/iran_sans"/>
 
 
     <EditText

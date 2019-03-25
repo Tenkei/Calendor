@@ -9,15 +9,14 @@
 package com.esbati.keivan.persiancalendar.components.views;
 
 import android.content.Context;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
+
+import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
 public class HeaderCell extends FrameLayout {
 
@@ -35,7 +34,7 @@ public class HeaderCell extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(38), MeasureSpec.EXACTLY));
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(toDp(38), MeasureSpec.EXACTLY));
     }
 
     public void setText(String text) {
