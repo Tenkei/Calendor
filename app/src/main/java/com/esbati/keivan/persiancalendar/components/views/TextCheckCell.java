@@ -16,6 +16,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.esbati.keivan.persiancalendar.R;
@@ -23,7 +24,7 @@ import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
 
 import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
-public class TextCheckCell extends FrameLayoutFixed {
+public class TextCheckCell extends FrameLayout {
 
     private TextView textView;
     private SwitchCompat checkBox;
