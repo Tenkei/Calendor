@@ -34,6 +34,10 @@ android {
             shrinkResources false // Protect resource that are accessed dynamically
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
+        }
     }
     lintOptions {
         abortOnError false
