@@ -19,8 +19,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
+
+import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
 public class TextCheckCell extends FrameLayoutFixed {
 
@@ -57,7 +58,7 @@ public class TextCheckCell extends FrameLayoutFixed {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48) + (needDivider ? 1 : 0), View.MeasureSpec.EXACTLY));
+        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(toDp(48) + (needDivider ? 1 : 0), View.MeasureSpec.EXACTLY));
     }
 
     public void setTextAndCheck(String text, boolean checked, boolean divider) {

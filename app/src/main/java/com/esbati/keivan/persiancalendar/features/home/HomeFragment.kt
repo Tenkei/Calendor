@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.*
+import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
@@ -28,11 +29,10 @@ import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdat
 import com.esbati.keivan.persiancalendar.features.settings.SettingFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
-import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.repository.Repository
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.utils.Constants
-import ir.smartlab.persindatepicker.util.PersianCalendar
+import com.esbati.keivan.persiancalendar.utils.dp
+import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
 
@@ -110,7 +110,7 @@ class HomeFragment : Fragment() {
 
         mCollapsingToolbar.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
             override fun onGlobalLayout() {
-                mCollapsingToolbar.scrimVisibleHeightTrigger = mCollapsingToolbar.height - AndroidUtilities.dp(48f)
+                mCollapsingToolbar.scrimVisibleHeightTrigger = mCollapsingToolbar.height - 48.toDp()
                 mCollapsingToolbar.viewTreeObserver.removeGlobalOnLayoutListener(this)
             }
         })
@@ -135,8 +135,8 @@ class HomeFragment : Fragment() {
         mAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val abHeight = mAppbar.totalScrollRange.toFloat()
             val heightRatio = (abHeight - Math.abs(verticalOffset)) / abHeight //Range from 1 to 0
-            val newToolbarMarginPixel = (heightRatio * AndroidUtilities.dp(48f)).toInt() //Range from 48 to 0
-            val newButtonMarginPixel = ((1 - heightRatio) * AndroidUtilities.dp(48f)).toInt() //Range from 0 to 48
+            val newToolbarMarginPixel = (heightRatio * 48.toDp()).toInt() //Range from 48 to 0
+            val newButtonMarginPixel = ((1 - heightRatio) * 48.toDp()).toInt() //Range from 0 to 48
 
             //Set Toolbar and Icon Margin, Since Padding is int Value
             if (mToolbarMargin != newToolbarMarginPixel)
@@ -155,7 +155,7 @@ class HomeFragment : Fragment() {
                     mLeftBtn.layoutParams = flp
 
                     flp = (mSetting.layoutParams as FrameLayout.LayoutParams).apply {
-                        setMargins(0, 0, newButtonMarginPixel - AndroidUtilities.dp(48f), 0)
+                        setMargins(0, 0, newButtonMarginPixel - 48.toDp(), 0)
                     }
                     mSetting.layoutParams = flp
                 }

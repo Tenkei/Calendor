@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- regular -->
+    <font
+        app:font="@font/iransans_fa_num"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <!-- italic -->
+    <font
+        app:font="@font/iransans_fa_num_ultralight"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+
+    <!-- bold -->
+    <font
+        app:font="@font/iransans_fa_num_bold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+</font-family>

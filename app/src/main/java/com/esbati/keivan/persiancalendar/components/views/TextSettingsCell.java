@@ -19,8 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities;
 import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
+
+import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
 public class TextSettingsCell extends FrameLayout {
 
@@ -67,16 +68,16 @@ public class TextSettingsCell extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), AndroidUtilities.dp(48) + (needDivider ? 1 : 0));
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), toDp(48) + (needDivider ? 1 : 0));
 
-        int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - AndroidUtilities.dp(34);
+        int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - toDp(34);
         int width = availableWidth / 2;
         if (valueImageView.getVisibility() == VISIBLE) {
             valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
         }
         if (valueTextView.getVisibility() == VISIBLE) {
             valueTextView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
-            width = availableWidth - valueTextView.getMeasuredWidth() - AndroidUtilities.dp(8);
+            width = availableWidth - valueTextView.getMeasuredWidth() - toDp(8);
         } else {
             width = availableWidth;
         }

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingRight="16dp"
     android:paddingLeft="16dp"
     android:clickable="true"
@@ -13,13 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
         android:paddingBottom="2dp"
-        android:textSize="13sp"
-        android:textColor="@android:color/white"
-        android:fontFamily="@font/iran_sans"
         android:maxLines="2"
         android:ellipsize="end"
-        tools:text="Event Title"
-        tools:ignore="UnusedAttribute" />
+        android:textSize="13sp"
+        android:textColor="@android:color/white"
+        app:fontFamily="@font/iran_sans"
+        tools:text="Event Title"/>
 
     <ImageView
         tools:visibility="visible"

@@ -15,11 +15,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
-import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.repository.Repository
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
+import com.esbati.keivan.persiancalendar.utils.hideSoftKeyboard
 import com.esbati.keivan.persiancalendar.utils.showThemedDialog
 
 /**
@@ -267,7 +267,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)
                 eventActionBtn.setOnClickListener { view ->
-                    AndroidUtilities.hideSoftKeyboard(view)
+                    view.hideSoftKeyboard()
                     onEventListener?.onEventEdited(tempEvent.copy(
                             title = mEventTitle.text.toString(),
                             description = mEventDesc.text.toString()

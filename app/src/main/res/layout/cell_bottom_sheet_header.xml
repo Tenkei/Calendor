@@ -15,9 +15,9 @@
         android:layout_marginBottom="2dp"
         android:maxLines="2"
         android:ellipsize="end"
-        android:fontFamily="@font/iransans_fa_num_bold"
         android:text="Title Test"
         android:textSize="14sp"
+        android:textStyle="bold"
         android:textColor="@android:color/white"
         tools:ignore="UnusedAttribute" />
 

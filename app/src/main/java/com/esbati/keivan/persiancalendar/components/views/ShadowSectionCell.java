@@ -12,7 +12,8 @@ import android.content.Context;
 import android.view.View;
 
 import com.esbati.keivan.persiancalendar.R;
-import com.esbati.keivan.persiancalendar.utils.AndroidUtilities;
+
+import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
 public class ShadowSectionCell extends View {
 
@@ -23,6 +24,6 @@ public class ShadowSectionCell extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(12), MeasureSpec.EXACTLY));
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(toDp(12), MeasureSpec.EXACTLY));
     }
 }
