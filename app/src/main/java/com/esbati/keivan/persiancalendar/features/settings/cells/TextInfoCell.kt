@@ -6,9 +6,11 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.esbati.keivan.persiancalendar.features.settings.ViewMarker
 import com.esbati.keivan.persiancalendar.utils.LayoutHelper
 import com.esbati.keivan.persiancalendar.utils.toDp
 
+@ViewMarker
 class TextInfoCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
