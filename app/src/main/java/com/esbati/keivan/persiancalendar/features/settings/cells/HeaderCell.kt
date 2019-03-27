@@ -14,7 +14,7 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 class HeaderCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
-    var text: String get() = textView.text.toString()
+    var title: String get() = textView.text.toString()
         set(value) {
             textView.text = value
         }

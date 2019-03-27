@@ -12,7 +12,6 @@ import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
-import com.esbati.keivan.persiancalendar.features.settings.Container.Companion.container
 import com.esbati.keivan.persiancalendar.features.settings.cells.TextCheckCell
 import com.esbati.keivan.persiancalendar.features.settings.cells.TextSettingsCell
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
@@ -21,7 +20,7 @@ import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
  * Created by asus on 4/16/2017.
  */
 
-class SettingFragment : BottomSheetDialogFragment() {
+class SettingsFragment : BottomSheetDialogFragment() {
 
     private val mPriorityTitles = arrayOf("کمترین", "پایین", "پیش فرض", "بالا", "بیشترین")
 
@@ -33,7 +32,7 @@ class SettingFragment : BottomSheetDialogFragment() {
         //Selection Animation
         header(R.string.setting_animation)
         textCheck {
-            text = getString(R.string.setting_animation_selection)
+            title = getString(R.string.setting_animation_selection)
             isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
             isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
             needDivider = false
@@ -46,7 +45,7 @@ class SettingFragment : BottomSheetDialogFragment() {
         //Sticky Notification
         header(R.string.setting_sticky_notification)
         textCheck {
-            text = getString(R.string.setting_sticky_notification_display)
+            title = getString(R.string.setting_sticky_notification_display)
             isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
             needDivider = true
             onClick {
@@ -63,7 +62,7 @@ class SettingFragment : BottomSheetDialogFragment() {
         textCheck {
             mNotificationAction = this
 
-            text = getString(R.string.setting_sticky_notification_actions)
+            title = getString(R.string.setting_sticky_notification_actions)
             isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
             isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)
             needDivider = true
@@ -81,11 +80,11 @@ class SettingFragment : BottomSheetDialogFragment() {
             isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channelImportanceIndex = Math.max(0, NotificationHelper.getChannelImportance(context!!) - 1)
-                text = getString(R.string.setting_sticky_notification_priority)
+                title = getString(R.string.setting_sticky_notification_priority)
                 value = mPriorityTitles[channelImportanceIndex]
                 onClick { NotificationHelper.openChannelSetting(context) }
             } else {
-                text = getString(R.string.setting_sticky_notification_priority)
+                title = getString(R.string.setting_sticky_notification_priority)
                 value = mPriorityTitles[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
                 onClick { showNotificationPriorityPicker() }
             }
@@ -97,6 +96,7 @@ class SettingFragment : BottomSheetDialogFragment() {
         textInfo{
             text = "${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}"
             textColor = Color.WHITE
+            setBackgroundResource(R.color.colorPrimary)
         }
     }
 

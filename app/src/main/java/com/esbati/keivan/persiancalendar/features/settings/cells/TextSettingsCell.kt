@@ -22,12 +22,7 @@ class TextSettingsCell(context: Context) : FrameLayout(context) {
     private val valueTextView: TextView
     private val valueImageView: ImageView
 
-    var needDivider: Boolean = false
-        set(value) {
-            field = value
-            setWillNotDraw(!value)
-        }
-    var text: String
+    var title: String
         get() = textView.text.toString()
         set(value) {
             textView.text = value
@@ -54,6 +49,11 @@ class TextSettingsCell(context: Context) : FrameLayout(context) {
             } else {
                 valueImageView.visibility = View.INVISIBLE
             }
+        }
+    var needDivider: Boolean = false
+        set(value) {
+            field = value
+            setWillNotDraw(!value)
         }
 
     init {
@@ -87,13 +87,13 @@ class TextSettingsCell(context: Context) : FrameLayout(context) {
     }
 
     fun setTextAndValue(text: String, value: String?, divider: Boolean) {
-        this.text = text
+        this.title = text
         this.value = value
         needDivider = divider
     }
 
     fun setTextAndIcon(text: String, iconResId: Int, divider: Boolean) {
-        this.text = text
+        this.title = text
         this.iconResId = iconResId
         needDivider = divider
     }

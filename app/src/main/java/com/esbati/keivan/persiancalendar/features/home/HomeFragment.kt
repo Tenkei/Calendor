@@ -26,12 +26,11 @@ import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
 import com.esbati.keivan.persiancalendar.features.calendarPage.CalendarFragment
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
-import com.esbati.keivan.persiancalendar.features.settings.SettingFragment
+import com.esbati.keivan.persiancalendar.features.settings.SettingsFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.Constants
-import com.esbati.keivan.persiancalendar.utils.dp
 import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
@@ -118,8 +117,8 @@ class HomeFragment : Fragment() {
         mRightBtn.setOnClickListener { mPager.loadRightItem() }
         mLeftBtn.setOnClickListener { mPager.loadLeftItem() }
         mSetting.setOnClickListener {
-            SettingFragment().also {
-                it.show(activity!!.supportFragmentManager, SettingFragment::class.java.simpleName)
+            SettingsFragment().also {
+                it.show(activity!!.supportFragmentManager, SettingsFragment::class.java.simpleName)
             }
         }
 

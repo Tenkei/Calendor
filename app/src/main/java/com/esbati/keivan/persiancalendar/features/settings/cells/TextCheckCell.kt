@@ -19,7 +19,7 @@ class TextCheckCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
     private val checkBox: SwitchCompat
-    var text: String
+    var title: String
         get() = textView.text.toString()
         set(value) {
             textView.text = value

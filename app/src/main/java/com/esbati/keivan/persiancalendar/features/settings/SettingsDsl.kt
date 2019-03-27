@@ -17,20 +17,18 @@ class Container(context: Context) : LinearLayout(context) {
         orientation = LinearLayout.VERTICAL
     }
 
-    private fun <V : View> initView(view: V, init: V.() -> Unit): V {
+    private fun <V : View> initViewIntoGroup(view: V, init: V.() -> Unit): V {
         view.init()
         addView(view)
         return view
     }
 
-    fun header(init: HeaderCell.() -> Unit) = initView(HeaderCell(context), init)
-    fun textCheck(init: TextCheckCell.() -> Unit) = initView(TextCheckCell(context), init)
-    fun textSetting(init: TextSettingsCell.() -> Unit) = initView(TextSettingsCell(context), init)
-    fun textInfo(init: TextInfoCell.() -> Unit) = initView(TextInfoCell(context), init)
-    fun shadowDivider() = initView(ShadowSectionCell(context)) {}
-
-
-    fun header(@StringRes titleResId: Int) = header { text = context.getString(titleResId) }
+    fun header(@StringRes titleResId: Int) = header { title = context.getString(titleResId) }
+    fun header(init: HeaderCell.() -> Unit) = initViewIntoGroup(HeaderCell(context), init)
+    fun textCheck(init: TextCheckCell.() -> Unit) = initViewIntoGroup(TextCheckCell(context), init)
+    fun textSetting(init: TextSettingsCell.() -> Unit) = initViewIntoGroup(TextSettingsCell(context), init)
+    fun textInfo(init: TextInfoCell.() -> Unit) = initViewIntoGroup(TextInfoCell(context), init)
+    fun shadowDivider() = initViewIntoGroup(ShadowSectionCell(context)) {}
 
     companion object {
         fun container(context: Context, init: Container.() -> Unit): Container {
