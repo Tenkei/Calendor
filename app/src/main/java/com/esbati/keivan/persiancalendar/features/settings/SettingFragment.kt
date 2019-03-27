@@ -6,16 +6,15 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.NumberPicker
-
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
-import com.esbati.keivan.persiancalendar.features.settings.cells.*
+import com.esbati.keivan.persiancalendar.features.settings.Container.Companion.container
+import com.esbati.keivan.persiancalendar.features.settings.cells.TextCheckCell
+import com.esbati.keivan.persiancalendar.features.settings.cells.TextSettingsCell
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 
 /**
@@ -30,61 +29,41 @@ class SettingFragment : BottomSheetDialogFragment() {
     private lateinit var mNotificationPriority: TextSettingsCell
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_setting, container, false).apply {
-            setupView(this)
-        }
-    }
+    override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, savedInstanceState: Bundle?) = container(context!!) {
+        //Selection Animation
+        header { setText(getString(R.string.setting_animation)) }
 
-    private fun setupView(rootView: View) {
-        val settingContainer = rootView.findViewById(R.id.main_container) as LinearLayout
+        textCheck {
+            isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 
-        //Sticky Notification
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            settingContainer.addView(
-                    HeaderCell(context!!).apply {
-                        setText(getString(R.string.setting_animation))
-                    }
-            )
-
-            settingContainer.addView(
-                    TextCheckCell(context!!).apply {
-                        setTextAndCheck(getString(R.string.setting_animation_selection), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false), false)
-                        setOnClickListener{
-                            //Toggle Setting and Set Notification Settings
-                            val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
-                            setChecked(isChecked)
-                        }
-                    }
-            )
-
-            settingContainer.addView(ShadowSectionCell(context!!))
+            setTextAndCheck(getString(R.string.setting_animation_selection), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false), false)
+            setOnClickListener {
+                //Toggle Setting and Set Notification Settings
+                val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
+                setChecked(isChecked)
+            }
         }
 
+        shadowDivider()
+
         //Sticky Notification
-        settingContainer.addView(
-                HeaderCell(context!!).apply {
-                    setText(getString(R.string.setting_sticky_notification))
-                }
-        )
+        header { setText(getString(R.string.setting_sticky_notification)) }
 
-        settingContainer.addView(
-                TextCheckCell(context!!).apply {
-                    setTextAndCheck(getString(R.string.setting_sticky_notification_display), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true), true)
-                    setOnClickListener{
-                        //Toggle Setting and Set Notification Settings
-                        val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
-                        setChecked(isChecked)
-                        mNotificationAction.isEnabled = isChecked
-                        mNotificationPriority.isEnabled = isChecked
+        textCheck {
+            setTextAndCheck(getString(R.string.setting_sticky_notification_display), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true), true)
+            setOnClickListener{
+                //Toggle Setting and Set Notification Settings
+                val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
+                setChecked(isChecked)
+                mNotificationAction.isEnabled = isChecked
+                mNotificationPriority.isEnabled = isChecked
 
-                        //Update Notification
-                        NotificationUpdateService.enqueueUpdate(context!!)
-                    }
-                }
-        )
+                //Update Notification
+                NotificationUpdateService.enqueueUpdate(context!!)
+            }
+        }
 
-        mNotificationAction = TextCheckCell(context!!).apply {
+        mNotificationAction = textCheck {
             isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
 
             setTextAndCheck(getString(R.string.setting_sticky_notification_actions), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true), true)
@@ -97,9 +76,8 @@ class SettingFragment : BottomSheetDialogFragment() {
                 NotificationUpdateService.enqueueUpdate(context!!)
             }
         }
-        settingContainer.addView(mNotificationAction)
 
-        mNotificationPriority = TextSettingsCell(context!!).apply {
+        mNotificationPriority = textSetting {
             isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -111,17 +89,15 @@ class SettingFragment : BottomSheetDialogFragment() {
                 setOnClickListener { showNotificationPriorityPicker() }
             }
         }
-        settingContainer.addView(mNotificationPriority)
-        settingContainer.addView(ShadowSectionCell(context!!))
+
+        shadowDivider()
 
         //Application Version
-        settingContainer.addView(
-                TextInfoCell(context!!).apply {
-                    setTextColor(Color.WHITE)
-                    setBackgroundResource(R.color.colorPrimary)
-                    setText("${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}")
-                }
-        )
+        textInfo{
+            setTextColor(Color.WHITE)
+            setBackgroundResource(R.color.colorPrimary)
+            setText("${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}")
+        }
     }
 
     private fun showNotificationPriorityPicker() {
