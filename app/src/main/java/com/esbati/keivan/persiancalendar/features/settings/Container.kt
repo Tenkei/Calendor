@@ -40,3 +40,7 @@ class Container(context: Context) : LinearLayout(context) {
         }
     }
 }
+
+fun View.onClick(action: (View) -> Unit) {
+    setOnClickListener(action)
+}
