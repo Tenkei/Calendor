@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2016.
  */
 
-package com.esbati.keivan.persiancalendar.components.views;
+package com.esbati.keivan.persiancalendar.features.settings.cells;
 
 import android.content.Context;
 import android.graphics.Canvas;

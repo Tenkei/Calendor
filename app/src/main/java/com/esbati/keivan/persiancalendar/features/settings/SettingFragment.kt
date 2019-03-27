@@ -13,9 +13,9 @@ import android.widget.NumberPicker
 
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.components.views.*
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
+import com.esbati.keivan.persiancalendar.features.settings.cells.*
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 
 /**

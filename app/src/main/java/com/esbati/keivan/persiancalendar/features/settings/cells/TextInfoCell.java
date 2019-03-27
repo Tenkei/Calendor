@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2016.
  */
 
-package com.esbati.keivan.persiancalendar.components.views;
+package com.esbati.keivan.persiancalendar.features.settings.cells;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -18,26 +18,31 @@ import com.esbati.keivan.persiancalendar.utils.LayoutHelper;
 
 import static com.esbati.keivan.persiancalendar.utils.AndroidUtilitiesKt.toDp;
 
-public class HeaderCell extends FrameLayout {
+public class TextInfoCell extends FrameLayout {
 
     private TextView textView;
 
-    public HeaderCell(Context context) {
+    public TextInfoCell(Context context) {
         super(context);
 
-        textView = new TextView(getContext());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        textView.setTextColor(0xff3e90cf);
-        textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.TOP, 17, 15, 17, 0));
+        textView = new TextView(context);
+        textView.setTextColor(0xffa3a3a3);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
+        textView.setGravity(Gravity.CENTER);
+        textView.setPadding(0, toDp(19), 0, toDp(19));
+        addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 17, 0, 17, 0));
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(toDp(38), MeasureSpec.EXACTLY));
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
     }
 
     public void setText(String text) {
         textView.setText(text);
+    }
+
+    public void setTextColor(int textColor){
+        textView.setTextColor(textColor);
     }
 }
