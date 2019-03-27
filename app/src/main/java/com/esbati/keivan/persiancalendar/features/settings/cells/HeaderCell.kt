@@ -14,9 +14,12 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 class HeaderCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
+    var text: String get() = textView.text.toString()
+        set(value) {
+            textView.text = value
+        }
 
     init {
-
         textView = TextView(getContext()).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
             setTextColor(-0xc16f31)
@@ -32,9 +35,5 @@ class HeaderCell(context: Context) : FrameLayout(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(38.toDp(), View.MeasureSpec.EXACTLY))
-    }
-
-    fun setText(text: String) {
-        textView.text = text
     }
 }

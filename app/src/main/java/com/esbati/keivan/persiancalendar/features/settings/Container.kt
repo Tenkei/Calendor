@@ -1,6 +1,7 @@
 package com.esbati.keivan.persiancalendar.features.settings
 
 import android.content.Context
+import android.support.annotation.StringRes
 import android.view.View
 import android.widget.LinearLayout
 import com.esbati.keivan.persiancalendar.features.settings.cells.*
@@ -29,6 +30,8 @@ class Container(context: Context) : LinearLayout(context) {
     fun shadowDivider() = initView(ShadowSectionCell(context)) {}
 
 
+    fun header(@StringRes titleResId: Int) = header { text = context.getString(titleResId) }
+
     companion object {
         fun container(context: Context, init: Container.() -> Unit): Container {
             val container = Container(context)
@@ -37,4 +40,3 @@ class Container(context: Context) : LinearLayout(context) {
         }
     }
 }
-

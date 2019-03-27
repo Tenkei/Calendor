@@ -31,30 +31,27 @@ class SettingFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, savedInstanceState: Bundle?) = container(context!!) {
         //Selection Animation
-        header { setText(getString(R.string.setting_animation)) }
-
+        header(R.string.setting_animation)
         textCheck {
+            text = getString(R.string.setting_animation_selection)
             isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-
-            setTextAndCheck(getString(R.string.setting_animation_selection), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false), false)
+            isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
+            needDivider = false
             setOnClickListener {
-                //Toggle Setting and Set Notification Settings
-                val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
-                setChecked(isChecked)
+                isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
             }
         }
-
         shadowDivider()
 
         //Sticky Notification
-        header { setText(getString(R.string.setting_sticky_notification)) }
-
+        header(R.string.setting_sticky_notification)
         textCheck {
-            setTextAndCheck(getString(R.string.setting_sticky_notification_display), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true), true)
+            text = getString(R.string.setting_sticky_notification_display)
+            isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
+            needDivider = true
             setOnClickListener{
                 //Toggle Setting and Set Notification Settings
-                val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
-                setChecked(isChecked)
+                isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
                 mNotificationAction.isEnabled = isChecked
                 mNotificationPriority.isEnabled = isChecked
 
@@ -63,29 +60,33 @@ class SettingFragment : BottomSheetDialogFragment() {
             }
         }
 
-        mNotificationAction = textCheck {
+        textCheck {
+            mNotificationAction = this
+
+            text = getString(R.string.setting_sticky_notification_actions)
             isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
-
-            setTextAndCheck(getString(R.string.setting_sticky_notification_actions), PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true), true)
+            isChecked = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)
+            needDivider = true
             setOnClickListener {
-                //Toggle Setting
-                val isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)
-                setChecked(isChecked)
-
-                //Update Notification
+                //Toggle Setting & Update Notification
+                isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)
                 NotificationUpdateService.enqueueUpdate(context!!)
             }
         }
 
-        mNotificationPriority = textSetting {
-            isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
+        textSetting {
+            mNotificationPriority = this
 
+            needDivider = false
+            isEnabled = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channelImportanceIndex = Math.max(0, NotificationHelper.getChannelImportance(context!!) - 1)
-                setTextAndValue(getString(R.string.setting_sticky_notification_priority), mPriorityTitles[channelImportanceIndex], false)
+                text = getString(R.string.setting_sticky_notification_priority)
+                value = mPriorityTitles[channelImportanceIndex]
                 setOnClickListener { NotificationHelper.openChannelSetting(context) }
             } else {
-                setTextAndValue(getString(R.string.setting_sticky_notification_priority), mPriorityTitles[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)], false)
+                text = getString(R.string.setting_sticky_notification_priority)
+                value = mPriorityTitles[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
                 setOnClickListener { showNotificationPriorityPicker() }
             }
         }
@@ -94,9 +95,9 @@ class SettingFragment : BottomSheetDialogFragment() {
 
         //Application Version
         textInfo{
-            setTextColor(Color.WHITE)
+            text = "${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}"
+            textColor = Color.WHITE
             setBackgroundResource(R.color.colorPrimary)
-            setText("${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}")
         }
     }
 

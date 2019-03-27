@@ -14,11 +14,20 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 class TextInfoCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
+    var text: String
+        get() = textView.text.toString()
+        set(value) {
+            textView.text = value
+        }
+    var textColor: Int = -0x5c5c5d
+        set(value) {
+            field = value
+            textView.setTextColor(value)
+        }
 
     init {
-
         textView = TextView(context).apply {
-            setTextColor(-0x5c5c5d)
+            setTextColor(textColor)
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
             gravity = Gravity.CENTER
             setPadding(0, 19.toDp(), 0, 19.toDp())
@@ -33,13 +42,5 @@ class TextInfoCell(context: Context) : FrameLayout(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-    }
-
-    fun setText(text: String) {
-        textView.text = text
-    }
-
-    fun setTextColor(textColor: Int) {
-        textView.setTextColor(textColor)
     }
 }

@@ -19,7 +19,22 @@ class TextCheckCell(context: Context) : FrameLayout(context) {
 
     private val textView: TextView
     private val checkBox: SwitchCompat
-    private var needDivider: Boolean = false
+    var text: String
+        get() = textView.text.toString()
+        set(value) {
+            textView.text = value
+        }
+    var isChecked: Boolean
+        get() = checkBox.isChecked
+        set(value) {
+            checkBox.isChecked = value
+        }
+    var needDivider: Boolean = false
+        set(value) {
+            field = value
+            setWillNotDraw(!value)
+        }
+
 
     init {
         textView = TextView(context).apply {
@@ -49,12 +64,6 @@ class TextCheckCell(context: Context) : FrameLayout(context) {
         )
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(
-                48.toDp() + if (needDivider) 1 else 0, View.MeasureSpec.EXACTLY
-        ))
-    }
-
     fun setTextAndCheck(text: String, checked: Boolean, divider: Boolean) {
         textView.text = text
         checkBox.isChecked = checked
@@ -62,8 +71,10 @@ class TextCheckCell(context: Context) : FrameLayout(context) {
         setWillNotDraw(!divider)
     }
 
-    fun setChecked(checked: Boolean) {
-        checkBox.isChecked = checked
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(
+                48.toDp() + if (needDivider) 1 else 0, View.MeasureSpec.EXACTLY
+        ))
     }
 
     override fun onDraw(canvas: Canvas) {
