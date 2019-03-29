@@ -116,7 +116,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 .setPositiveButton(R.string.dialog_button_confirm) { _, _ ->
                     //Toggle Setting
                     PreferencesHelper.saveInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, numberPicker.value)
-                    mNotificationPriority.setTextAndValue(getString(R.string.setting_sticky_notification_priority), mPriorityTitles[numberPicker.value], false)
+                    mNotificationPriority.value = mPriorityTitles[numberPicker.value]
 
                     //Update Notification
                     NotificationUpdateService.enqueueUpdate(context!!)
