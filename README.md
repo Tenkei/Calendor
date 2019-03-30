@@ -5,7 +5,7 @@
 
 <img src="artworks/seasons_1st_spring.png" width="24%" /> <img src="artworks/seasons_2nd_summer.png" width="24%" /> <img src="artworks/seasons_3rd_fall.png" width="24%" /> <img src="artworks/seasons_4th_winter.png" width="24%" />
 
-Calendor is a simple material calendar designed with functionality and easy of use in mind.
+Calendor is a simple material calendar designed with functionality and ease of use in mind.
 All national and religious holidays are marked accurately for the current year, and will be updated for the following years.
 **[Install on Google Play](https://play.google.com/store/apps/details?id=com.github.tenkei.calendor)**
 
@@ -17,9 +17,9 @@ All national and religious holidays are marked accurately for the current year, 
 * Sticky notification on your preference
 
 ### Goals
-* Rewriting to Kotlin, while applying clean architecture principles
-* Modularize the app using [dynamic feature](https://developer.android.com/guide/app-bundle/)
-* Improve extensibility of the architecture to add other calendars like Georgian or Hijri
+* Rewriting to Kotlin, while applying the Clean architecture principles
+* Applying SOLID principles to achieve a testable code
+* Improve extensibility of the architecture to add other calendar systems like Gregorian and Hijri
 
 ### Contributing
 Your contributions are always welcomed, Where and how are coming soon! 
