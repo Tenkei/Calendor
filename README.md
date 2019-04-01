@@ -22,8 +22,15 @@ All national and religious holidays are marked accurately for the current year, 
 * Improve extensibility of the architecture to add other calendar systems like Gregorian and Hijri
 
 ### Contributing
-Your contributions are always welcomed, Where and how are coming soon! 
-Comments and issues are welcomed too ^^
+Your contributions are always welcomed but for easier and faster code review please consider:
+- This project uses [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow "gitflow")
+	- Feature branches are created from **develop**
+	- When a feature is complete it is merged into the **develop**
+- Create a descriptively named branch
+- Every **branch** should only fix **one** issue, this way branches can be merged easier
+- Each **commit** should only change **one** thing, this way commits can be reverted easier
+- When you need feedback or help, or you think the branch is ready for merging, open a pull request
+- Refrrain from adding tools and technologies that **increase** the complexity of the project
 
 ### License
 
