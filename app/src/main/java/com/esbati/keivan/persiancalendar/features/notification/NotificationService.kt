@@ -51,7 +51,7 @@ class NotificationService : Service() {
 
     companion object {
         fun startService(context: Context) {
-            if (isServiceRunning())
+            if (!isServiceRunning())
                 ContextCompat.startForegroundService(context, Intent(context, NotificationService::class.java))
         }
 
