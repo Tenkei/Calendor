@@ -27,7 +27,7 @@ import com.esbati.keivan.persiancalendar.utils.showThemedDialog
  */
 
 class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null
-    ) : FrameLayout(context, attrs) {
+) : FrameLayout(context, attrs) {
 
     var mBottomSheetMode = Mode.SHEET_MODE_DATE
     var onEventListener: OnEventListener? = null
@@ -45,10 +45,10 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     var mGregorianDate: TextView
     private val mBottomSheetBehavior by lazy {
         BottomSheetBehavior.from<CalendarBottomSheet>(this).apply {
-            setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
+            setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     //Change BottomSheet Content if Needed
-                    if(isCollapsed() && mShouldUpdateBottomSheet){
+                    if (isCollapsed() && mShouldUpdateBottomSheet) {
                         mShouldUpdateBottomSheet = false
                         setBottomSheetMode(mBottomSheetMode)
                     }
@@ -64,7 +64,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     private lateinit var mEventTitle: TextView
     private lateinit var mEventDesc: TextView
 
-    enum class Mode{
+    enum class Mode {
         SHEET_MODE_DATE,
         SHEET_MODE_EDIT_EVENT,
         SHEET_MODE_VIEW_EVENT
@@ -94,14 +94,14 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         proceedToSetupBottomSheet(Mode.SHEET_MODE_DATE)
     }
 
-    fun showEvent(event: UserEvent) {
+    private fun showEvent(event: UserEvent) {
         mShouldExpandBottomSheet = true
         mSelectedEvent = event
 
         proceedToSetupBottomSheet(Mode.SHEET_MODE_VIEW_EVENT)
     }
 
-    fun editEvent(event: UserEvent?, isEditable: Boolean) {
+    private fun editEvent(event: UserEvent?, isEditable: Boolean) {
         mShouldExpandBottomSheet = true
         mSelectedEvent = event
 
@@ -126,7 +126,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             else
                 eventTitle.setText(R.string.event_no_title)
 
-            eventView.setOnClickListener { onEventClick(event)}
+            eventView.setOnClickListener { onEventClick(event) }
             mBottomSheetContainer.addView(eventView)
         }
 
@@ -134,7 +134,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         if (day.mRemarks.size > 0) {
             //Add header
             val eventHeader = LayoutInflater.from(context).inflate(R.layout.cell_bottom_sheet_header, mBottomSheetContainer, false)
-            (eventHeader.findViewById(R.id.header_title) as TextView).text = "رویداد های روز:"
+            (eventHeader.findViewById(R.id.header_title) as TextView).text = context.getString(R.string.event_days)
             mBottomSheetContainer.addView(eventHeader)
 
             //Add events
@@ -292,7 +292,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
         }, 200)
     }
 
-    interface OnEventListener{
+    interface OnEventListener {
         fun onEventDeleted(deletedEvent: UserEvent)
         fun onEventEdited(editedEvent: UserEvent)
     }

@@ -1,23 +1,25 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false"
             app:contentScrim="@color/colorPrimary"
-            app:statusBarScrim="@color/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:statusBarScrim="@color/colorPrimary">
+
             <ImageSwitcher
                 android:id="@+id/toolbar_background"
                 android:layout_width="match_parent"
@@ -30,16 +32,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="96dp"
                 android:layout_gravity="bottom"
-                android:paddingBottom="48dp"
-                android:gravity="bottom|center"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                app:layout_collapseMode="none"
-                app:contentInsetStart="0dp">
+                android:gravity="bottom|center"
+                android:paddingBottom="48dp"
+                app:contentInsetStart="0dp"
+                app:layout_collapseMode="none">
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipChildren="false">
+
                     <ImageView
                         android:id="@+id/toolbar_left_btn"
                         android:layout_width="wrap_content"
@@ -49,29 +53,31 @@
                         android:src="@drawable/ic_chevron_left_white_24dp"/>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
                         android:layout_gravity="center"
+                        android:clipChildren="false"
                         android:gravity="center"
-                        android:clipChildren="false">
+                        android:minHeight="48dp"
+                        android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/toolbar_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="آبان"
+                            android:text="@string/aban"
+                            android:textColor="@android:color/white"
                             android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/white"/>
+                            android:textStyle="bold"/>
+
                         <TextView
                             android:id="@+id/toolbar_sub_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="-4dp"
-                            android:text="June - July"
-                            android:textSize="13sp"
-                            android:textColor="@android:color/white"/>
+                            android:text="@string/june_july"
+                            android:textColor="@android:color/white"
+                            android:textSize="13sp"/>
                     </LinearLayout>
 
                     <ImageView
@@ -83,14 +89,14 @@
                         android:src="@drawable/ic_chevron_right_white_24dp"/>
 
                     <ImageView
-                        android:visibility="visible"
                         android:id="@+id/toolbar_setting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right|center_vertical"
                         android:layout_marginRight="-48dp"
                         android:padding="16dp"
-                        android:src="@drawable/ic_settings_white_24dp"/>
+                        android:src="@drawable/ic_settings_white_24dp"
+                        android:visibility="visible"/>
                 </FrameLayout>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -107,10 +113,10 @@
 
     <com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
         android:id="@+id/bottom_sheet"
-        android:elevation="4dp"
-        android:layoutDirection="ltr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:layoutDirection="ltr"
         app:behavior_peekHeight="48dp"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
 
@@ -119,9 +125,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        app:layout_anchor="@+id/scroll_view"
-        app:layout_anchorGravity="top|left"
-        app:fabSize="mini"
+        android:src="@drawable/ic_pencil_white_24dp"
         app:backgroundTint="@android:color/holo_blue_light"
-        android:src="@drawable/ic_pencil_white_24dp"/>
+        app:fabSize="mini"
+        app:layout_anchor="@+id/scroll_view"
+        app:layout_anchorGravity="top|left"/>
 </android.support.design.widget.CoordinatorLayout>

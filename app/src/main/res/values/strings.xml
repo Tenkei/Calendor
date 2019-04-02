@@ -38,10 +38,12 @@
     <string name="event_successfully_updated">رویداد با موفقیت به روزرسانی گردید!</string>
     <string name="event_successfully_added">رویداد با موفقیت افزوده شد!</string>
     <string name="event_error_no_calendar">تقویمی جهت درج رویداد موجود نمی باشد.</string>
+    <string name="event_error_delete">خطایی در حذف رویداد رخ داده است.</string>
     <string name="event_error_no_content">عنوان یا توضیح رویداد باید تکمیل گردد.</string>
     <string name="event_error_write_permission">جهت افزودن رویداد به تقویم, دسترسی نوشتن تقویم را فعال نمایید.</string>
     <string name="event_no_title">(بدون عنوان)</string>
     <string name="event_no_desc">(فاقد توضیحات)</string>
+    <string name="event_days">رویدادهای روز:</string>
 
     <!-- Notification -->
     <string name="notification_collapsed_text_with_title">%s و %d رویداد دیگر</string>
@@ -62,4 +64,28 @@
     <string name="setting_sticky_notification_display">نمایش تاریخ در نوار اعلانات</string>
     <string name="setting_sticky_notification_actions">نمایش اکشن ها</string>
     <string name="setting_sticky_notification_priority">اولویت نمایش</string>
+    
+    <!-- Priority Titles -->
+    <string name="least">کمترین</string>
+    <string name="down">پایین</string>
+    <string name="priority_default">پیش فرض</string>
+    <string name="up">بالا</string>
+    <string name="the_most">بیشترین</string>
+
+    <!-- persian month -->
+    <string name="farvardin">فروردین</string>
+    <string name="ordibehesht">اردیبهشت</string>
+    <string name="khordad">خرداد</string>
+    <string name="tir">تیر</string>
+    <string name="mordad">مرداد</string>
+    <string name="shahrivar">شهریور</string>
+    <string name="mehr">مهر</string>
+    <string name="aban">آبان</string>
+    <string name="azar">آذر</string>
+    <string name="dey">دی</string>
+    <string name="bahman">بهمن</string>
+    <string name="esfand">اسفند</string>
+
+
+    <string name="june_july">June - July</string>
 </resources>
