@@ -2,6 +2,7 @@ package com.esbati.keivan.persiancalendar.features.home
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -31,6 +32,7 @@ import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.Constants
+import com.esbati.keivan.persiancalendar.utils.showToast
 import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
@@ -107,10 +109,14 @@ class HomeFragment : Fragment() {
         mRightBtn = rootView.findViewById(R.id.toolbar_right_btn) as ImageView
         mLeftBtn = rootView.findViewById(R.id.toolbar_left_btn) as ImageView
 
-        mCollapsingToolbar.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
+        mCollapsingToolbar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 mCollapsingToolbar.scrimVisibleHeightTrigger = mCollapsingToolbar.height - 48.toDp()
-                mCollapsingToolbar.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                if (Build.VERSION.SDK_INT < 16) {
+                    mCollapsingToolbar.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                } else {
+                    mCollapsingToolbar.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
             }
         })
 
@@ -131,7 +137,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        mAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        mAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             val abHeight = mAppbar.totalScrollRange.toFloat()
             val heightRatio = (abHeight - Math.abs(verticalOffset)) / abHeight //Range from 1 to 0
             val newToolbarMarginPixel = (heightRatio * 48.toDp()).toInt() //Range from 48 to 0
@@ -170,7 +176,7 @@ class HomeFragment : Fragment() {
         mPagerAdapter = HomeAdapter(childFragmentManager)
         mPager.adapter = mPagerAdapter
 
-        mPager.addOnPageChangeListener(object: CalendarPager.OnPageChangeListener() {
+        mPager.addOnPageChangeListener(object : CalendarPager.OnPageChangeListener() {
             override fun onPageSelected(year: Int, month: Int) {
                 mDisplayedYear = year
                 mDisplayedMonth = month
@@ -183,10 +189,9 @@ class HomeFragment : Fragment() {
                 icons.recycle()
 
                 //Set Toolbar Title
-                mToolbarTitle.text = Constants.months_fa[mDisplayedMonth - 1] + " " + mDisplayedYear
-                mToolbarSubTitle.text = (Constants.months_en[(mDisplayedMonth + 1) % 12]
-                        + " - "
-                        + Constants.months_en[(mDisplayedMonth + 2) % 12])
+                mToolbarTitle.text = String.format("%s %s", Constants.months_fa[mDisplayedMonth - 1], mDisplayedYear)
+                mToolbarSubTitle.text = String.format("%s - %s", Constants.months_en[(mDisplayedMonth + 1) % 12],
+                        Constants.months_en[(mDisplayedMonth + 2) % 12])
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -199,7 +204,7 @@ class HomeFragment : Fragment() {
         mEventActionBtn = view.findViewById(R.id.add_event) as FloatingActionButton
         mBottomSheet = view.findViewById(R.id.bottom_sheet) as CalendarBottomSheet
         mBottomSheet.eventActionBtn = mEventActionBtn
-        mBottomSheet.onEventListener = object: CalendarBottomSheet.OnEventListener {
+        mBottomSheet.onEventListener = object : CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: UserEvent) {
                 Repository.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
@@ -212,18 +217,18 @@ class HomeFragment : Fragment() {
                         //Update Notification
                         NotificationUpdateService.enqueueUpdate(context!!)
                     } else {
-                        Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
+                        showToast(R.string.event_error_delete)
                     }
                 }
             }
 
             override fun onEventEdited(editedEvent: UserEvent) {
-                if(TextUtils.isEmpty(editedEvent.title) && TextUtils.isEmpty(editedEvent.description)){
-                    Toast.makeText(context, R.string.event_error_no_content, Toast.LENGTH_SHORT).show()
+                if (TextUtils.isEmpty(editedEvent.title) && TextUtils.isEmpty(editedEvent.description)) {
+                    showToast(R.string.event_error_no_content)
                     return
                 }
 
-                if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                         == PackageManager.PERMISSION_GRANTED)
                     Repository.saveEvent(editedEvent).also {
                         //Refresh UI and show Date if Event Successfully added
@@ -241,24 +246,25 @@ class HomeFragment : Fragment() {
                             //Update Notification
                             NotificationUpdateService.enqueueUpdate(context!!)
                         } else {
-                            Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
-                            Log.d("Calendar", getString(R.string.event_error_no_calendar))
+                            showToast(R.string.event_error_no_calendar)
+                            Log.d("Calendar", "Problem in saving event!")
                         }
                     }
-                else
-                    Toast.makeText(context, R.string.event_error_write_permission, Toast.LENGTH_SHORT).show()
+                else {
+                    showToast(R.string.event_error_write_permission)
+                }
             }
         }
     }
 
-    fun showDate(day: CalendarDay, expand: Boolean){
+    fun showDate(day: CalendarDay, expand: Boolean) {
         mSelectedDay = day
         mBottomSheet.showDate(day, expand)
     }
 
-    fun refreshFragment(year: Int, month: Int){
+    fun refreshFragment(year: Int, month: Int) {
         //if Page is not in Pager Stack return since the Pager will create the Updated Page when Needed
-        if(mPager.isPageShown(year, month)){
+        if (mPager.isPageShown(year, month)) {
             val selectedFragment = mPager.getPage(year, month, childFragmentManager)
             if (selectedFragment is CalendarFragment)
                 selectedFragment.refreshCalendar()
@@ -279,7 +285,7 @@ class HomeFragment : Fragment() {
         else -> false
     }
 
-    inner class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
+    inner class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
             val (year, month) = mPager.getYearAndMonth(position)

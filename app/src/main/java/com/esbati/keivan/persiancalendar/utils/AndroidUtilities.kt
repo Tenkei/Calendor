@@ -1,13 +1,18 @@
 package com.esbati.keivan.persiancalendar.utils
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
+import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
+import android.support.annotation.StringRes
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 
@@ -56,8 +61,8 @@ fun AlertDialog.applyDefaultTheme(): AlertDialog {
 }
 
 fun AlertDialog.applyFont(@FontRes title: Int = R.font.iransans_fa_num_bold,
-                              @FontRes message: Int = R.font.iran_sans,
-                              @FontRes buttons: Int = R.font.iran_sans): AlertDialog {
+                          @FontRes message: Int = R.font.iran_sans,
+                          @FontRes buttons: Int = R.font.iran_sans): AlertDialog {
 
     findViewById<TextView>(R.id.alertTitle)?.typeface = ResourcesCompat.getFont(context, title)
     findViewById<TextView>(android.R.id.message)?.typeface = ResourcesCompat.getFont(context, message)
@@ -66,6 +71,14 @@ fun AlertDialog.applyFont(@FontRes title: Int = R.font.iransans_fa_num_bold,
     findViewById<TextView>(android.R.id.button3)?.typeface = ResourcesCompat.getFont(context, buttons)
 
     return this
+}
+
+fun getColor(@ColorRes value: Int): Int {
+    return ContextCompat.getColor(ApplicationController.getContext(), value)
+}
+
+fun showToast(@StringRes value: Int, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(ApplicationController.getContext(), value, duration).show()
 }
 
 

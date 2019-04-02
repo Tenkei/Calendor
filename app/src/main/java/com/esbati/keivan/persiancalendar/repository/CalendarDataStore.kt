@@ -1,6 +1,7 @@
 package com.esbati.keivan.persiancalendar.repository
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
@@ -8,9 +9,9 @@ import android.support.annotation.RequiresPermission
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
-import ir.smartlab.persindatepicker.util.PersianCalendar
 import java.util.*
 
+@SuppressLint("MissingPermission")
 object CalendarDataStore {
 
     private val mCalendars: ArrayList<DeviceCalendar>
@@ -68,7 +69,8 @@ object CalendarDataStore {
 
                 calendars.add(DeviceCalendar(id, displayName, accountName, ownerName))
             }
-        }.close()
+        }
+        cur.close()
 
         return calendars
     }
@@ -95,7 +97,8 @@ object CalendarDataStore {
 
                 events.add(UserEvent(id, title, description, dtStart, dtEnd, eventTimezone))
             }
-        }.close()
+        }
+        cur.close()
 
         return events
     }

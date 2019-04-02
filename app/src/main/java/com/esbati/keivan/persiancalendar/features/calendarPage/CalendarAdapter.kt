@@ -12,24 +12,25 @@ import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
+import com.esbati.keivan.persiancalendar.utils.getColor
 
-class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): RecyclerView.Adapter<CalendarAdapter.DayHolder>(){
+class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : RecyclerView.Adapter<CalendarAdapter.DayHolder>() {
 
     var onCalendarClickListener: OnCalendarClickListener? = null
     val calendarDays = ArrayList<CalendarDay>(days)
 
-    interface OnCalendarClickListener{
+    interface OnCalendarClickListener {
         fun onCalendarClick(day: CalendarDay)
     }
 
-    inner class DayHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class DayHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val mDayNo = itemView.findViewById(R.id.calendar_day_no) as TextView
         private val mEvents = itemView.findViewById(R.id.calendar_events) as TextView
 
         init {
             itemView.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
-                if(isFocused) view.performClick()
+                if (isFocused) view.performClick()
             }
 
             itemView.setOnClickListener {
@@ -40,7 +41,6 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
         }
 
         fun setupView(day: CalendarDay) {
-            val context = itemView.context
             itemView.isEnabled = day.isCurrentMonth
 
             mDayNo.text = day.mDay.toString()
@@ -54,34 +54,34 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
             //Set Background Color
             when {
                 day.isHoliday && day.isToday -> {
-                    mDayNo.setTextColor(context.resources.getColor(android.R.color.holo_red_dark))
+                    mDayNo.setTextColor(getColor(android.R.color.holo_red_dark))
                     itemView.setBackgroundResource(R.drawable.bg_calendar_today)
-                    mEvents.setTextColor(context.resources.getColor(android.R.color.white))
+                    mEvents.setTextColor(getColor(android.R.color.white))
                 }
 
                 day.isHoliday -> {
-                    mDayNo.setTextColor(context.resources.getColor(android.R.color.white))
+                    mDayNo.setTextColor(getColor(android.R.color.white))
                     itemView.setBackgroundResource(R.drawable.bg_calendar_holiday)
-                    mEvents.setTextColor(context.resources.getColor(android.R.color.white))
+                    mEvents.setTextColor(getColor(android.R.color.white))
                 }
 
                 day.isToday -> {
-                    mDayNo.setTextColor(context.resources.getColor(android.R.color.white))
+                    mDayNo.setTextColor(getColor(android.R.color.white))
                     itemView.setBackgroundResource(R.drawable.bg_calendar_today)
-                    mEvents.setTextColor(context.resources.getColor(android.R.color.white))
+                    mEvents.setTextColor(getColor(android.R.color.white))
                 }
 
                 day.isCurrentMonth -> {
-                    mDayNo.setTextColor(context.resources.getColor(android.R.color.black))
+                    mDayNo.setTextColor(getColor(android.R.color.black))
                     itemView.setBackgroundResource(ColorHelper.getSeasonDrawableResource(month))
-                    mEvents.setTextColor(context.resources.getColor(android.R.color.black))
+                    mEvents.setTextColor(getColor(android.R.color.black))
                 }
 
                 else -> {
                     itemView.isEnabled = false
-                    mDayNo.setTextColor(context.resources.getColor(android.R.color.white))
-                    itemView.setBackgroundColor(context.resources.getColor(R.color.lighter_gray))
-                    mEvents.setTextColor(context.resources.getColor(android.R.color.white))
+                    mDayNo.setTextColor(getColor(android.R.color.white))
+                    itemView.setBackgroundColor(getColor(R.color.lighter_gray))
+                    mEvents.setTextColor(getColor(android.R.color.white))
                 }
             }
         }
@@ -100,7 +100,7 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>): R
         return DayHolder(view)
     }
 
-    override fun onBindViewHolder(holder: DayHolder, position: Int){
+    override fun onBindViewHolder(holder: DayHolder, position: Int) {
         holder.setupView(calendarDays[position])
     }
 
