@@ -1,5 +1,6 @@
 package com.esbati.keivan.persiancalendar.pojos
 
+import com.esbati.keivan.persiancalendar.refactoring.bases.Event
 import java.util.*
 
 /**
@@ -15,5 +16,5 @@ class CalendarDay(
     val isCurrentMonth: Boolean = false,
     val formattedDate: String = "",
     val formattedDateSecondary: String = "",
-    val mRemarks: ArrayList<CalendarRemark> = ArrayList(),
-    val mEvents: ArrayList<UserEvent> = ArrayList())
+    val mRemarks: ArrayList<Event> = ArrayList(),
+    val mEvents: ArrayList<Event> = ArrayList())

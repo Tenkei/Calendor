@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,21 +23,24 @@ import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
 import com.esbati.keivan.persiancalendar.features.calendarPage.CalendarFragment
-import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.features.settings.SettingFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
-import com.esbati.keivan.persiancalendar.pojos.UserEvent
+import com.esbati.keivan.persiancalendar.pojos.GoogleEvent
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.refactoring.CalendarManagerFactory
+import com.esbati.keivan.persiancalendar.refactoring.bases.CalendarManager
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
 import com.esbati.keivan.persiancalendar.utils.Constants
-import ir.smartlab.persindatepicker.util.PersianCalendar
 
 class HomeFragment : Fragment() {
 
     private var mDisplayedMonth: Int = 0
     private var mDisplayedYear: Int = 0
     private lateinit var mSelectedDay: CalendarDay
+
+
+    private val calendarManager: CalendarManager = CalendarManagerFactory.create()
+
 
     //Toolbar
     private var mToolbarMargin: Int = 0
@@ -68,7 +70,7 @@ class HomeFragment : Fragment() {
             setupBottomSheet(this)
 
             //Setup Initial Day
-            mSelectedDay = Repository.getToday().also {
+            mSelectedDay = calendarManager.provideToday().also {
                 mDisplayedYear = it.mYear
                 mDisplayedMonth = it.mMonth
             }
@@ -201,24 +203,24 @@ class HomeFragment : Fragment() {
         mBottomSheet = view.findViewById(R.id.bottom_sheet) as CalendarBottomSheet
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object: CalendarBottomSheet.OnEventListener {
-            override fun onEventDeleted(deletedEvent: UserEvent) {
-                Repository.deleteEvent(deletedEvent).also {
-                    //Refresh UI and show Date if Event Successfully added
-                    if (it == 1) {
-                        refreshFragment(deletedEvent.year, deletedEvent.month)
-
-                        mSelectedDay.mEvents.remove(deletedEvent)
-                        showDate(mSelectedDay, true)
-
-                        //Update Notification
-                        NotificationUpdateService.enqueueUpdate(context!!)
-                    } else {
-                        Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            override fun onEventDeleted(deletedEvent: GoogleEvent) {
+//                GoogleEventDataSource.deleteEvent(deletedEvent.id).also {
+//                    //Refresh UI and show Date if Event Successfully added
+//                    if (it == 1) {
+//                        refreshFragment(deletedEvent.year, deletedEvent.month)
+//
+//                        mSelectedDay.mEvents.remove(deletedEvent)
+//                        showDate(mSelectedDay, true)
+//
+//                        //Update Notification
+//                        NotificationUpdateService.enqueueUpdate(context!!)
+//                    } else {
+//                        Toast.makeText(context, "Problem in deleting event!", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
             }
 
-            override fun onEventEdited(editedEvent: UserEvent) {
+            override fun onEventEdited(editedEvent: GoogleEvent) {
                 if(TextUtils.isEmpty(editedEvent.title) && TextUtils.isEmpty(editedEvent.description)){
                     Toast.makeText(context, R.string.event_error_no_content, Toast.LENGTH_SHORT).show()
                     return
@@ -226,26 +228,26 @@ class HomeFragment : Fragment() {
 
                 if(ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                         == PackageManager.PERMISSION_GRANTED)
-                    Repository.saveEvent(editedEvent).also {
-                        //Refresh UI and show Date if Event Successfully added
-                        if (it == 1) {
-                            refreshFragment(editedEvent.year, editedEvent.month)
-
-                            mSelectedDay.mEvents.clear()
-                            mSelectedDay.mEvents.addAll(Repository.getEvents(
-                                    mSelectedDay.mYear
-                                    , mSelectedDay.mMonth
-                                    , mSelectedDay.mDay
-                            ))
-                            showDate(mSelectedDay, true)
-
-                            //Update Notification
-                            NotificationUpdateService.enqueueUpdate(context!!)
-                        } else {
-                            Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
-                            Log.d("Calendar", getString(R.string.event_error_no_calendar))
-                        }
-                    }
+//                    GoogleEventDataSource.saveEvent(editedEvent).also {
+//                        //Refresh UI and show Date if Event Successfully added
+//                        if (it == 1) {
+//                            refreshFragment(editedEvent.year, editedEvent.month)
+//
+//                            mSelectedDay.mEvents.clear()
+//                            mSelectedDay.mEvents.addAll(Repository.getEvents(
+//                                    mSelectedDay.mYear
+//                                    , mSelectedDay.mMonth
+//                                    , mSelectedDay.mDay
+//                            ))
+//                            showDate(mSelectedDay, true)
+//
+//                            //Update Notification
+//                            NotificationUpdateService.enqueueUpdate(context!!)
+//                        } else {
+//                            Toast.makeText(context, "Problem in saving event!", Toast.LENGTH_SHORT).show()
+//                            Log.d("Calendar", getString(R.string.event_error_no_calendar))
+//                        }
+//                    }
                 else
                     Toast.makeText(context, R.string.event_error_write_permission, Toast.LENGTH_SHORT).show()
             }

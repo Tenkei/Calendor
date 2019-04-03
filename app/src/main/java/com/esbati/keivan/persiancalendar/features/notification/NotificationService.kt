@@ -6,7 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.refactoring.CalendarManagerFactory
+import com.esbati.keivan.persiancalendar.refactoring.bases.CalendarManager
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
 
 /**
@@ -22,6 +23,9 @@ class NotificationService : Service() {
         addAction(Intent.ACTION_TIMEZONE_CHANGED)
     }
 
+    private val calendarManager: CalendarManager = CalendarManagerFactory.create()
+
+
     override fun onBind(paramIntent: Intent) = null
 
     override fun onCreate() {
@@ -29,7 +33,7 @@ class NotificationService : Service() {
         Log.d(javaClass.simpleName, "Created")
 
         //Promote service to foreground using sticky notification
-        val today = Repository.getToday()
+        val today = calendarManager.provideToday()
         val notification = NotificationHelper.createStickyNotification(this, today)
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
     }

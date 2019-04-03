@@ -16,7 +16,7 @@
         android:name=".components.ApplicationController"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".features.home.MainActivity"
+        <activity android:name=".features.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Splash"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan">

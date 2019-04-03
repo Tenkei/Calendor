@@ -12,16 +12,19 @@ import com.esbati.keivan.persiancalendar.components.SoundManager
 import com.esbati.keivan.persiancalendar.features.home.HomeFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.refactoring.CalendarManagerFactory
+import com.esbati.keivan.persiancalendar.refactoring.bases.CalendarManager
 
 class CalendarFragment: Fragment() {
 
     private val mYear by lazy { arguments!!.get(EXTRA_YEAR) as Int }
     private val mMonth by lazy { arguments!!.get(EXTRA_MONTH) as Int }
 
+    private val calendarManager: CalendarManager = CalendarManagerFactory.create()
+
     private lateinit var mRecyclerView: RecyclerView
     private val mAdapter by lazy {
-        CalendarAdapter(mYear, mMonth, Repository.prepareDays(mYear, mMonth)).apply {
+        CalendarAdapter(mYear, mMonth, calendarManager.provideMonth(mYear, mMonth)).apply {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
                 override fun onCalendarClick(day: CalendarDay) {
                     SoundManager.playSound(day.mDay)
@@ -53,6 +56,6 @@ class CalendarFragment: Fragment() {
     }
 
     fun refreshCalendar() {
-        mAdapter.refresh(Repository.prepareDays(mYear, mMonth))
+        mAdapter.refresh(calendarManager.provideMonth(mYear, mMonth))
     }
 }

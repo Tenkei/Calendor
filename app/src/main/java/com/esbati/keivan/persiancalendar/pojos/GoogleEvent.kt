@@ -6,7 +6,7 @@ import ir.smartlab.persindatepicker.util.PersianCalendar
  * Created by asus on 11/23/2016.
  */
 
-data class UserEvent(
+data class GoogleEvent(
         val id: Long = 0,
         val title: String? = null,
         val description: String? = null,
@@ -21,4 +21,5 @@ data class UserEvent(
     fun inTheSameDate(year: Int, month: Int, day: Int): Boolean {
         return this.year == year && this.month == month && this.day == day
     }
+
 }

@@ -4,8 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
+import com.esbati.keivan.persiancalendar.refactoring.CalendarManagerFactory
+import com.esbati.keivan.persiancalendar.refactoring.bases.CalendarManager
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
-import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
  * Created by Keivan Esbati on 4/10/2017.
@@ -13,13 +14,17 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationUpdateService : JobIntentService() {
 
+    private val calendarManager: CalendarManager = CalendarManagerFactory.create()
+
+
+
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")
 
         //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)) {
             //Show Sticky Notification
-            val today = Repository.getToday()
+            val today = calendarManager.provideToday()
             NotificationHelper.showStickyNotification(this, today)
         } else {
             NotificationHelper.cancelNotification(this)
