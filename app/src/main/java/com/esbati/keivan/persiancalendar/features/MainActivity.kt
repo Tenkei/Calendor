@@ -1,4 +1,4 @@
-package com.esbati.keivan.persiancalendar.features.home
+package com.esbati.keivan.persiancalendar.features
 
 import android.Manifest
 import android.app.AlertDialog
@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.features.home.HomeFragment
 import com.esbati.keivan.persiancalendar.utils.AndroidUtilities
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 

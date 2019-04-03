@@ -10,9 +10,10 @@ import android.support.v4.app.NotificationCompat
 import android.text.TextUtils
 import com.esbati.keivan.persiancalendar.BuildConfig
 
-import com.esbati.keivan.persiancalendar.features.home.MainActivity
+import com.esbati.keivan.persiancalendar.features.MainActivity
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.refactoring.events.UserEvent
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
 import com.esbati.keivan.persiancalendar.utils.LanguageHelper
@@ -116,8 +117,10 @@ object NotificationHelper {
                 inboxStyle.addLine(
                         if (!TextUtils.isEmpty(event.title))
                             event.title
-                        else
+                        else if(event is UserEvent)
                             event.description
+                        else
+                            ""
                 )
 
             mBuilder.setStyle(inboxStyle)

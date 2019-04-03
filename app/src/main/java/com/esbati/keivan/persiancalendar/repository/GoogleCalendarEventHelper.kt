@@ -7,14 +7,13 @@ import android.provider.CalendarContract
 import android.support.annotation.RequiresPermission
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
-import com.esbati.keivan.persiancalendar.pojos.UserEvent
-import ir.smartlab.persindatepicker.util.PersianCalendar
+import com.esbati.keivan.persiancalendar.pojos.GoogleEvent
 import java.util.*
 
-object CalendarDataStore {
+object GoogleCalendarEventHelper {
 
     private val mCalendars: ArrayList<DeviceCalendar>
-    private val mEvents: ArrayList<UserEvent>
+    private val mEvents: ArrayList<GoogleEvent>
 
     // The indices for the projection array above.
     private const val PROJECTION_ID_INDEX = 0
@@ -74,8 +73,8 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    private fun getEvents(calendar: DeviceCalendar): ArrayList<UserEvent> {
-        val events = ArrayList<UserEvent>()
+    private fun getEvents(calendar: DeviceCalendar): ArrayList<GoogleEvent> {
+        val events = ArrayList<GoogleEvent>()
 
         // Submit the query and get a Cursor object back.
         val selection = "((" + CalendarContract.Events.CALENDAR_ID + " = ?))"
@@ -93,7 +92,7 @@ object CalendarDataStore {
                 val dtEnd = getLong(6)
                 val eventTimezone = getString(7)
 
-                events.add(UserEvent(id, title, description, dtStart, dtEnd, eventTimezone))
+                events.add(GoogleEvent(id, title, description, dtStart, dtEnd, eventTimezone))
             }
         }.close()
 
@@ -101,8 +100,8 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
-    fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
-        val selectedEvents = ArrayList<UserEvent>()
+    fun getEvents(year: Int, month: Int, day: Int): ArrayList<GoogleEvent> {
+        val selectedEvents = ArrayList<GoogleEvent>()
 
         for (event in mEvents)
             if (event.inTheSameDate(year, month, day))
@@ -112,7 +111,7 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    fun saveEvent(event: UserEvent): Int {
+    fun saveEvent(event: GoogleEvent): Int {
         //Return if No Calendar is Available
         if (mCalendars.size <= 0)
             return -1
@@ -124,7 +123,7 @@ object CalendarDataStore {
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    private fun saveSimpleEvent(newEvent: UserEvent): Int {
+    private fun saveSimpleEvent(newEvent: GoogleEvent): Int {
         val defaultCalendar = mCalendars[0]
 
         val values = ContentValues().apply {
@@ -147,7 +146,7 @@ object CalendarDataStore {
         return 1
     }
 
-    private fun updateEvent(event: UserEvent): Int {
+    private fun updateEvent(event: GoogleEvent): Int {
         //Update Event Row
         val values = ContentValues().apply {
             put(CalendarContract.Events.TITLE, event.title)
