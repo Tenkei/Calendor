@@ -1,5 +1,6 @@
 package com.esbati.keivan.persiancalendar.repository
 
+import android.content.res.Resources
 import android.support.annotation.RawRes
 import android.util.Log
 import com.esbati.keivan.persiancalendar.R
@@ -9,16 +10,12 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-object RemarkDataStore {
+class RemarkDataStore(private val resources: Resources) {
 
-    private val remarks: List<CalendarRemark>
-
-    init {
-        remarks = readEventsFromJSON()
-    }
+    private val remarks: List<CalendarRemark> by lazy { readEventsFromJSON() }
 
     private fun readRawResource(@RawRes res: Int): String {
-        val s = Scanner(ApplicationController.getContext().resources.openRawResource(res)).useDelimiter("\\A")
+        val s = Scanner(resources.openRawResource(res)).useDelimiter("\\A")
         return if (s.hasNext()) s.next() else ""
     }
 
