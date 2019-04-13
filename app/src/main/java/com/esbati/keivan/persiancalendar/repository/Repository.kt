@@ -23,11 +23,9 @@ object Repository{
 
     private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
 
-    private val remarks: List<CalendarRemark>
     private val mCalendar: PersianCalendar
 
     init {
-        remarks = readEventsFromJSON()
         mCalendar = PersianCalendar().apply {
             // Set time at the middle of the day to prevent shift in days
             // for dates like yyyy/1/1 caused by DST
@@ -132,8 +130,8 @@ object Repository{
         )
     }
 
-    private fun getRemarks(year: Int, month: Int, day: Int): ArrayList<CalendarRemark>
-            = remarks.filter { it.inTheSameDate(year, month, day) } as ArrayList
+    private fun getRemarks(year: Int, month: Int, day: Int): ArrayList<CalendarRemark> =
+            RemarkDataStore.getRemarks(year, month, day)
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
