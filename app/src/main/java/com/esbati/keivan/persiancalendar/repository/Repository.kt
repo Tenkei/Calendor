@@ -24,6 +24,7 @@ object Repository{
     private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
 
     private val mCalendar: PersianCalendar
+    private val mCalendarDataStore: CalendarDataStore
 
     init {
         mCalendar = PersianCalendar().apply {
@@ -31,6 +32,7 @@ object Repository{
             // for dates like yyyy/1/1 caused by DST
             set(Calendar.HOUR_OF_DAY, 12)
         }
+        mCalendarDataStore = CalendarDataStore()
     }
 
     private fun readRawResource(@RawRes res: Int): String {
@@ -135,7 +137,7 @@ object Repository{
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
-            CalendarDataStore.getEvents(year, month, day)
+            mCalendarDataStore.getEvents(year, month, day)
 
     private fun getEventsIfPermissionIsAvailable(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
         return if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
@@ -154,9 +156,9 @@ object Repository{
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
+    fun saveEvent(event: UserEvent): Int = mCalendarDataStore.saveEvent(event)
 
-    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event.id)
+    fun deleteEvent(event: UserEvent): Int = mCalendarDataStore.deleteEvent(event.id)
 }
 
 

@@ -11,24 +11,29 @@ import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import java.util.*
 
-@SuppressLint("MissingPermission")
-object CalendarDataStore {
+//@SuppressLint("MissingPermission")
+class CalendarDataStore {
 
-    private val mCalendars: ArrayList<DeviceCalendar>
-    private val mEvents: ArrayList<UserEvent>
+    private val mCalendars: ArrayList<DeviceCalendar> by lazy { getCalendars() }
+    private val mEvents: ArrayList<UserEvent> by lazy{
+        val events = ArrayList<UserEvent>()
+        for (calendar in mCalendars)
+            mEvents.addAll(getEvents(calendar))
+
+        events
+    }
 
     // The indices for the projection array above.
-    private const val PROJECTION_ID_INDEX = 0
-    private const val PROJECTION_ACCOUNT_NAME_INDEX = 1
-    private const val PROJECTION_DISPLAY_NAME_INDEX = 2
-    private const val PROJECTION_OWNER_ACCOUNT_INDEX = 3
+    private val PROJECTION_ID_INDEX = 0
+    private val PROJECTION_ACCOUNT_NAME_INDEX = 1
+    private val PROJECTION_DISPLAY_NAME_INDEX = 2
+    private val PROJECTION_OWNER_ACCOUNT_INDEX = 3
 
     private val CALENDAR_PROJECTION = arrayOf(
             CalendarContract.Calendars._ID,                     // 0
             CalendarContract.Calendars.ACCOUNT_NAME,            // 1
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 2
             CalendarContract.Calendars.OWNER_ACCOUNT)           // 3
-
 
     private val EVENT_PROJECTION = arrayOf(
             CalendarContract.Events._ID,                // 0
@@ -44,14 +49,6 @@ object CalendarDataStore {
             CalendarContract.Events.ALL_DAY,            // 10
             CalendarContract.Events.RRULE,              // 11
             CalendarContract.Events.RDATE)              // 12
-
-    init {
-        mCalendars = getCalendars()
-        mEvents = ArrayList()
-        for (calendar in mCalendars) {
-            mEvents.addAll(getEvents(calendar))
-        }
-    }
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     private fun getCalendars(): ArrayList<DeviceCalendar> {
