@@ -262,7 +262,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.copy() ?: Repository.createEventFor(mSelectedDay)
+                val tempEvent = mSelectedEvent?.copy() ?: Repository.INSTANCE.createEventFor(mSelectedDay)
                 setEditEventSheet(tempEvent)
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)

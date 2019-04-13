@@ -30,7 +30,7 @@ class NotificationService : Service() {
         Log.d(javaClass.simpleName, "Created")
 
         //Promote service to foreground using sticky notification
-        val today = Repository.getToday()
+        val today = Repository.INSTANCE.getToday()
         val notification = NotificationHelper.createStickyNotification(this, today)
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
     }

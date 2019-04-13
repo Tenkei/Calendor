@@ -19,7 +19,7 @@ class NotificationUpdateService : JobIntentService() {
         //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.shouldShowNotification) {
             //Show Sticky Notification
-            val today = Repository.getToday()
+            val today = Repository.INSTANCE.getToday()
             NotificationHelper.showStickyNotification(this, today)
         } else {
             NotificationHelper.cancelNotification(this)

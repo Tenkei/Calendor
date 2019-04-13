@@ -19,18 +19,26 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-object Repository {
+class Repository (
+    calendar: PersianCalendar,
+    calendarDataStore: CalendarDataStore
+) {
 
-    private val mCalendar: PersianCalendar
-    private val mCalendarDataStore: CalendarDataStore
+    private val remarks = readEventsFromJSON()
+    private val mCalendar = calendar
+    private val mCalendarDataStore = calendarDataStore
 
-    init {
-        mCalendar = PersianCalendar().apply {
+    companion object {
+        private val calendar = PersianCalendar().apply {
             // Set time at the middle of the day to prevent shift in days
             // for dates like yyyy/1/1 caused by DST
             set(Calendar.HOUR_OF_DAY, 12)
         }
-        mCalendarDataStore = CalendarDataStore(ApplicationController.getContext().contentResolver)
+        private val calendarDataStore = CalendarDataStore(ApplicationController.getContext().contentResolver)
+
+        val INSTANCE: Repository by lazy {
+            Repository(calendar, calendarDataStore)
+        }
     }
 
     private fun readRawResource(@RawRes res: Int): String {
@@ -140,7 +148,7 @@ object Repository {
     private fun getEventsIfPermissionIsAvailable(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
         return if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED)
-                    Repository.getEvents(year, month, day)
+                    getEvents(year, month, day)
                 else
                     ArrayList()
     }
