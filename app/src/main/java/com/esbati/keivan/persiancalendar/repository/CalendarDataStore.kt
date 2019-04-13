@@ -2,11 +2,11 @@ package com.esbati.keivan.persiancalendar.repository
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
 import android.support.annotation.RequiresPermission
-import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import java.util.*
@@ -17,13 +17,14 @@ import java.util.*
  * so there is no risk of SecurityException.
  */
 @SuppressLint("MissingPermission")
-class CalendarDataStore {
+class CalendarDataStore(contentResolver: ContentResolver) {
 
+    private val mContentProvider = contentResolver
     private val mCalendars: ArrayList<DeviceCalendar> by lazy { getCalendars() }
-    private val mEvents: ArrayList<UserEvent> by lazy{
+    private val mEvents: ArrayList<UserEvent> by lazy {
         val events = ArrayList<UserEvent>()
         for (calendar in mCalendars)
-            mEvents.addAll(getEvents(calendar))
+            events.addAll(getEvents(calendar))
 
         events
     }
@@ -59,8 +60,11 @@ class CalendarDataStore {
     private fun getCalendars(): ArrayList<DeviceCalendar> {
         val calendars = ArrayList<DeviceCalendar>()
 
-        val cr = ApplicationController.getContext().contentResolver
-        val cur = cr.query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null)
+        val cur = mContentProvider.query(
+                CalendarContract.Calendars.CONTENT_URI,
+                CALENDAR_PROJECTION,
+                null, null, null
+        )
 
         cur!!.apply {
             while (moveToNext()) {
@@ -85,8 +89,11 @@ class CalendarDataStore {
         val selection = "((" + CalendarContract.Events.CALENDAR_ID + " = ?))"
         val selectionArgs = arrayOf("" + calendar.id)
 
-        val cr = ApplicationController.getContext().contentResolver
-        val cur = cr.query(CalendarContract.Events.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null)
+        val cur = mContentProvider.query(
+                CalendarContract.Events.CONTENT_URI,
+                EVENT_PROJECTION,
+                selection, selectionArgs, null
+        )
 
         cur!!.apply {
             while (moveToNext()) {
@@ -142,8 +149,7 @@ class CalendarDataStore {
         }
 
         // Submit the query and get a Cursor object back.
-        val cr = ApplicationController.getContext().contentResolver
-        val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
+        val uri = mContentProvider.insert(CalendarContract.Events.CONTENT_URI, values)
 
         //Get the event ID and Add it to Google Events Pool
         val id = uri!!.lastPathSegment!!.toLong()
@@ -159,12 +165,11 @@ class CalendarDataStore {
             put(CalendarContract.Events.DESCRIPTION, event.description)
         }
 
-        val cr = ApplicationController.getContext().contentResolver
         val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
-        val rows = cr.update(updateUri, values, null, null)
+        val rows = mContentProvider.update(updateUri, values, null, null)
 
         //Update Events Pool
-        for(i in 0 until mEvents.size)
+        for (i in 0 until mEvents.size)
             if (event.id == mEvents[i].id)
                 mEvents[i] = event
 
@@ -172,10 +177,8 @@ class CalendarDataStore {
     }
 
     fun deleteEvent(eventId: Long): Int {
-        //Delete Event Row
-        val cr = ApplicationController.getContext().contentResolver
         val deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
-        val rows = cr.delete(deleteUri, null, null)
+        val rows = mContentProvider.delete(deleteUri, null, null)
 
         //Remove From Events Pool
         mEvents.removeAll { it.id == eventId }

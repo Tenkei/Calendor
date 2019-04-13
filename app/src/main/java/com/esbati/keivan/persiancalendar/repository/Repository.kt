@@ -19,9 +19,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-object Repository{
-
-    private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
+object Repository {
 
     private val mCalendar: PersianCalendar
     private val mCalendarDataStore: CalendarDataStore
@@ -32,7 +30,7 @@ object Repository{
             // for dates like yyyy/1/1 caused by DST
             set(Calendar.HOUR_OF_DAY, 12)
         }
-        mCalendarDataStore = CalendarDataStore()
+        mCalendarDataStore = CalendarDataStore(ApplicationController.getContext().contentResolver)
     }
 
     private fun readRawResource(@RawRes res: Int): String {
