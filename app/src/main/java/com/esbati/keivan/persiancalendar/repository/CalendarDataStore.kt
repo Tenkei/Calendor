@@ -11,7 +11,12 @@ import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import java.util.*
 
-//@SuppressLint("MissingPermission")
+/**
+ * Quick note about the suppress MissingPermission annotation
+ * The values are only accessed through permission required methods
+ * so there is no risk of SecurityException.
+ */
+@SuppressLint("MissingPermission")
 class CalendarDataStore {
 
     private val mCalendars: ArrayList<DeviceCalendar> by lazy { getCalendars() }
