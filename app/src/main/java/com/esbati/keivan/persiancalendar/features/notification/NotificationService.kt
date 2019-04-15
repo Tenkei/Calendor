@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
+import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
  * Created by asus on 5/2/2017.
@@ -16,7 +17,7 @@ import com.esbati.keivan.persiancalendar.components.ServiceLocator
 
 class NotificationService : Service() {
 
-    private val repository by lazy { ServiceLocator.instance.getRepository() }
+    private val repository by lazy { ServiceLocator.instance.get(Repository::class) as Repository }
     private var broadcastReceiver = NotificationBroadcastReceiver()
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_TIME_TICK)

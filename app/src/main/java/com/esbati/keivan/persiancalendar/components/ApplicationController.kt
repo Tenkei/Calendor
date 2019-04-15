@@ -7,7 +7,12 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
+import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
+import com.esbati.keivan.persiancalendar.repository.RemarkDataStore
+import com.esbati.keivan.persiancalendar.repository.Repository
 import io.fabric.sdk.android.Fabric
+import ir.smartlab.persindatepicker.util.PersianCalendar
+import java.util.*
 
 /**
  * Created by Esbati on 12/22/2015.
@@ -19,7 +24,21 @@ class ApplicationController : Application() {
         appContext = this
 
         SoundManager.init()
-        ServiceLocator.init(DefaultServiceLocator(this))
+        ServiceLocator.init(ServiceLocator().apply {
+            set(RemarkDataStore::class, RemarkDataStore(this@ApplicationController.resources))
+            set(CalendarDataStore::class, CalendarDataStore(this@ApplicationController.contentResolver))
+            set(PersianCalendar::class, PersianCalendar().apply {
+                // Set time at the middle of the day to prevent shift in days
+                // for dates like yyyy/1/1 caused by DST
+                set(Calendar.HOUR_OF_DAY, 12)
+            })
+            set(Repository::class, Repository(
+                get(PersianCalendar::class),
+                get(RemarkDataStore::class),
+                get(CalendarDataStore::class))
+            )
+        })
+
         val crashlyticsKit  = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()
@@ -28,10 +47,6 @@ class ApplicationController : Application() {
         //Show Sticky Notification
         NotificationHelper.createNotificationChannelIfRequired(this)
         NotificationUpdateService.enqueueUpdate(this)
-    }
-
-    override fun getSystemService(name: String): Any {
-        return super.getSystemService(name)
     }
 
     companion object {

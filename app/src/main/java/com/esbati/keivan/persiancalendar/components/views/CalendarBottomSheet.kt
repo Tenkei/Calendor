@@ -19,6 +19,7 @@ import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
+import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.hideSoftKeyboard
 import com.esbati.keivan.persiancalendar.utils.showThemedDialog
 
@@ -32,7 +33,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     var mBottomSheetMode = Mode.SHEET_MODE_DATE
     var onEventListener: OnEventListener? = null
 
-    private val repository by lazy { ServiceLocator.instance.getRepository() }
+    private val repository by lazy { ServiceLocator.instance.get(Repository::class) as Repository }
     private var mPreviousBottomSheetState: Int = 0
     private var mShouldUpdateBottomSheet: Boolean = false
     private var mShouldExpandBottomSheet: Boolean = false
