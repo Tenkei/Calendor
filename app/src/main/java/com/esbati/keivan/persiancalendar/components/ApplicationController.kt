@@ -7,12 +7,7 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
-import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
-import com.esbati.keivan.persiancalendar.repository.RemarkDataStore
-import com.esbati.keivan.persiancalendar.repository.Repository
 import io.fabric.sdk.android.Fabric
-import ir.smartlab.persindatepicker.util.PersianCalendar
-import java.util.*
 
 /**
  * Created by Esbati on 12/22/2015.
@@ -24,6 +19,7 @@ class ApplicationController : Application() {
         appContext = this
 
         SoundManager.init()
+        ServiceLocator.init(this)
         val crashlyticsKit  = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()

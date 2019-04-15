@@ -15,14 +15,10 @@ class ServiceLocator(val app: Application) {
     private val repo: Repository by lazy { Repository(getCalendar(), remarkDataStore, calendarDataStore) }
 
     companion object {
-        private var instance: ServiceLocator? = null
-        fun instance(context: Context): ServiceLocator {
-            synchronized(ServiceLocator::class.java) {
-                if (instance == null)
-                    instance = ServiceLocator(context.applicationContext as Application)
+        lateinit var instance: ServiceLocator
 
-                return instance!!
-            }
+        fun init(app: Application) {
+            instance = ServiceLocator(app)
         }
     }
 

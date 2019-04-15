@@ -32,7 +32,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     var mBottomSheetMode = Mode.SHEET_MODE_DATE
     var onEventListener: OnEventListener? = null
 
-    private val repository by lazy { ServiceLocator.instance(context).getRepository() }
+    private val repository by lazy { ServiceLocator.instance.getRepository() }
     private var mPreviousBottomSheetState: Int = 0
     private var mShouldUpdateBottomSheet: Boolean = false
     private var mShouldExpandBottomSheet: Boolean = false

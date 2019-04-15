@@ -13,7 +13,7 @@ import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 
 class NotificationUpdateService : JobIntentService() {
 
-    private val repository by lazy { ServiceLocator.instance(this).getRepository() }
+    private val repository by lazy { ServiceLocator.instance.getRepository() }
 
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")

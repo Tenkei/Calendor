@@ -38,7 +38,7 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
 
-    private val repository by lazy { ServiceLocator.instance(context!!).getRepository() }
+    private val repository by lazy { ServiceLocator.instance.getRepository() }
     private var mDisplayedMonth: Int = 0
     private var mDisplayedYear: Int = 0
     private lateinit var mSelectedDay: CalendarDay
