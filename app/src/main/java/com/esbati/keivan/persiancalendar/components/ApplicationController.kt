@@ -19,7 +19,7 @@ class ApplicationController : Application() {
         appContext = this
 
         SoundManager.init()
-        ServiceLocator.init(this)
+        ServiceLocator.init(DefaultServiceLocator(this))
         val crashlyticsKit  = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()
