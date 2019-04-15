@@ -8,20 +8,21 @@ import android.support.v7.widget.RecyclerView.VERTICAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.components.SoundManager
 import com.esbati.keivan.persiancalendar.features.home.HomeFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
-import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.repository.Repository
 
 class CalendarFragment: Fragment() {
 
     private val mYear by lazy { arguments!!.get(EXTRA_YEAR) as Int }
     private val mMonth by lazy { arguments!!.get(EXTRA_MONTH) as Int }
+    private val repository by lazy { ServiceLocator.instance(context!!).getRepository() }
 
     private lateinit var mRecyclerView: RecyclerView
     private val mAdapter by lazy {
-        CalendarAdapter(mYear, mMonth, Repository.INSTANCE.prepareDays(mYear, mMonth)).apply {
+        CalendarAdapter(mYear, mMonth, repository.prepareDays(mYear, mMonth)).apply {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
                 override fun onCalendarClick(day: CalendarDay) {
                     SoundManager.playSound(day.mDay)
@@ -53,6 +54,6 @@ class CalendarFragment: Fragment() {
     }
 
     fun refreshCalendar() {
-        mAdapter.refresh(Repository.INSTANCE.prepareDays(mYear, mMonth))
+        mAdapter.refresh(repository.prepareDays(mYear, mMonth))
     }
 }

@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
+import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
-import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
  * Created by Keivan Esbati on 4/10/2017.
@@ -13,13 +13,15 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationUpdateService : JobIntentService() {
 
+    private val repository by lazy { ServiceLocator.instance(this).getRepository() }
+
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")
 
         //If notification is active update it, else cancel ongoing notification
         if (PreferencesHelper.shouldShowNotification) {
             //Show Sticky Notification
-            val today = Repository.INSTANCE.getToday()
+            val today = repository.getToday()
             NotificationHelper.showStickyNotification(this, today)
         } else {
             NotificationHelper.cancelNotification(this)

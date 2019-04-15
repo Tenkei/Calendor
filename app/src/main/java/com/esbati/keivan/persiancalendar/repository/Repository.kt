@@ -24,20 +24,6 @@ class Repository (
     private val mRemarkDataStore = remarkDataStore
     private val mCalendarDataStore = calendarDataStore
 
-    companion object {
-        private val remarkDataStore = RemarkDataStore(ApplicationController.getContext().resources)
-        private val calendarDataStore = CalendarDataStore(ApplicationController.getContext().contentResolver)
-        private val calendar = PersianCalendar().apply {
-            // Set time at the middle of the day to prevent shift in days
-            // for dates like yyyy/1/1 caused by DST
-            set(Calendar.HOUR_OF_DAY, 12)
-        }
-
-        val INSTANCE: Repository by lazy {
-            Repository(calendar, remarkDataStore, calendarDataStore)
-        }
-    }
-
 
     fun prepareDays(year: Int, month: Int): List<CalendarDay> {
         val todayCalendar = (mCalendar.clone() as PersianCalendar).apply {
