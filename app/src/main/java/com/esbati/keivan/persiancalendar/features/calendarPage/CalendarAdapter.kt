@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
 import com.esbati.keivan.persiancalendar.utils.getColor
@@ -91,10 +91,10 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_calendar, parent, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val animateSelection = PreferencesHelper.isOptionActive(PreferencesHelper.KEY_ANIMATION_SELECTION, false)
-            if (animateSelection)
+            if (PreferencesHelper.isAnimationSelectionActive) {
                 view.stateListAnimator = AnimatorInflater
                         .loadStateListAnimator(parent.context, R.animator.cell_animator)
+            }
         }
 
         return DayHolder(view)

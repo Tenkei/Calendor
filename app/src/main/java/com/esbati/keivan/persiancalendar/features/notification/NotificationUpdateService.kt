@@ -17,7 +17,7 @@ class NotificationUpdateService : JobIntentService() {
         Log.d(javaClass.simpleName, "Updating notification")
 
         //If notification is active update it, else cancel ongoing notification
-        if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_SHOW, true)) {
+        if (PreferencesHelper.shouldShowNotification) {
             //Show Sticky Notification
             val today = Repository.getToday()
             NotificationHelper.showStickyNotification(this, today)
