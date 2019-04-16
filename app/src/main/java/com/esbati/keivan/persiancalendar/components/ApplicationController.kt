@@ -25,18 +25,16 @@ class ApplicationController : Application() {
 
         SoundManager.init()
         ServiceLocator.init(ServiceLocator().apply {
-            set(RemarkDataStore::class, RemarkDataStore(this@ApplicationController.resources))
-            set(CalendarDataStore::class, CalendarDataStore(this@ApplicationController.contentResolver))
-            set(PersianCalendar::class, PersianCalendar().apply {
+            set(Repository::class) {
+                Repository(get(PersianCalendar::class), get(RemarkDataStore::class), get(CalendarDataStore::class))
+            }
+            set(RemarkDataStore::class) { RemarkDataStore(this@ApplicationController.resources) }
+            set(CalendarDataStore::class) { CalendarDataStore(this@ApplicationController.contentResolver) }
+            set(PersianCalendar::class) { PersianCalendar().apply {
                 // Set time at the middle of the day to prevent shift in days
                 // for dates like yyyy/1/1 caused by DST
                 set(Calendar.HOUR_OF_DAY, 12)
-            })
-            set(Repository::class, Repository(
-                get(PersianCalendar::class),
-                get(RemarkDataStore::class),
-                get(CalendarDataStore::class))
-            )
+            }}
         })
 
         val crashlyticsKit  = Crashlytics.Builder()
