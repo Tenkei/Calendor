@@ -1,7 +1,10 @@
 package com.esbati.keivan.persiancalendar.features.notification
 
 import android.annotation.TargetApi
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,10 +12,9 @@ import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.text.TextUtils
 import com.esbati.keivan.persiancalendar.BuildConfig
-
+import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.features.home.MainActivity
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
-import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
 import com.esbati.keivan.persiancalendar.utils.LanguageHelper
@@ -85,7 +87,7 @@ object NotificationHelper {
         val pIntent = PendingIntent.getActivity(context, requestId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         //Setup Notification
-        val notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.loadInt(PreferencesHelper.KEY_NOTIFICATION_PRIORITY, 2)]
+        val notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.notificationPriority]
         val mBuilder = NotificationCompat.Builder(context, STICKY_NOTIFICATION_CHANNEL_ID)
                 .setPriority(notificationPriority)
                 .setColor(ColorHelper.getSeasonColor(shownDay.mMonth))
@@ -124,7 +126,7 @@ object NotificationHelper {
         }
 
         //Setup Actions
-        if (PreferencesHelper.isOptionActive(PreferencesHelper.KEY_NOTIFICATION_ACTIONS, true)) {
+        if (PreferencesHelper.isNotificationActionsActive) {
             mBuilder.addAction(
                     R.drawable.ic_server_remove_white_24dp
                     , context.getString(R.string.notification_action_dismiss_title)
