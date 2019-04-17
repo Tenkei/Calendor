@@ -9,8 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.components.SoundManager
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.features.home.HomeFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.repository.Repository
@@ -19,7 +19,7 @@ class CalendarFragment: Fragment() {
 
     private val mYear by lazy { arguments!!.get(EXTRA_YEAR) as Int }
     private val mMonth by lazy { arguments!!.get(EXTRA_MONTH) as Int }
-    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
+    private val repository: Repository by locate()
 
     private lateinit var mRecyclerView: RecyclerView
     private val mAdapter by lazy {

@@ -8,7 +8,7 @@ import android.content.IntentFilter
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.components.ApplicationController
-import com.esbati.keivan.persiancalendar.components.ServiceLocator
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
@@ -17,7 +17,7 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationService : Service() {
 
-    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
+    private val repository: Repository by locate()
     private var broadcastReceiver = NotificationBroadcastReceiver()
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_TIME_TICK)

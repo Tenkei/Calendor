@@ -2,17 +2,22 @@ package com.esbati.keivan.persiancalendar.components
 
 import kotlin.reflect.KClass
 
+inline fun <reified T> locate(): Lazy<T> = lazy { ServiceLocator.getInstance().get<T>() }
+
 class ServiceLocator {
 
     @PublishedApi
     internal val registry: HashMap<KClass<*>, Instance<*>> = hashMapOf()
 
     companion object {
-        lateinit var instance: ServiceLocator
+        
+        private var instance: ServiceLocator? = null
 
         fun init(serviceLocator: ServiceLocator) {
             instance = serviceLocator
         }
+
+        fun getInstance() = instance ?: error("Service Locator has not been initiated")
     }
 
     /**

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
-import com.esbati.keivan.persiancalendar.components.ServiceLocator
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.repository.Repository
 
@@ -14,7 +14,7 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationUpdateService : JobIntentService() {
 
-    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
+    private val repository: Repository by locate()
 
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")

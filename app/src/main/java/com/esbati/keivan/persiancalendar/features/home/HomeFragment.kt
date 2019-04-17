@@ -23,7 +23,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ApplicationController
-import com.esbati.keivan.persiancalendar.components.ServiceLocator
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
 import com.esbati.keivan.persiancalendar.features.calendarPage.CalendarFragment
@@ -38,7 +38,7 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
 
-    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
+    private val repository: Repository by locate()
     private var mDisplayedMonth: Int = 0
     private var mDisplayedYear: Int = 0
     private lateinit var mSelectedDay: CalendarDay
