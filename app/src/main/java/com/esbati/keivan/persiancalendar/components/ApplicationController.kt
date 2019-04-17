@@ -25,12 +25,10 @@ class ApplicationController : Application() {
 
         SoundManager.init()
         ServiceLocator.init(ServiceLocator().apply {
-            single(Repository::class) {
-                Repository(get(PersianCalendar::class), get(RemarkDataStore::class), get(CalendarDataStore::class))
-            }
-            single(RemarkDataStore::class) { RemarkDataStore(this@ApplicationController.resources) }
-            single(CalendarDataStore::class) { CalendarDataStore(this@ApplicationController.contentResolver) }
-            factory(PersianCalendar::class) { PersianCalendar().apply {
+            single { Repository(get(), get(), get()) }
+            single { RemarkDataStore(this@ApplicationController.resources) }
+            single { CalendarDataStore(this@ApplicationController.contentResolver) }
+            factory { PersianCalendar().apply {
                 // Set time at the middle of the day to prevent shift in days
                 // for dates like yyyy/1/1 caused by DST
                 set(Calendar.HOUR_OF_DAY, 12)

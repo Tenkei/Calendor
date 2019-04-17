@@ -17,7 +17,7 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationService : Service() {
 
-    private val repository by lazy { ServiceLocator.instance.get(Repository::class) as Repository }
+    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
     private var broadcastReceiver = NotificationBroadcastReceiver()
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_TIME_TICK)

@@ -4,7 +4,8 @@ import kotlin.reflect.KClass
 
 class ServiceLocator {
 
-    private val registry: HashMap<KClass<*>, Instance<*>> = hashMapOf()
+    @PublishedApi
+    internal val registry: HashMap<KClass<*>, Instance<*>> = hashMapOf()
 
     companion object {
         lateinit var instance: ServiceLocator
@@ -17,21 +18,21 @@ class ServiceLocator {
     /**
      * Register a Single instance dependency
      */
-    fun <T> single(clazz: KClass<*>, definition: () -> T){
-        registry[clazz] = SingleInstance(definition)
+    inline fun <reified T> single(noinline definition: () -> T){
+        registry[T::class] = SingleInstance(definition)
     }
 
     /**
      * Register a Factory instance dependency
      */
-    fun <T> factory(clazz: KClass<*>, definition: () -> T){
-        registry[clazz] = FactoryInstance(definition)
+    inline fun <reified T> factory(noinline definition: () -> T){
+        registry[T::class] = FactoryInstance(definition)
     }
 
     /**
      * Retrieve an instance of the given dependency
      */
-    fun <T> get(clazz: KClass<*>): T = registry[clazz]?.get() as T ?: error("No instance of the given type is found")
+    inline fun <reified T> get(): T = registry[T::class]?.get() as T ?: error("No instance of the given type is found")
 }
 
 /**

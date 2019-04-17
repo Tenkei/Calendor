@@ -14,7 +14,7 @@ import com.esbati.keivan.persiancalendar.repository.Repository
 
 class NotificationUpdateService : JobIntentService() {
 
-    private val repository by lazy { ServiceLocator.instance.get(Repository::class) as Repository }
+    private val repository by lazy { ServiceLocator.instance.get<Repository>() }
 
     override fun onHandleWork(intent: Intent) {
         Log.d(javaClass.simpleName, "Updating notification")
