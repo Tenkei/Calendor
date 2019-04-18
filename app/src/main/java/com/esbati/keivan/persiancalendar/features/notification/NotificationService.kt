@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
 
@@ -54,17 +53,17 @@ class NotificationService : Service() {
 
     companion object {
         fun startService(context: Context) {
-            if (!isServiceRunning())
+            if (!isServiceRunning(context))
                 ContextCompat.startForegroundService(context, Intent(context, NotificationService::class.java))
         }
 
         fun stopService(context: Context){
-            if (isServiceRunning())
+            if (isServiceRunning(context))
                 context.stopService(Intent(context, NotificationService::class.java))
         }
 
-        fun isServiceRunning(): Boolean {
-            val manager = ApplicationController.getContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        fun isServiceRunning(context: Context): Boolean {
+            val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             for (service in manager.getRunningServices(Integer.MAX_VALUE))
                 if (NotificationService::class.java.name == service.service.className)
                     return true

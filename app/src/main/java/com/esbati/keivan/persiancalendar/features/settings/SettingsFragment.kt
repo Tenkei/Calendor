@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.NumberPicker
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
 import com.esbati.keivan.persiancalendar.features.settings.cells.TextCheckCell
@@ -24,11 +23,12 @@ import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 class SettingsFragment : BottomSheetDialogFragment() {
 
     private  val mPriorityTitles = arrayOf(
-            ApplicationController.getContext().getString(R.string.least),
-            ApplicationController.getContext().getString(R.string.down),
-            ApplicationController.getContext().getString(R.string.priority_default),
-            ApplicationController.getContext().getString(R.string.up),
-            ApplicationController.getContext().getString(R.string.the_most))
+            getString(R.string.least),
+            getString(R.string.down),
+            getString(R.string.priority_default),
+            getString(R.string.up),
+            getString(R.string.the_most)
+    )
 
     private lateinit var mNotificationAction: TextCheckCell
     private lateinit var mNotificationPriority: TextSettingsCell

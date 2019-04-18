@@ -1,7 +1,6 @@
 package com.esbati.keivan.persiancalendar.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
@@ -31,14 +30,22 @@ fun Float.toDp(): Int {
     return if (this == 0f) 0 else Math.ceil((density * this).toDouble()).toInt()
 }
 
+fun showToast(@StringRes value: Int, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(ApplicationController.getContext(), value, duration).show()
+}
+
 fun View.showSoftKeyboard() {
-    val imm = ApplicationController.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun View.hideSoftKeyboard() {
-    val imm = ApplicationController.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+fun TextView.setTextColorResource(@ColorRes value: Int) {
+    this.setTextColor(ContextCompat.getColor(this.context, value))
 }
 
 fun AlertDialog.Builder.showThemedDialog(): AlertDialog {
@@ -71,14 +78,6 @@ fun AlertDialog.applyFont(@FontRes title: Int = R.font.iransans_fa_num_bold,
     findViewById<TextView>(android.R.id.button3)?.typeface = ResourcesCompat.getFont(context, buttons)
 
     return this
-}
-
-fun getColor(@ColorRes value: Int): Int {
-    return ContextCompat.getColor(ApplicationController.getContext(), value)
-}
-
-fun showToast(@StringRes value: Int, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(ApplicationController.getContext(), value, duration).show()
 }
 
 
