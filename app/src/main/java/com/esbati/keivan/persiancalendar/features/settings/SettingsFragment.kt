@@ -17,7 +17,7 @@ import com.esbati.keivan.persiancalendar.features.settings.cells.TextSettingsCel
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 
 /**
- * Created by asus on 4/16/2017.
+ * Created by Keivan Esbati on 4/16/2017.
  */
 
 class SettingsFragment : BottomSheetDialogFragment() {

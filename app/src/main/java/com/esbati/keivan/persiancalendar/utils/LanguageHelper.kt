@@ -1,7 +1,7 @@
 package com.esbati.keivan.persiancalendar.utils
 
 /**
- * Created by asus on 4/16/2017.
+ * Created by Keivan Esbati on 4/16/2017.
  */
 
 object LanguageHelper {

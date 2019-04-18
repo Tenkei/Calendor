@@ -11,7 +11,7 @@ import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
- * Created by asus on 5/2/2017.
+ * Created by Keivan Esbati on 5/2/2017.
  */
 
 class NotificationService : Service() {

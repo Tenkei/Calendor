@@ -4,7 +4,7 @@ import android.content.Context
 import com.esbati.keivan.persiancalendar.R
 
 /**
- * Created by asus on 11/21/2016.
+ * Created by Keivan Esbati on 11/21/2016.
  */
 
 object ColorHelper {

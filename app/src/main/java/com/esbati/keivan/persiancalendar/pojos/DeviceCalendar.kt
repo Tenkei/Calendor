@@ -1,7 +1,7 @@
 package com.esbati.keivan.persiancalendar.pojos
 
 /**
- * Created by asus on 11/23/2016.
+ * Created by Keivan Esbati on 11/23/2016.
  */
 
 data class DeviceCalendar (

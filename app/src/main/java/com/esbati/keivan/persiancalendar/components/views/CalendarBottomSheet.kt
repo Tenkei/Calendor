@@ -25,7 +25,7 @@ import com.esbati.keivan.persiancalendar.utils.hideSoftKeyboard
 import com.esbati.keivan.persiancalendar.utils.showThemedDialog
 
 /**
- * Created by asus on 11/25/2016.
+ * Created by Keivan Esbati on 11/25/2016.
  */
 
 class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null
