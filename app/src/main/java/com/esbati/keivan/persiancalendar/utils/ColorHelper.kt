@@ -1,6 +1,6 @@
 package com.esbati.keivan.persiancalendar.utils
 
-import com.esbati.keivan.persiancalendar.components.ApplicationController
+import android.content.Context
 import com.esbati.keivan.persiancalendar.R
 
 /**
@@ -23,8 +23,8 @@ object ColorHelper {
             , R.drawable.bg_calendar_winter
     )
 
-    fun getSeasonColor(month: Int): Int {
-        return ApplicationController.getContext().resources.getColor(getSeasonColorResource(month))
+    fun getSeasonColor(month: Int, context: Context): Int {
+        return context.resources.getColor(getSeasonColorResource(month))
     }
 
     fun getSeasonColorResource(month: Int): Int {

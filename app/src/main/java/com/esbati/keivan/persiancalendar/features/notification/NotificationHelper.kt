@@ -90,7 +90,7 @@ object NotificationHelper {
         val notificationPriority = NOTIFICATION_PRIORITY[PreferencesHelper.notificationPriority]
         val mBuilder = NotificationCompat.Builder(context, STICKY_NOTIFICATION_CHANNEL_ID)
                 .setPriority(notificationPriority)
-                .setColor(ColorHelper.getSeasonColor(shownDay.mMonth))
+                .setColor(ColorHelper.getSeasonColor(shownDay.mMonth, context))
                 .setSmallIcon(R.drawable.icon01 + shownDay.mDay - 1)
                 .setContentIntent(pIntent)
                 .setWhen(0)
