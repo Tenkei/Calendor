@@ -16,6 +16,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.components.ServiceLocator
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.repository.Repository
@@ -32,6 +34,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
     var mBottomSheetMode = Mode.SHEET_MODE_DATE
     var onEventListener: OnEventListener? = null
 
+    private val repository: Repository by locate()
     private var mPreviousBottomSheetState: Int = 0
     private var mShouldUpdateBottomSheet: Boolean = false
     private var mShouldExpandBottomSheet: Boolean = false
@@ -262,7 +265,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.copy() ?: Repository.createEventFor(mSelectedDay)
+                val tempEvent = mSelectedEvent?.copy() ?: repository.createEventFor(mSelectedDay)
                 setEditEventSheet(tempEvent)
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)

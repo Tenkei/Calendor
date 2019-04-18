@@ -23,6 +23,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ApplicationController
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
 import com.esbati.keivan.persiancalendar.features.calendarPage.CalendarFragment
@@ -37,6 +38,7 @@ import com.esbati.keivan.persiancalendar.utils.toDp
 
 class HomeFragment : Fragment() {
 
+    private val repository: Repository by locate()
     private var mDisplayedMonth: Int = 0
     private var mDisplayedYear: Int = 0
     private lateinit var mSelectedDay: CalendarDay
@@ -69,7 +71,7 @@ class HomeFragment : Fragment() {
             setupBottomSheet(this)
 
             //Setup Initial Day
-            mSelectedDay = Repository.getToday().also {
+            mSelectedDay = repository.getToday().also {
                 mDisplayedYear = it.mYear
                 mDisplayedMonth = it.mMonth
             }
@@ -206,7 +208,7 @@ class HomeFragment : Fragment() {
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object : CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: UserEvent) {
-                Repository.deleteEvent(deletedEvent).also {
+                repository.deleteEvent(deletedEvent).also {
                     //Refresh UI and show Date if Event Successfully added
                     if (it == 1) {
                         refreshFragment(deletedEvent.year, deletedEvent.month)
@@ -230,13 +232,13 @@ class HomeFragment : Fragment() {
 
                 if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
                         == PackageManager.PERMISSION_GRANTED)
-                    Repository.saveEvent(editedEvent).also {
+                    repository.saveEvent(editedEvent).also {
                         //Refresh UI and show Date if Event Successfully added
                         if (it == 1) {
                             refreshFragment(editedEvent.year, editedEvent.month)
 
                             mSelectedDay.mEvents.clear()
-                            mSelectedDay.mEvents.addAll(Repository.getEvents(
+                            mSelectedDay.mEvents.addAll(repository.getEvents(
                                     mSelectedDay.mYear
                                     , mSelectedDay.mMonth
                                     , mSelectedDay.mDay

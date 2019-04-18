@@ -2,59 +2,28 @@ package com.esbati.keivan.persiancalendar.repository
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.support.annotation.RawRes
 import android.support.annotation.RequiresPermission
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.CalendarRemark
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
-import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.utils.Constants
 import ir.smartlab.persindatepicker.util.PersianCalendar
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-object Repository{
+class Repository (
+    calendar: PersianCalendar,
+    remarkDataStore: RemarkDataStore,
+    calendarDataStore: CalendarDataStore
+) {
 
-    private const val DAY_IN_MILLIS = 1000L * 24 * 60 * 60
+    private val mCalendar = calendar
+    private val mRemarkDataStore = remarkDataStore
+    private val mCalendarDataStore = calendarDataStore
 
-    private val mCalendar: PersianCalendar
-
-    init {
-        mCalendar = PersianCalendar().apply {
-            // Set time at the middle of the day to prevent shift in days
-            // for dates like yyyy/1/1 caused by DST
-            set(Calendar.HOUR_OF_DAY, 12)
-        }
-    }
-
-    private fun readRawResource(@RawRes res: Int): String {
-        val s = Scanner(ApplicationController.getContext().resources.openRawResource(res)).useDelimiter("\\A")
-        return if (s.hasNext()) s.next() else ""
-    }
-
-    private fun readEventsFromJSON(): ArrayList<CalendarRemark> {
-        val calendarEvents = ArrayList<CalendarRemark>()
-        try {
-            val eventsJSON = JSONObject(readRawResource(R.raw.events)).getJSONArray("events")
-
-            for (i in 0 until eventsJSON.length()) {
-                val eventJSON = eventsJSON.getJSONObject(i)
-                val event = CalendarRemark.fromJSON(eventJSON)
-                calendarEvents.add(event)
-            }
-
-        } catch (e: JSONException) {
-            Log.e("JSON Parser", e.message)
-        }
-
-        return calendarEvents
-    }
 
     fun prepareDays(year: Int, month: Int): List<CalendarDay> {
         val todayCalendar = (mCalendar.clone() as PersianCalendar).apply {
@@ -131,16 +100,16 @@ object Repository{
     }
 
     private fun getRemarks(year: Int, month: Int, day: Int): ArrayList<CalendarRemark> =
-            RemarkDataStore.getRemarks(year, month, day)
+            mRemarkDataStore.getRemarks(year, month, day)
 
     @RequiresPermission(Manifest.permission.READ_CALENDAR)
     fun getEvents(year: Int, month: Int, day: Int): ArrayList<UserEvent> =
-            CalendarDataStore.getEvents(year, month, day)
+            mCalendarDataStore.getEvents(year, month, day)
 
     private fun getEventsIfPermissionIsAvailable(year: Int, month: Int, day: Int): ArrayList<UserEvent> {
         return if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.READ_CALENDAR)
                 == PackageManager.PERMISSION_GRANTED)
-                    Repository.getEvents(year, month, day)
+                    getEvents(year, month, day)
                 else
                     ArrayList()
     }
@@ -154,9 +123,9 @@ object Repository{
     }
 
     @RequiresPermission(Manifest.permission.WRITE_CALENDAR)
-    fun saveEvent(event: UserEvent): Int = CalendarDataStore.saveEvent(event)
+    fun saveEvent(event: UserEvent): Int = mCalendarDataStore.saveEvent(event)
 
-    fun deleteEvent(event: UserEvent): Int = CalendarDataStore.deleteEvent(event.id)
+    fun deleteEvent(event: UserEvent): Int = mCalendarDataStore.deleteEvent(event.id)
 }
 
 

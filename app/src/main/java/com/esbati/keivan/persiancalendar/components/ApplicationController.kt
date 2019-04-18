@@ -7,7 +7,12 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
+import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
+import com.esbati.keivan.persiancalendar.repository.RemarkDataStore
+import com.esbati.keivan.persiancalendar.repository.Repository
 import io.fabric.sdk.android.Fabric
+import ir.smartlab.persindatepicker.util.PersianCalendar
+import java.util.*
 
 /**
  * Created by Esbati on 12/22/2015.
@@ -19,6 +24,17 @@ class ApplicationController : Application() {
         appContext = this
 
         SoundManager.init()
+        ServiceLocator.init(ServiceLocator().apply {
+            single { Repository(get(), get(), get()) }
+            single { RemarkDataStore(this@ApplicationController.resources) }
+            single { CalendarDataStore(this@ApplicationController.contentResolver) }
+            factory { PersianCalendar().apply {
+                // Set time at the middle of the day to prevent shift in days
+                // for dates like yyyy/1/1 caused by DST
+                set(Calendar.HOUR_OF_DAY, 12)
+            }}
+        })
+
         val crashlyticsKit  = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()

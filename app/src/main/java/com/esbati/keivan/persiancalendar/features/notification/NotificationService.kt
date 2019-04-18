@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.components.ApplicationController
+import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
 
 /**
@@ -15,6 +16,8 @@ import com.esbati.keivan.persiancalendar.repository.Repository
  */
 
 class NotificationService : Service() {
+
+    private val repository: Repository by locate()
     private var broadcastReceiver = NotificationBroadcastReceiver()
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_TIME_TICK)
@@ -30,7 +33,7 @@ class NotificationService : Service() {
         Log.d(javaClass.simpleName, "Created")
 
         //Promote service to foreground using sticky notification
-        val today = Repository.getToday()
+        val today = repository.getToday()
         val notification = NotificationHelper.createStickyNotification(this, today)
         startForeground(NotificationHelper.STICKY_NOTIFICATION_ID, notification)
     }
