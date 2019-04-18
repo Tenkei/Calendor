@@ -22,7 +22,6 @@ import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.*
 import com.esbati.keivan.persiancalendar.R
-import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
 import com.esbati.keivan.persiancalendar.components.views.CalendarPager
@@ -230,7 +229,7 @@ class HomeFragment : Fragment() {
                     return
                 }
 
-                if (ContextCompat.checkSelfPermission(ApplicationController.getContext(), Manifest.permission.WRITE_CALENDAR)
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR)
                         == PackageManager.PERMISSION_GRANTED)
                     repository.saveEvent(editedEvent).also {
                         //Refresh UI and show Date if Event Successfully added

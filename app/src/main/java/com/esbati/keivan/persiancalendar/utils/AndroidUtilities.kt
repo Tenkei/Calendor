@@ -1,7 +1,6 @@
 package com.esbati.keivan.persiancalendar.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
@@ -32,12 +31,12 @@ fun Float.toDp(): Int {
 }
 
 fun View.showSoftKeyboard() {
-    val imm = ApplicationController.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun View.hideSoftKeyboard() {
-    val imm = ApplicationController.getContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(this.windowToken, 0)
 }
 
