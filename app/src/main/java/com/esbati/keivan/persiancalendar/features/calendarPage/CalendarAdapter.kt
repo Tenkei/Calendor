@@ -12,7 +12,7 @@ import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
-import com.esbati.keivan.persiancalendar.utils.getColor
+import com.esbati.keivan.persiancalendar.utils.setTextColorResource
 
 class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : RecyclerView.Adapter<CalendarAdapter.DayHolder>() {
 
@@ -54,34 +54,34 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : 
             //Set Background Color
             when {
                 day.isHoliday && day.isToday -> {
-                    mDayNo.setTextColor(getColor(android.R.color.holo_red_dark))
+                    mDayNo.setTextColorResource(android.R.color.holo_red_dark)
                     itemView.setBackgroundResource(R.drawable.bg_calendar_today)
-                    mEvents.setTextColor(getColor(android.R.color.white))
+                    mEvents.setTextColorResource(android.R.color.white)
                 }
 
                 day.isHoliday -> {
-                    mDayNo.setTextColor(getColor(android.R.color.white))
+                    mDayNo.setTextColorResource(android.R.color.white)
                     itemView.setBackgroundResource(R.drawable.bg_calendar_holiday)
-                    mEvents.setTextColor(getColor(android.R.color.white))
+                    mEvents.setTextColorResource(android.R.color.white)
                 }
 
                 day.isToday -> {
-                    mDayNo.setTextColor(getColor(android.R.color.white))
+                    mDayNo.setTextColorResource(android.R.color.white)
                     itemView.setBackgroundResource(R.drawable.bg_calendar_today)
-                    mEvents.setTextColor(getColor(android.R.color.white))
+                    mEvents.setTextColorResource(android.R.color.white)
                 }
 
                 day.isCurrentMonth -> {
-                    mDayNo.setTextColor(getColor(android.R.color.black))
+                    mDayNo.setTextColorResource(android.R.color.black)
                     itemView.setBackgroundResource(ColorHelper.getSeasonDrawableResource(month))
-                    mEvents.setTextColor(getColor(android.R.color.black))
+                    mEvents.setTextColorResource(android.R.color.black)
                 }
 
                 else -> {
                     itemView.isEnabled = false
-                    mDayNo.setTextColor(getColor(android.R.color.white))
-                    itemView.setBackgroundColor(getColor(R.color.lighter_gray))
-                    mEvents.setTextColor(getColor(android.R.color.white))
+                    mDayNo.setTextColorResource(android.R.color.white)
+                    itemView.setBackgroundResource(R.color.lighter_gray)
+                    mEvents.setTextColorResource(android.R.color.white)
                 }
             }
         }
