@@ -22,13 +22,15 @@ import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 
 class SettingsFragment : BottomSheetDialogFragment() {
 
-    private  val mPriorityTitles = arrayOf(
-            getString(R.string.least),
-            getString(R.string.down),
-            getString(R.string.priority_default),
-            getString(R.string.up),
-            getString(R.string.the_most)
-    )
+    private val mPriorityTitles by lazy {
+        arrayOf(
+                getString(R.string.least),
+                getString(R.string.down),
+                getString(R.string.priority_default),
+                getString(R.string.up),
+                getString(R.string.the_most)
+        )
+    }
 
     private lateinit var mNotificationAction: TextCheckCell
     private lateinit var mNotificationPriority: TextSettingsCell
