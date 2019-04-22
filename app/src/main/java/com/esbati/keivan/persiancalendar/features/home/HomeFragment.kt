@@ -32,6 +32,7 @@ import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.Constants
+import com.esbati.keivan.persiancalendar.utils.bindView
 import com.esbati.keivan.persiancalendar.utils.showToast
 import com.esbati.keivan.persiancalendar.utils.toDp
 
@@ -44,46 +45,47 @@ class HomeFragment : Fragment() {
 
     //Toolbar
     private var mToolbarMargin: Int = 0
-    private lateinit var mCoordinatorLayout: CoordinatorLayout
-    private lateinit var mAppbar: AppBarLayout
-    private lateinit var mCollapsingToolbar: CollapsingToolbarLayout
-    private lateinit var mToolbar: Toolbar
-    private lateinit var mToolbarTitle: TextView
-    private lateinit var mToolbarSubTitle: TextView
-    private lateinit var mToolbarBackground: ImageSwitcher
-    private lateinit var mSetting: ImageView
-    private lateinit var mRightBtn: ImageView
-    private lateinit var mLeftBtn: ImageView
+    private val mCoordinatorLayout:CoordinatorLayout by bindView(R.id.coordinator_layout)
+    private val mAppbar:AppBarLayout by bindView(R.id.appbar)
+    private val mCollapsingToolbar:CollapsingToolbarLayout by bindView(R.id.collapsing_toolbar)
+    private val mToolbar:Toolbar by bindView(R.id.toolbar)
+    private val mToolbarTitle:TextView by bindView(R.id.toolbar_title)
+    private val mToolbarSubTitle:TextView by bindView(R.id.toolbar_sub_title)
+    private val mToolbarBackground:ImageSwitcher by bindView(R.id.toolbar_background)
+    private val mSetting:ImageView by bindView(R.id.toolbar_setting)
+    private val mRightBtn:ImageView by bindView(R.id.toolbar_right_btn)
+    private val mLeftBtn:ImageView by bindView(R.id.toolbar_left_btn)
 
     //Pager
-    private lateinit var mPager: CalendarPager
+    private val mPager: CalendarPager by bindView(R.id.pager)
     private lateinit var mPagerAdapter: FragmentPagerAdapter
 
     //Bottom Sheet
-    private lateinit var mBottomSheet: CalendarBottomSheet
-    private lateinit var mEventActionBtn: FloatingActionButton
+    private val mBottomSheet: CalendarBottomSheet by bindView(R.id.bottom_sheet)
+    private val mEventActionBtn: FloatingActionButton by bindView(R.id.add_event)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)?.apply {
-            setupToolbar(this)
-            setupPager(this)
-            setupBottomSheet(this)
-
-            //Setup Initial Day
-            mSelectedDay = repository.getToday().also {
-                mDisplayedYear = it.mYear
-                mDisplayedMonth = it.mMonth
-            }
-
-            //Set Viewpager to Show Current Month
-            mPager.isRtL = true
-            mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth)
-            showDate(mSelectedDay, false)
-        }
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupToolbar(view)
+        setupPager(view)
+        setupBottomSheet(view)
+
+        //Setup Initial Day
+        mSelectedDay = repository.getToday().also {
+            mDisplayedYear = it.mYear
+            mDisplayedMonth = it.mMonth
+        }
+
+        //Set Viewpager to Show Current Month
+        mPager.isRtL = true
+        mPager.setCurrentItem(mDisplayedYear, mDisplayedMonth)
+        showDate(mSelectedDay, false)
+
         runStartAnimation()
     }
 
@@ -99,17 +101,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupToolbar(rootView: View) {
-        mCoordinatorLayout = rootView.findViewById(R.id.coordinator_layout) as CoordinatorLayout
-        mAppbar = rootView.findViewById(R.id.appbar) as AppBarLayout
-        mCollapsingToolbar = rootView.findViewById(R.id.collapsing_toolbar) as CollapsingToolbarLayout
-        mToolbar = rootView.findViewById(R.id.toolbar) as Toolbar
-        mToolbarTitle = rootView.findViewById(R.id.toolbar_title) as TextView
-        mToolbarSubTitle = rootView.findViewById(R.id.toolbar_sub_title) as TextView
-        mToolbarBackground = rootView.findViewById(R.id.toolbar_background) as ImageSwitcher
-        mSetting = rootView.findViewById(R.id.toolbar_setting) as ImageView
-        mRightBtn = rootView.findViewById(R.id.toolbar_right_btn) as ImageView
-        mLeftBtn = rootView.findViewById(R.id.toolbar_left_btn) as ImageView
-
         mCollapsingToolbar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 mCollapsingToolbar.scrimVisibleHeightTrigger = mCollapsingToolbar.height - 48.toDp()
@@ -173,7 +164,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupPager(view: View) {
-        mPager = view.findViewById(R.id.pager) as CalendarPager
         mPagerAdapter = HomeAdapter(childFragmentManager)
         mPager.adapter = mPagerAdapter
 
@@ -202,8 +192,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupBottomSheet(view: View) {
-        mEventActionBtn = view.findViewById(R.id.add_event) as FloatingActionButton
-        mBottomSheet = view.findViewById(R.id.bottom_sheet) as CalendarBottomSheet
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object : CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: UserEvent) {
