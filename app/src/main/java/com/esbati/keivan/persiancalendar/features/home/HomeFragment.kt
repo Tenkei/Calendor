@@ -45,20 +45,20 @@ class HomeFragment : Fragment() {
 
     //Toolbar
     private var mToolbarMargin: Int = 0
-    private val mCoordinatorLayout:CoordinatorLayout by bindView(R.id.coordinator_layout)
-    private val mAppbar:AppBarLayout by bindView(R.id.appbar)
-    private val mCollapsingToolbar:CollapsingToolbarLayout by bindView(R.id.collapsing_toolbar)
-    private val mToolbar:Toolbar by bindView(R.id.toolbar)
-    private val mToolbarTitle:TextView by bindView(R.id.toolbar_title)
-    private val mToolbarSubTitle:TextView by bindView(R.id.toolbar_sub_title)
-    private val mToolbarBackground:ImageSwitcher by bindView(R.id.toolbar_background)
-    private val mSetting:ImageView by bindView(R.id.toolbar_setting)
-    private val mRightBtn:ImageView by bindView(R.id.toolbar_right_btn)
-    private val mLeftBtn:ImageView by bindView(R.id.toolbar_left_btn)
+    private val mCoordinatorLayout: CoordinatorLayout by bindView(R.id.coordinator_layout)
+    private val mAppbar: AppBarLayout by bindView(R.id.appbar)
+    private val mCollapsingToolbar: CollapsingToolbarLayout by bindView(R.id.collapsing_toolbar)
+    private val mToolbar: Toolbar by bindView(R.id.toolbar)
+    private val mToolbarTitle: TextView by bindView(R.id.toolbar_title)
+    private val mToolbarSubTitle: TextView by bindView(R.id.toolbar_sub_title)
+    private val mToolbarBackground: ImageSwitcher by bindView(R.id.toolbar_background)
+    private val mSetting: ImageView by bindView(R.id.toolbar_setting)
+    private val mRightBtn: ImageView by bindView(R.id.toolbar_right_btn)
+    private val mLeftBtn: ImageView by bindView(R.id.toolbar_left_btn)
 
     //Pager
     private val mPager: CalendarPager by bindView(R.id.pager)
-    private lateinit var mPagerAdapter: FragmentPagerAdapter
+    private val mPagerAdapter by lazy(LazyThreadSafetyMode.NONE) { HomeAdapter(childFragmentManager) }
 
     //Bottom Sheet
     private val mBottomSheet: CalendarBottomSheet by bindView(R.id.bottom_sheet)
@@ -164,9 +164,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupPager() {
-        mPagerAdapter = HomeAdapter(childFragmentManager)
         mPager.adapter = mPagerAdapter
-
         mPager.addOnPageChangeListener(object : CalendarPager.OnPageChangeListener() {
             override fun onPageSelected(year: Int, month: Int) {
                 mDisplayedYear = year
