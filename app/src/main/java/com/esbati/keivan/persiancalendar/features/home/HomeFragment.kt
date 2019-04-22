@@ -71,9 +71,9 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar(view)
-        setupPager(view)
-        setupBottomSheet(view)
+        setupToolbar()
+        setupPager()
+        setupBottomSheet()
 
         //Setup Initial Day
         mSelectedDay = repository.getToday().also {
@@ -100,7 +100,7 @@ class HomeFragment : Fragment() {
         mPager.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_bottom))
     }
 
-    private fun setupToolbar(rootView: View) {
+    private fun setupToolbar() {
         mCollapsingToolbar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 mCollapsingToolbar.scrimVisibleHeightTrigger = mCollapsingToolbar.height - 48.toDp()
@@ -163,7 +163,7 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun setupPager(view: View) {
+    private fun setupPager() {
         mPagerAdapter = HomeAdapter(childFragmentManager)
         mPager.adapter = mPagerAdapter
 
@@ -191,7 +191,7 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun setupBottomSheet(view: View) {
+    private fun setupBottomSheet() {
         mBottomSheet.eventActionBtn = mEventActionBtn
         mBottomSheet.onEventListener = object : CalendarBottomSheet.OnEventListener {
             override fun onEventDeleted(deletedEvent: UserEvent) {
