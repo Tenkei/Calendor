@@ -1,15 +1,16 @@
 package com.esbati.keivan.persiancalendar.utils
 
-import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
 import android.support.annotation.StringRes
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -23,6 +24,10 @@ private val density = ApplicationController.getContext().resources.displayMetric
 fun Context.checkPermissions(vararg permissions: String): Boolean
         = permissions.toList().all {
     ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+}
+fun AppCompatActivity.shouldShowPermissionsRationale(vararg permissions: String): Boolean
+        = permissions.toList().any {
+    ActivityCompat.shouldShowRequestPermissionRationale(this, it)
 }
 
 fun dp(value: Float): Int {
