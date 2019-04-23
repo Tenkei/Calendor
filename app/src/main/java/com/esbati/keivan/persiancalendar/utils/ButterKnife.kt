@@ -4,6 +4,10 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.DialogFragment
 import android.app.Fragment
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.OnLifecycleEvent
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import kotlin.properties.ReadOnlyProperty
@@ -119,15 +123,30 @@ private fun <T, V : View> optional(ids: IntArray, finder: Finder<T>)
 typealias Finder<T> = T.(Int) -> View?
 
 // Like Kotlin's lazy delegate but the initializer gets the target and metadata passed to it
-private class Lazy<T, V>(private val initializer: (T, KProperty<*>) -> V) : ReadOnlyProperty<T, V> {
+private class Lazy<T, V>(private val initializer: (T, KProperty<*>) -> V)
+    : ReadOnlyProperty<T, V>, LifecycleObserver {
     private object EMPTY
     private var value: Any? = EMPTY
+    private var attachedToLifecycleOwner = false
 
     override fun getValue(thisRef: T, property: KProperty<*>): V {
+        checkAddToLifecycleOwner(thisRef)
         if (value == EMPTY) {
             value = initializer(thisRef, property)
         }
         @Suppress("UNCHECKED_CAST")
         return value as V
+    }
+
+    private fun checkAddToLifecycleOwner(thisRef: T) {
+        if (!attachedToLifecycleOwner && thisRef is LifecycleOwner) {
+            thisRef.lifecycle.addObserver(this)
+            attachedToLifecycleOwner = true
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun destroy() {
+        value = EMPTY
     }
 }
