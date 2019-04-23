@@ -1,6 +1,8 @@
 package com.esbati.keivan.persiancalendar.utils
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
@@ -17,6 +19,11 @@ import com.esbati.keivan.persiancalendar.components.ApplicationController
 
 
 private val density = ApplicationController.getContext().resources.displayMetrics.density
+
+fun Context.checkPermissions(vararg permissions: String): Boolean
+        = permissions.toList().all {
+    ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+}
 
 fun dp(value: Float): Int {
     return if (value == 0f) 0 else Math.ceil((density * value).toDouble()).toInt()
