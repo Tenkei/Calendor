@@ -118,7 +118,7 @@
         android:elevation="4dp"
         android:layoutDirection="ltr"
         app:behavior_peekHeight="48dp"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_event"
