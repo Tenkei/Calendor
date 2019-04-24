@@ -2,7 +2,7 @@ package com.esbati.keivan.persiancalendar.repository
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 
 /**

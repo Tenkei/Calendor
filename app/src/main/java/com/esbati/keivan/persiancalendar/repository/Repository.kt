@@ -2,8 +2,8 @@ package com.esbati.keivan.persiancalendar.repository
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.support.annotation.RequiresPermission
-import android.support.v4.content.ContextCompat
+import androidx.annotation.RequiresPermission
+import androidx.core.content.ContextCompat
 import com.esbati.keivan.persiancalendar.components.ApplicationController
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.pojos.CalendarRemark

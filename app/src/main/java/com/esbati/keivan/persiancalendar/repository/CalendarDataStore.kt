@@ -6,7 +6,7 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.esbati.keivan.persiancalendar.pojos.DeviceCalendar
 import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import java.util.*

@@ -4,15 +4,15 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.core.content.ContextCompat
+import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,7 +36,7 @@ import com.esbati.keivan.persiancalendar.utils.bindView
 import com.esbati.keivan.persiancalendar.utils.showToast
 import com.esbati.keivan.persiancalendar.utils.toDp
 
-class HomeFragment : Fragment() {
+class HomeFragment : androidx.fragment.app.Fragment() {
 
     private val repository: Repository by locate()
     private var mDisplayedMonth: Int = 0
@@ -45,7 +45,7 @@ class HomeFragment : Fragment() {
 
     //Toolbar
     private var mToolbarMargin: Int = 0
-    private val mCoordinatorLayout: CoordinatorLayout by bindView(R.id.coordinator_layout)
+    private val mCoordinatorLayout: androidx.coordinatorlayout.widget.CoordinatorLayout by bindView(R.id.coordinator_layout)
     private val mAppbar: AppBarLayout by bindView(R.id.appbar)
     private val mCollapsingToolbar: CollapsingToolbarLayout by bindView(R.id.collapsing_toolbar)
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
@@ -272,9 +272,9 @@ class HomeFragment : Fragment() {
         else -> false
     }
 
-    inner class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    inner class HomeAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             val (year, month) = mPager.getYearAndMonth(position)
             return CalendarFragment.newInstance(year, month)
         }

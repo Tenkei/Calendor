@@ -1,7 +1,7 @@
 package com.esbati.keivan.persiancalendar.repository
 
 import android.content.res.Resources
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import android.util.Log
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ApplicationController

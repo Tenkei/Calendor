@@ -3,10 +3,10 @@ package com.esbati.keivan.persiancalendar.components.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.widget.NestedScrollView
-import android.support.v7.app.AlertDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.widget.NestedScrollView
+import androidx.appcompat.app.AlertDialog
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater

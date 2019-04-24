@@ -1,9 +1,9 @@
 package com.esbati.keivan.persiancalendar.components.views
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import com.esbati.keivan.persiancalendar.R
 
@@ -27,7 +27,7 @@ class CalendarPager @JvmOverloads constructor(context: Context, attrs: Attribute
         super.setCurrentItem(position)
     }
 
-    fun getPage(year: Int, month: Int, fm: FragmentManager): Fragment? {
+    fun getPage(year: Int, month: Int, fm: androidx.fragment.app.FragmentManager): androidx.fragment.app.Fragment? {
         val pageNumber = getPageNumber(year, month)
 
         return fm.findFragmentByTag("android:switcher:" + R.id.pager + ":" + pageNumber)
@@ -69,7 +69,7 @@ class CalendarPager @JvmOverloads constructor(context: Context, attrs: Attribute
         })
     }
 
-    abstract class OnPageChangeListener : ViewPager.SimpleOnPageChangeListener(){
+    abstract class OnPageChangeListener : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener(){
         abstract fun onPageSelected(year: Int, month: Int)
     }
 }

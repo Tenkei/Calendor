@@ -3,7 +3,7 @@ package com.esbati.keivan.persiancalendar.features.settings.cells
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.support.v7.widget.SwitchCompat
+import androidx.appcompat.widget.SwitchCompat
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
