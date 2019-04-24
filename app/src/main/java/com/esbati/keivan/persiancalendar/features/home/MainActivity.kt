@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupFragment(refresh: Boolean = false) {
-        var fragment: androidx.fragment.app.Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        var fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
         if (fragment == null || refresh)
             fragment = HomeFragment()

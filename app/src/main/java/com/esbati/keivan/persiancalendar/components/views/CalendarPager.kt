@@ -27,7 +27,7 @@ class CalendarPager @JvmOverloads constructor(context: Context, attrs: Attribute
         super.setCurrentItem(position)
     }
 
-    fun getPage(year: Int, month: Int, fm: androidx.fragment.app.FragmentManager): androidx.fragment.app.Fragment? {
+    fun getPage(year: Int, month: Int, fm: FragmentManager): androidx.fragment.app.Fragment? {
         val pageNumber = getPageNumber(year, month)
 
         return fm.findFragmentByTag("android:switcher:" + R.id.pager + ":" + pageNumber)
@@ -69,7 +69,7 @@ class CalendarPager @JvmOverloads constructor(context: Context, attrs: Attribute
         })
     }
 
-    abstract class OnPageChangeListener : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener(){
+    abstract class OnPageChangeListener : SimpleOnPageChangeListener(){
         abstract fun onPageSelected(year: Int, month: Int)
     }
 }

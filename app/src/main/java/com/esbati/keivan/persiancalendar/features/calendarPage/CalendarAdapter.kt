@@ -14,7 +14,7 @@ import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.utils.ColorHelper
 import com.esbati.keivan.persiancalendar.utils.setTextColorResource
 
-class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : androidx.recyclerview.widget.RecyclerView.Adapter<CalendarAdapter.DayHolder>() {
+class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : RecyclerView.Adapter<CalendarAdapter.DayHolder>() {
 
     var onCalendarClickListener: OnCalendarClickListener? = null
     val calendarDays = ArrayList<CalendarDay>(days)
@@ -23,7 +23,7 @@ class CalendarAdapter(val year: Int, val month: Int, days: List<CalendarDay>) : 
         fun onCalendarClick(day: CalendarDay)
     }
 
-    inner class DayHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    inner class DayHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val mDayNo = itemView.findViewById(R.id.calendar_day_no) as TextView
         private val mEvents = itemView.findViewById(R.id.calendar_events) as TextView
