@@ -2,7 +2,7 @@ package com.esbati.keivan.persiancalendar.features.notification
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.JobIntentService
+import androidx.core.app.JobIntentService
 import android.util.Log
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.PreferencesHelper

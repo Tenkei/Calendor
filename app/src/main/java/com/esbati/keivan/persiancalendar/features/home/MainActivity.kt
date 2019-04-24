@@ -4,10 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.utils.checkPermissions
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupFragment(refresh: Boolean = false) {
-        var fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        var fragment: androidx.fragment.app.Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
         if (fragment == null || refresh)
             fragment = HomeFragment()

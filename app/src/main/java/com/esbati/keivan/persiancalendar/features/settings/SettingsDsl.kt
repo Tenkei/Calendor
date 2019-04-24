@@ -1,7 +1,7 @@
 package com.esbati.keivan.persiancalendar.features.settings
 
 import android.content.Context
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout

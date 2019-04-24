@@ -5,7 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
