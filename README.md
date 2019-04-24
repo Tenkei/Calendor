@@ -16,6 +16,11 @@ All national and religious holidays are marked accurately for the current year, 
 * Add events to device calendar
 * Sticky notification on your preference
 
+### Showcases
+* Running **[Service](app/src/main/java/com/esbati/keivan/persiancalendar/features/notification "Service")** in background using sticky notification
+* Creating **[View](app/src/main/java/com/esbati/keivan/persiancalendar/features/settings/ "View")** using design language systems and Kotlin DSL
+* Implementating lightweight **[Service Locator](app/src/main/java/com/esbati/keivan/persiancalendar/components/ServiceLocator.kt "Service Locator")** with dynamic configuration and accesors  
+
 ### Goals
 * Rewriting to Kotlin, while applying the Clean architecture principles
 * Applying SOLID principles to achieve a testable code
@@ -23,14 +28,13 @@ All national and religious holidays are marked accurately for the current year, 
 
 ### Contributing
 Your contributions are always welcomed but for easier and faster code review please consider:
-- This project uses [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow "gitflow")
-	- Feature branches are created from **develop**
-	- When a feature is complete it is merged into the **develop**
+- Feature branches are created from **develop**
+- When a feature is complete it is merged into the **develop**
 - Create a descriptively named branch
 - Every **branch** should only fix **one** issue, this way branches can be merged easier
 - Each **commit** should only change **one** thing, this way commits can be reverted easier
-- When you need feedback or help, or you think the branch is ready for merging, open a pull request
-- Refrrain from adding tools and technologies that **increase** the complexity of the project
+- When you need feedback or help, or you think the branch is ready for merging, open a **pull request**
+- Refrrain from adding tools and technologies that **increase** the **complexity** of the project
 
 ### License
 
