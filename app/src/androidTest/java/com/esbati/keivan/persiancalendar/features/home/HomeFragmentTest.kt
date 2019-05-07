@@ -1,13 +1,11 @@
 package com.esbati.keivan.persiancalendar.features.home
 
-import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
@@ -17,6 +15,8 @@ import ir.smartlab.persindatepicker.util.PersianCalendar
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.hamcrest.core.AllOf.allOf
+import org.hamcrest.core.IsNot
+import org.hamcrest.core.IsNot.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -44,8 +44,10 @@ class HomeFragmentTest {
     val TITLE_NEXT_MONTH = "خرداد 1398"
     val DATE_PERSIAN = "یک\u200Cشنبه  15  اردی\u200Cبهشت  1398"
     val DATE_GREGORIAN = "Sunday, May 5 2019"
-    val TEST_EVENT_TITLE = "TITLE"
-    val TEST_EVENT_TITLE_EDITED = "EDITED"
+    val TEST_TITLE_EVENT_NEW = "NEW_EVENT"
+    val TEST_DESCRIPTION_EVENT_NEW = "DESCRIPTION"
+    val TEST_TITLE_EVENT_TO_EDIT = "EDIT_ME"
+    val TEST_TITLE_EVENT_EDITED = "EDITED_EVENT"
 
     @Before
     fun setUp() {
@@ -132,7 +134,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun toolbarCollapseWhenPagerSwipedUp(){
+    fun toolbarCollapseWhenListSwipedUp(){
         onView(allOf(withId(R.id.list), isDisplayed()))
                 .perform(swipeUp())
 
@@ -142,7 +144,7 @@ class HomeFragmentTest {
 
     @Test
     fun bottomSheetExpandWhenSwipedUp(){
-        onView(withId(R.id.bottom_sheet_Date_container))
+        onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
         assertFalse(activityTestRule.activity.findViewById<CalendarBottomSheet>(R.id.bottom_sheet).isCollapsed())
@@ -150,7 +152,7 @@ class HomeFragmentTest {
 
     @Test
     fun bottomSheetCollapseOnBackPressed(){
-        onView(withId(R.id.bottom_sheet_Date_container))
+        onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
         Thread.sleep(400)
@@ -174,33 +176,114 @@ class HomeFragmentTest {
 
     @Test
     fun newEventIsShownOnNewEventSaved(){
+        onView(withId(R.id.add_event))
+                .perform(click())
 
+        onView(withId(R.id.event_title))
+                .perform(typeText(TEST_TITLE_EVENT_NEW), pressImeActionButton())
+
+        onView(withId(R.id.event_description))
+                .perform(typeText(TEST_DESCRIPTION_EVENT_NEW))
+
+        onView(withId(R.id.add_event))
+                .perform(click())
+
+        onView(withId(R.id.bottom_sheet_content_container))
+                .check(matches(hasDescendant(withText(TEST_TITLE_EVENT_NEW))))
     }
 
     @Test
     fun eventDetailDialogIsShownOnEventClick(){
+        //TODO Improve with Mocks
+        onView(withId(R.id.bottom_sheet_date_container))
+                .perform(swipeUp())
 
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+                .perform(click())
+
+        //TODO Remove Thread Sleep
+        Thread.sleep(500)
+        onView(withText(TEST_DESCRIPTION_EVENT_NEW))
+                .check(matches(isDisplayed()))
     }
 
     @Test
     fun editEventDialogIsShownOnEditEventClicked(){
+        //TODO Improve with Mocks
+        onView(withId(R.id.bottom_sheet_date_container))
+                .perform(swipeUp())
 
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+                .perform(click())
+
+        onView(withId(R.id.add_event))
+                .perform(click())
+
+        onView(allOf(withId(R.id.event_title), withText(TEST_TITLE_EVENT_NEW)))
+                .check(matches(isDisplayed()))
+
+        onView(allOf(withId(R.id.event_description), withText(TEST_DESCRIPTION_EVENT_NEW)))
+                .check(matches(isDisplayed()))
     }
 
     @Test
     fun editedEventIsShownOnEditedEventSaved(){
+        //TODO Improve with Mocks
+        onView(withId(R.id.bottom_sheet_date_container))
+                .perform(swipeUp())
 
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+                .perform(click())
+
+        onView(withId(R.id.add_event))
+                .perform(click())
+
+        onView(withId(R.id.event_title))
+                .perform(clearText(), typeText(TEST_TITLE_EVENT_EDITED))
+
+        onView(withId(R.id.add_event))
+                .perform(click())
+
+        onView(withId(R.id.bottom_sheet_content_container))
+                .check(matches(hasDescendant(withText(TEST_TITLE_EVENT_EDITED))))
     }
 
     @Test
     fun deleteDialogIsShownOnDeleteBtnClicked(){
+        //TODO Improve with Mocks
+        onView(withId(R.id.bottom_sheet_date_container))
+                .perform(swipeUp())
 
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_EDITED)))
+                .perform(click())
+
+        //TODO remove Thread sleep
+        Thread.sleep(400)
+        onView(allOf(withEffectiveVisibility(Visibility.VISIBLE), withId(R.id.event_icon)))
+                .perform(click())
+
+        onView(withText(R.string.dialog_delete_event_title))
+                .check(matches(isDisplayed()))
     }
 
     @Test
     fun deletedEventRemovedOnEventDeleted(){
+        //TODO Improve with Mocks
+        onView(withId(R.id.bottom_sheet_date_container))
+                .perform(swipeUp())
 
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_EDITED)))
+                .perform(click())
+
+        //TODO remove Thread sleep
+        Thread.sleep(400)
+        onView(allOf(withEffectiveVisibility(Visibility.VISIBLE), withId(R.id.event_icon)))
+                .perform(click())
+
+        onView(withId(android.R.id.button1))
+                .perform(click())
+
+        onView(withId(R.id.bottom_sheet_content_container))
+                .check(matches(not(hasDescendant(withText(TEST_TITLE_EVENT_EDITED)))))
     }
-
-    //Test Back presses
 }
