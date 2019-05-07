@@ -15,16 +15,14 @@ import ir.smartlab.persindatepicker.util.PersianCalendar
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.hamcrest.core.AllOf.allOf
-import org.hamcrest.core.IsNot
-import org.hamcrest.core.IsNot.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.hamcrest.core.IsNot.not
+import org.junit.*
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class HomeFragmentTest {
 
     @get:Rule
@@ -163,7 +161,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun newEventDialogIsDisplayedWhenFabClicked(){
+    fun a_newEventDialogIsDisplayedWhenFabClicked(){
         onView(withId(R.id.add_event))
                 .perform(click())
 
@@ -175,7 +173,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun newEventIsShownOnNewEventSaved(){
+    fun a_newEventIsShownOnNewEventSaved(){
         onView(withId(R.id.add_event))
                 .perform(click())
 
@@ -193,7 +191,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun eventDetailDialogIsShownOnEventClick(){
+    fun b_eventDetailDialogIsShownOnEventClick(){
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
@@ -208,7 +206,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun editEventDialogIsShownOnEditEventClicked(){
+    fun c_editEventDialogIsShownOnEditEventClicked(){
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
@@ -227,7 +225,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun editedEventIsShownOnEditedEventSaved(){
+    fun c_editedEventIsShownOnEditedEventSaved(){
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
@@ -249,7 +247,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun deleteDialogIsShownOnDeleteBtnClicked(){
+    fun d_deleteDialogIsShownOnDeleteBtnClicked(){
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
@@ -267,7 +265,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun deletedEventRemovedOnEventDeleted(){
+    fun d_deletedEventRemovedOnEventDeleted(){
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
