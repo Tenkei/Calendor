@@ -1,18 +1,22 @@
 package com.esbati.keivan.persiancalendar.features.home
 
+import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
+import com.esbati.keivan.persiancalendar.repository.Repository
+import ir.smartlab.persindatepicker.util.PersianCalendar
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
-import org.hamcrest.core.AllOf
-import org.hamcrest.core.AllOf.*
+import org.hamcrest.core.AllOf.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -24,7 +28,15 @@ import org.junit.runner.RunWith
 class HomeFragmentTest {
 
     @get:Rule
-    var activityTestRule = ActivityTestRule(MainActivity::class.java)
+    var activityTestRule = object : ActivityTestRule<MainActivity>(MainActivity::class.java, false, true) {
+
+        override fun beforeActivityLaunched() {
+            ServiceLocator.getInstance().apply {
+                factory { PersianCalendar().setPersianDate(1398, 2, 15) }
+                single { Repository(get(), get(), get()) }
+            }
+        }
+    }
 
     val TITLE = "اردیبهشت 1398"
     val TITLE_SUB = "April - May"
@@ -32,9 +44,12 @@ class HomeFragmentTest {
     val TITLE_NEXT_MONTH = "خرداد 1398"
     val DATE_PERSIAN = "یک\u200Cشنبه  15  اردی\u200Cبهشت  1398"
     val DATE_GREGORIAN = "Sunday, May 5 2019"
+    val TEST_EVENT_TITLE = "TITLE"
+    val TEST_EVENT_TITLE_EDITED = "EDITED"
 
     @Before
     fun setUp() {
+
     }
 
     @After
