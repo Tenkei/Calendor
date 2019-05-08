@@ -1,37 +1,30 @@
 package com.esbati.keivan.persiancalendar.features.calendarPage
 
-import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RippleDrawable
-import android.view.View
-import android.widget.TextView
-import androidx.annotation.ColorRes
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.internal.util.Checks
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.features.home.MainActivity
 import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.withBackground
+import com.esbati.keivan.persiancalendar.withTextColor
 import ir.smartlab.persindatepicker.util.PersianCalendar
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.core.AllOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.lang.reflect.AccessibleObject.setAccessible
+import org.junit.runner.RunWith
 
 
-
-
+@LargeTest
+@RunWith(AndroidJUnit4::class)
 class CalendarFragmentTest {
 
     @get:Rule
@@ -80,17 +73,17 @@ class CalendarFragmentTest {
     }
 
     @Test
-    fun eventTitleIsShown(){
+    fun cellUpdatedWhenNewEventAdded(){
         //Setup
-        //TODO improve with mock
+        //TODO improve with mock and create a test-case eventTitleIsShown()
         onView(withId(R.id.add_event))
-                .perform(ViewActions.click())
+                .perform(click())
 
         onView(withId(R.id.event_title))
-                .perform(ViewActions.typeText(TEST_TITLE), ViewActions.pressImeActionButton())
+                .perform(typeText(TEST_TITLE))
 
         onView(withId(R.id.add_event))
-                .perform(ViewActions.click())
+                .perform(click())
 
         //Assert
         onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TODAY)), isDisplayed()))
@@ -99,67 +92,17 @@ class CalendarFragmentTest {
         //Cleanup
         //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
-                .perform(ViewActions.swipeUp())
+                .perform(swipeUp())
 
-        onView(AllOf.allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE)))
-                .perform(ViewActions.click())
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), hasDescendant(withText(TEST_TITLE))))
+                .perform(click())
 
         //TODO remove Thread sleep
-        Thread.sleep(400)
-        onView(AllOf.allOf(withEffectiveVisibility(Visibility.VISIBLE), withId(R.id.event_icon)))
-                .perform(ViewActions.click())
+        Thread.sleep(1000)
+        onView(allOf(withId(R.id.event_icon), hasSibling(withText(TEST_TITLE))))
+                .perform(click())
 
         onView(withId(android.R.id.button1))
-                .perform(ViewActions.click())
+                .perform(click())
     }
-}
-
-fun withTextColor(@ColorRes color: Int): Matcher<View> {
-    Checks.checkNotNull(color)
-    return object : BoundedMatcher<View, TextView>(TextView::class.java) {
-        public override fun matchesSafely(view: TextView): Boolean {
-            return view.context.getColor(color) == view.currentTextColor
-        }
-
-        override fun describeTo(description: Description) {
-            description.appendText("with text color: ")
-        }
-    }
-}
-
-fun withBackground(res: Int): Matcher<View> {
-    Checks.checkNotNull(res)
-    return object : BoundedMatcher<View, View>(View::class.java) {
-        public override fun matchesSafely(view: View): Boolean {
-            val background = view.background
-            return when(background){
-                is RippleDrawable -> background.sameAs(view.context.getDrawable(res))
-                else -> false
-            }
-        }
-
-        override fun describeTo(description: Description) {
-            description.appendText("with background color: ")
-        }
-    }
-}
-
-fun RippleDrawable.sameAs(drawable: Drawable): Boolean {
-    return drawable is RippleDrawable && this.getDefaultColor() == drawable.getDefaultColor()
-}
-
-fun RippleDrawable.getDefaultColor(): Int {
-    var rippleColor: Int = -1
-    try {
-        val colorField = constantState::class.java.getDeclaredField("mColor")
-        colorField.isAccessible = true
-        val colorStateList = colorField.get(constantState) as ColorStateList
-        rippleColor = colorStateList.defaultColor
-    } catch (e: NoSuchFieldException) {
-        e.printStackTrace()
-    } catch (e: IllegalAccessException) {
-        e.printStackTrace()
-    }
-
-    return rippleColor
 }

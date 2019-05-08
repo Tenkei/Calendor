@@ -1,14 +1,11 @@
 package com.esbati.keivan.persiancalendar.features.home
 
-import android.os.Build
-import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.esbati.keivan.persiancalendar.R
@@ -23,6 +20,7 @@ import org.hamcrest.core.IsNot.not
 import org.junit.*
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
+
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -160,7 +158,6 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        Thread.sleep(400)
         onView(withId(android.R.id.content))
                 .perform(pressBack())
 
