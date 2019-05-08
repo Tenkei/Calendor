@@ -1,12 +1,16 @@
 package com.esbati.keivan.persiancalendar.features.home
 
+import android.os.Build
+import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
@@ -25,6 +29,8 @@ import org.junit.runners.MethodSorters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class HomeFragmentTest {
 
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.READ_CALENDAR, android.Manifest.permission.WRITE_CALENDAR)
     @get:Rule
     var activityTestRule = object : ActivityTestRule<MainActivity>(MainActivity::class.java, false, true) {
 
@@ -54,6 +60,7 @@ class HomeFragmentTest {
 
     @After
     fun tearDown() {
+
     }
 
     @Test
