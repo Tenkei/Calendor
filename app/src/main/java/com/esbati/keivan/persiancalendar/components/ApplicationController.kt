@@ -7,9 +7,7 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.esbati.keivan.persiancalendar.BuildConfig
 import com.esbati.keivan.persiancalendar.features.notification.NotificationHelper
 import com.esbati.keivan.persiancalendar.features.notification.NotificationUpdateService
-import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
-import com.esbati.keivan.persiancalendar.repository.RemarkDataStore
-import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.repository.*
 import io.fabric.sdk.android.Fabric
 import ir.smartlab.persindatepicker.util.PersianCalendar
 import java.util.*
@@ -25,9 +23,9 @@ class ApplicationController : Application() {
 
         SoundManager.init()
         ServiceLocator.init(ServiceLocator().apply {
-            single { Repository(get(), get(), get()) }
-            single { RemarkDataStore(this@ApplicationController.resources) }
-            single { CalendarDataStore(this@ApplicationController.contentResolver) }
+            single { RepositoryImp(get(), get(), get()) as Repository }
+            single { LocalRemarkDataStore(this@ApplicationController.resources) as RemarkDataStore }
+            single { DeviceCalendarDataStore(this@ApplicationController.contentResolver) as CalendarDataStore }
             factory { PersianCalendar().apply {
                 // Set time at the middle of the day to prevent shift in days
                 // for dates like yyyy/1/1 caused by DST
