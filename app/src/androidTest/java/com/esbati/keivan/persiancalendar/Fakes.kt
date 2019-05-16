@@ -33,10 +33,16 @@ class FakeCalendarDataStore(vararg testEvents: UserEvent): CalendarDataStore {
     }
 
     override fun updateEvent(event: UserEvent): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //Find and replace event
+        for (i in 0 until events.size)
+            if (event.id == events[i].id)
+                events[i] = event
+        return 1
     }
 
     override fun deleteEvent(eventId: Long): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //Remove From Events Pool
+        events.removeAll { it.id == eventId }
+        return 1
     }
 }

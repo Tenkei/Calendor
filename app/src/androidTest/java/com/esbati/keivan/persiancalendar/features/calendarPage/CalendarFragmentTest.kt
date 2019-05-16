@@ -33,8 +33,8 @@ class CalendarFragmentTest {
 
     companion object TestObjects{
         const val TEST_TITLE = "TEST_TITLE"
+        val TEST_TODAY_CALENDAR = PersianCalendar().setPersianDate(1398, 2, 14)!!
         private val TEST_DATE = PersianCalendar().setPersianDate(1398, 2, 15)!!
-        val TEST_TODAY = PersianCalendar().setPersianDate(1398, 2, 14)!!
         val TEST_EVENT = UserEvent(1, "TEST_EVENT", "DESCRIPTION", TEST_DATE.timeInMillis)
         val TEST_HOLIDAY = CalendarRemark(
                 "TEST_HOLIDAY",
@@ -52,7 +52,7 @@ class CalendarFragmentTest {
 
         override fun beforeActivityLaunched() {
             ServiceLocator.getInstance().apply {
-                factory { TEST_TODAY }
+                factory { TEST_TODAY_CALENDAR }
                 single { RepositoryImp(get(), get(), get()) as Repository}
                 single { FakeRemarkDataStore(TEST_HOLIDAY) as RemarkDataStore }
                 single { FakeCalendarDataStore(TEST_EVENT ) as CalendarDataStore }
@@ -72,10 +72,10 @@ class CalendarFragmentTest {
 
     @Test
     fun todayIsMarked(){
-        onView(allOf(withText(TEST_TODAY.persianDay.toString()), isDisplayed()))
+        onView(allOf(withText(TEST_TODAY_CALENDAR.persianDay.toString()), isDisplayed()))
                 .check(matches(withTextColor(android.R.color.white)))
 
-        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(TEST_TODAY.persianDay.toString())), isDisplayed()))
+        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(TEST_TODAY_CALENDAR.persianDay.toString())), isDisplayed()))
                 .check(matches(withBackground(R.drawable.bg_calendar_today)))
     }
 
@@ -106,7 +106,7 @@ class CalendarFragmentTest {
                 .perform(click())
 
         //Assert
-        onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TEST_TODAY.persianDay.toString())), isDisplayed()))
+        onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TEST_TODAY_CALENDAR.persianDay.toString())), isDisplayed()))
                 .check(matches(withText(TEST_TITLE)))
     }
 }

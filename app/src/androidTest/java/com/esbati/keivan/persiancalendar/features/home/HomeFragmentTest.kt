@@ -8,9 +8,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import com.esbati.keivan.persiancalendar.FakeCalendarDataStore
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.components.views.CalendarBottomSheet
+import com.esbati.keivan.persiancalendar.pojos.CalendarDay
+import com.esbati.keivan.persiancalendar.pojos.UserEvent
+import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.repository.RepositoryImp
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -28,6 +32,25 @@ import org.junit.runners.MethodSorters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class HomeFragmentTest {
 
+    companion object TestObjects {
+        val TEST_TODAY = CalendarDay(
+                1398, 2, 15,
+                true, false, true,
+                "یک\u200Cشنبه  15  اردی\u200Cبهشت  1398",
+                "Sunday, May 5 2019"
+        )
+        val TEST_TODAY_CALENDAR = PersianCalendar().setPersianDate(TEST_TODAY.mYear, TEST_TODAY.mMonth, TEST_TODAY.mDay)!!
+        val TEST_EVENT = UserEvent(1, "TEST_EVENT", "DESCRIPTION", TEST_TODAY_CALENDAR.timeInMillis)
+        const val TEST_EVENT_EDITED_TITLE = "EDITED_EVENT"
+        const val TEST_EVENT_NEW_TITLE = "NEW_EVENT"
+        const val TEST_EVENT_NEW_DESCRIPTION = "DESCRIPTION"
+
+        const val TITLE = "اردیبهشت 1398"
+        const val TITLE_SUB = "April - May"
+        const val TITLE_PERV_MONTH = "فروردین 1398"
+        const val TITLE_NEXT_MONTH = "خرداد 1398"
+    }
+
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.READ_CALENDAR, android.Manifest.permission.WRITE_CALENDAR)
     @get:Rule
@@ -35,22 +58,13 @@ class HomeFragmentTest {
 
         override fun beforeActivityLaunched() {
             ServiceLocator.getInstance().apply {
-                factory { PersianCalendar().setPersianDate(1398, 2, 15) }
+                factory { TEST_TODAY_CALENDAR }
                 single { RepositoryImp(get(), get(), get()) as Repository }
+                single { FakeCalendarDataStore(TEST_EVENT) as CalendarDataStore }
             }
         }
     }
 
-    val TITLE = "اردیبهشت 1398"
-    val TITLE_SUB = "April - May"
-    val TITLE_PERV_MONTH = "فروردین 1398"
-    val TITLE_NEXT_MONTH = "خرداد 1398"
-    val DATE_PERSIAN = "یک\u200Cشنبه  15  اردی\u200Cبهشت  1398"
-    val DATE_GREGORIAN = "Sunday, May 5 2019"
-    val TEST_TITLE_EVENT_NEW = "NEW_EVENT"
-    val TEST_DESCRIPTION_EVENT_NEW = "DESCRIPTION"
-    val TEST_TITLE_EVENT_TO_EDIT = "EDIT_ME"
-    val TEST_TITLE_EVENT_EDITED = "EDITED_EVENT"
 
     @Before
     fun setUp() {
@@ -74,10 +88,10 @@ class HomeFragmentTest {
     @Test
     fun todayDateIsDisplayed(){
         onView(withId(R.id.date_shamsi))
-                .check(matches(withText(DATE_PERSIAN)))
+                .check(matches(withText(TEST_TODAY.formattedDate)))
 
         onView(withId(R.id.date_miladi))
-                .check(matches(withText(DATE_GREGORIAN)))
+                .check(matches(withText(TEST_TODAY.formattedDateSecondary)))
     }
 
     @Test
@@ -183,81 +197,77 @@ class HomeFragmentTest {
                 .perform(click())
 
         onView(withId(R.id.event_title))
-                .perform(typeText(TEST_TITLE_EVENT_NEW), pressImeActionButton())
+                .perform(typeText(TEST_EVENT_NEW_TITLE), pressImeActionButton())
 
         onView(withId(R.id.event_description))
-                .perform(typeText(TEST_DESCRIPTION_EVENT_NEW))
+                .perform(typeText(TEST_EVENT_NEW_DESCRIPTION))
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
         onView(withId(R.id.bottom_sheet_content_container))
-                .check(matches(hasDescendant(withText(TEST_TITLE_EVENT_NEW))))
+                .check(matches(hasDescendant(withText(TEST_EVENT_NEW_TITLE))))
     }
 
     @Test
     fun b_eventDetailDialogIsShownOnEventClick(){
-        //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
                 .perform(click())
 
         //TODO Remove Thread Sleep
         Thread.sleep(500)
-        onView(withText(TEST_DESCRIPTION_EVENT_NEW))
+        onView(withText(TEST_EVENT.description))
                 .check(matches(isDisplayed()))
     }
 
     @Test
     fun c_editEventDialogIsShownOnEditEventClicked(){
-        //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
                 .perform(click())
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
-        onView(allOf(withId(R.id.event_title), withText(TEST_TITLE_EVENT_NEW)))
+        onView(allOf(withId(R.id.event_title), withText(TEST_EVENT.title)))
                 .check(matches(isDisplayed()))
 
-        onView(allOf(withId(R.id.event_description), withText(TEST_DESCRIPTION_EVENT_NEW)))
+        onView(allOf(withId(R.id.event_description), withText(TEST_EVENT.description)))
                 .check(matches(isDisplayed()))
     }
 
     @Test
     fun c_editedEventIsShownOnEditedEventSaved(){
-        //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_NEW)))
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
                 .perform(click())
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
         onView(withId(R.id.event_title))
-                .perform(clearText(), typeText(TEST_TITLE_EVENT_EDITED))
+                .perform(clearText(), typeText(TEST_EVENT_EDITED_TITLE))
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
         onView(withId(R.id.bottom_sheet_content_container))
-                .check(matches(hasDescendant(withText(TEST_TITLE_EVENT_EDITED))))
+                .check(matches(hasDescendant(withText(TEST_EVENT_EDITED_TITLE))))
     }
 
     @Test
     fun d_deleteDialogIsShownOnDeleteBtnClicked(){
-        //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_EDITED)))
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
                 .perform(click())
 
         //TODO remove Thread sleep
@@ -271,11 +281,10 @@ class HomeFragmentTest {
 
     @Test
     fun d_deletedEventRemovedOnEventDeleted(){
-        //TODO Improve with Mocks
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_TITLE_EVENT_EDITED)))
+        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
                 .perform(click())
 
         //TODO remove Thread sleep
@@ -287,6 +296,6 @@ class HomeFragmentTest {
                 .perform(click())
 
         onView(withId(R.id.bottom_sheet_content_container))
-                .check(matches(not(hasDescendant(withText(TEST_TITLE_EVENT_EDITED)))))
+                .check(matches(not(hasDescendant(withText(TEST_EVENT_EDITED_TITLE)))))
     }
 }
