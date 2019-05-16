@@ -1,20 +1,23 @@
 package com.esbati.keivan.persiancalendar.features.calendarPage
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import com.esbati.keivan.persiancalendar.R
+import com.esbati.keivan.persiancalendar.*
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.features.home.MainActivity
+import com.esbati.keivan.persiancalendar.pojos.CalendarRemark
+import com.esbati.keivan.persiancalendar.pojos.UserEvent
+import com.esbati.keivan.persiancalendar.repository.CalendarDataStore
+import com.esbati.keivan.persiancalendar.repository.RemarkDataStore
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.repository.RepositoryImp
-import com.esbati.keivan.persiancalendar.withBackground
-import com.esbati.keivan.persiancalendar.withTextColor
 import ir.smartlab.persindatepicker.util.PersianCalendar
 import org.hamcrest.Matchers.allOf
 import org.junit.After
@@ -28,6 +31,20 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CalendarFragmentTest {
 
+    companion object TestObjects{
+        const val TEST_TITLE = "TEST_TITLE"
+        private val TEST_DATE = PersianCalendar().setPersianDate(1398, 2, 15)!!
+        val TEST_TODAY = PersianCalendar().setPersianDate(1398, 2, 14)!!
+        val TEST_EVENT = UserEvent(1, "TEST_EVENT", "DESCRIPTION", TEST_DATE.timeInMillis)
+        val TEST_HOLIDAY = CalendarRemark(
+                "TEST_HOLIDAY",
+                TEST_DATE.persianYear,
+                TEST_DATE.persianMonth,
+                TEST_DATE.persianDay,
+                true
+        )
+    }
+
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.READ_CALENDAR, android.Manifest.permission.WRITE_CALENDAR)
     @get:Rule
@@ -35,15 +52,13 @@ class CalendarFragmentTest {
 
         override fun beforeActivityLaunched() {
             ServiceLocator.getInstance().apply {
-                factory { PersianCalendar().setPersianDate(1398, 2, TODAY.toInt()) }
+                factory { TEST_TODAY }
                 single { RepositoryImp(get(), get(), get()) as Repository}
+                single { FakeRemarkDataStore(TEST_HOLIDAY) as RemarkDataStore }
+                single { FakeCalendarDataStore(TEST_EVENT ) as CalendarDataStore }
             }
         }
     }
-
-    val HOLIDAY = "13"
-    val TODAY = "14"
-    val TEST_TITLE = "TEST_TITLE"
 
     @Before
     fun setUp() {
@@ -57,26 +72,30 @@ class CalendarFragmentTest {
 
     @Test
     fun todayIsMarked(){
-        onView(allOf(withText(TODAY), isDisplayed()))
+        onView(allOf(withText(TEST_TODAY.persianDay.toString()), isDisplayed()))
                 .check(matches(withTextColor(android.R.color.white)))
 
-        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(TODAY)), isDisplayed()))
+        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(TEST_TODAY.persianDay.toString())), isDisplayed()))
                 .check(matches(withBackground(R.drawable.bg_calendar_today)))
     }
 
     @Test
     fun holidayIsMarked(){
-        onView(allOf(withText(HOLIDAY), isDisplayed()))
+        onView(allOf(withText(TEST_HOLIDAY.mDay.toString()), isDisplayed()))
                 .check(matches(withTextColor(android.R.color.white)))
 
-        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(HOLIDAY)), isDisplayed()))
+        onView(allOf(withId(R.id.calendar_background), hasDescendant(withText(TEST_HOLIDAY.mDay.toString())), isDisplayed()))
                 .check(matches(withBackground(R.drawable.bg_calendar_holiday)))
     }
 
     @Test
+    fun eventTitleIsShown(){
+        onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TEST_EVENT.day.toString())), isDisplayed()))
+                .check(matches(withText(TEST_EVENT.title)))
+    }
+
+    @Test
     fun cellUpdatedWhenNewEventAdded(){
-        //Setup
-        //TODO improve with mock and create a test-case eventTitleIsShown()
         onView(withId(R.id.add_event))
                 .perform(click())
 
@@ -87,23 +106,7 @@ class CalendarFragmentTest {
                 .perform(click())
 
         //Assert
-        onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TODAY)), isDisplayed()))
+        onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TEST_TODAY.persianDay.toString())), isDisplayed()))
                 .check(matches(withText(TEST_TITLE)))
-
-        //Cleanup
-        //TODO Improve with Mocks
-        onView(withId(R.id.bottom_sheet_date_container))
-                .perform(swipeUp())
-
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), hasDescendant(withText(TEST_TITLE))))
-                .perform(click())
-
-        //TODO remove Thread sleep
-        Thread.sleep(1000)
-        onView(allOf(withId(R.id.event_icon), hasSibling(withText(TEST_TITLE))))
-                .perform(click())
-
-        onView(withId(android.R.id.button1))
-                .perform(click())
     }
 }

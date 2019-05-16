@@ -16,5 +16,6 @@ interface CalendarDataStore {
     fun saveSimpleEvent(newEvent: UserEvent): Int
 
     fun updateEvent(event: UserEvent): Int
+
     fun deleteEvent(eventId: Long): Int
 }
