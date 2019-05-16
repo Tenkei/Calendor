@@ -99,6 +99,8 @@ class CalendarFragmentTest {
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(withId(R.id.event_title))
                 .perform(typeText(TEST_TITLE))
 
@@ -106,6 +108,8 @@ class CalendarFragmentTest {
                 .perform(click())
 
         //Assert
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(allOf(withId(R.id.calendar_events), hasSibling(withText(TEST_TODAY_CALENDAR.persianDay.toString())), isDisplayed()))
                 .check(matches(withText(TEST_TITLE)))
     }

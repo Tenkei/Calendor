@@ -22,9 +22,11 @@ import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.hamcrest.core.AllOf.allOf
 import org.hamcrest.core.IsNot.not
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 
 
 @LargeTest
@@ -195,6 +197,8 @@ class HomeFragmentTest {
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(withId(R.id.event_title))
                 .perform(typeText(TEST_EVENT_NEW_TITLE), pressImeActionButton())
 
@@ -204,6 +208,8 @@ class HomeFragmentTest {
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(withId(R.id.bottom_sheet_content_container))
                 .check(matches(hasDescendant(withText(TEST_EVENT_NEW_TITLE))))
     }
@@ -217,7 +223,7 @@ class HomeFragmentTest {
                 .perform(click())
 
         //TODO Remove Thread Sleep
-        Thread.sleep(500)
+        Thread.sleep(400)
         onView(withText(TEST_EVENT.description))
                 .check(matches(isDisplayed()))
     }
@@ -233,6 +239,8 @@ class HomeFragmentTest {
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(allOf(withId(R.id.event_title), withText(TEST_EVENT.title)))
                 .check(matches(isDisplayed()))
 
@@ -251,12 +259,16 @@ class HomeFragmentTest {
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(withId(R.id.event_title))
                 .perform(clearText(), typeText(TEST_EVENT_EDITED_TITLE))
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
+        //TODO Remove Thread Sleep
+        Thread.sleep(400)
         onView(withId(R.id.bottom_sheet_content_container))
                 .check(matches(hasDescendant(withText(TEST_EVENT_EDITED_TITLE))))
     }
