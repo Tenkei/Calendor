@@ -3,10 +3,6 @@ package com.esbati.keivan.persiancalendar.components.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.widget.NestedScrollView
-import androidx.appcompat.app.AlertDialog
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -15,6 +11,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
@@ -22,6 +20,8 @@ import com.esbati.keivan.persiancalendar.pojos.UserEvent
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.hideSoftKeyboard
 import com.esbati.keivan.persiancalendar.utils.showThemedDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Created by Keivan Esbati on 11/25/2016.
@@ -264,7 +264,7 @@ class CalendarBottomSheet @JvmOverloads constructor(context: Context, attrs: Att
             }
 
             CalendarBottomSheet.Mode.SHEET_MODE_EDIT_EVENT -> {
-                val tempEvent = mSelectedEvent?.copy() ?: repository.createEventFor(mSelectedDay)
+                val tempEvent = mSelectedEvent?.copy() ?: repository.createEvent(mSelectedDay)
                 setEditEventSheet(tempEvent)
 
                 eventActionBtn.setImageResource(R.drawable.ic_check_white_24dp)

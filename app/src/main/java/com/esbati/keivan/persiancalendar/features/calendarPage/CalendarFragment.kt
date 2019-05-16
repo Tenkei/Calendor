@@ -23,7 +23,7 @@ class CalendarFragment: Fragment() {
 
     private val mRecyclerView: RecyclerView by bindView(R.id.list)
     private val mAdapter by lazy {
-        CalendarAdapter(mYear, mMonth, repository.prepareDays(mYear, mMonth)).apply {
+        CalendarAdapter(mYear, mMonth, repository.getDays(mYear, mMonth)).apply {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
                 override fun onCalendarClick(day: CalendarDay) {
                     SoundManager.playSound(day.mDay)
@@ -58,6 +58,6 @@ class CalendarFragment: Fragment() {
     }
 
     fun refreshCalendar() {
-        mAdapter.refresh(repository.prepareDays(mYear, mMonth))
+        mAdapter.refresh(repository.getDays(mYear, mMonth))
     }
 }

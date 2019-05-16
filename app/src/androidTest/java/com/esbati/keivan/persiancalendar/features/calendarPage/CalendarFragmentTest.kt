@@ -12,6 +12,7 @@ import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.ServiceLocator
 import com.esbati.keivan.persiancalendar.features.home.MainActivity
 import com.esbati.keivan.persiancalendar.repository.Repository
+import com.esbati.keivan.persiancalendar.repository.RepositoryImp
 import com.esbati.keivan.persiancalendar.withBackground
 import com.esbati.keivan.persiancalendar.withTextColor
 import ir.smartlab.persindatepicker.util.PersianCalendar
@@ -35,7 +36,7 @@ class CalendarFragmentTest {
         override fun beforeActivityLaunched() {
             ServiceLocator.getInstance().apply {
                 factory { PersianCalendar().setPersianDate(1398, 2, TODAY.toInt()) }
-                single { Repository(get(), get(), get()) }
+                single { RepositoryImp(get(), get(), get()) as Repository}
             }
         }
     }
