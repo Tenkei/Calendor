@@ -1,6 +1,8 @@
 package com.esbati.keivan.persiancalendar.features.home
 
+import android.view.View
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -20,6 +22,7 @@ import com.esbati.keivan.persiancalendar.repository.RepositoryImp
 import ir.smartlab.persindatepicker.util.PersianCalendar
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
+import org.hamcrest.Matcher
 import org.hamcrest.core.AllOf.allOf
 import org.hamcrest.core.IsNot.not
 import org.junit.After
@@ -219,7 +222,7 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
+        onEvent(TEST_EVENT)
                 .perform(click())
 
         //TODO Remove Thread Sleep
@@ -233,19 +236,19 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
+        onEvent(TEST_EVENT)
                 .perform(click())
 
         onView(withId(R.id.add_event))
                 .perform(click())
 
         //TODO Remove Thread Sleep
-        Thread.sleep(400)
-        onView(allOf(withId(R.id.event_title), withText(TEST_EVENT.title)))
-                .check(matches(isDisplayed()))
+        Thread.sleep(600)
+        onView(withId(R.id.event_title))
+                .check(matches(withText(TEST_EVENT.title)))
 
-        onView(allOf(withId(R.id.event_description), withText(TEST_EVENT.description)))
-                .check(matches(isDisplayed()))
+        onView(withId(R.id.event_description))
+                .check(matches(withText(TEST_EVENT.description)))
     }
 
     @Test
@@ -253,7 +256,7 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
+        onEvent(TEST_EVENT)
                 .perform(click())
 
         onView(withId(R.id.add_event))
@@ -278,7 +281,7 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
+        onEvent(TEST_EVENT)
                 .perform(click())
 
         //TODO remove Thread sleep
@@ -295,7 +298,7 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
-        onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(TEST_EVENT.title)))
+        onEvent(TEST_EVENT)
                 .perform(click())
 
         //TODO remove Thread sleep
@@ -309,4 +312,7 @@ class HomeFragmentTest {
         onView(withId(R.id.bottom_sheet_content_container))
                 .check(matches(not(hasDescendant(withText(TEST_EVENT_EDITED_TITLE)))))
     }
+
+    private fun onEvent(event: UserEvent): ViewInteraction
+            = onView(allOf(isDescendantOfA(withId(R.id.bottom_sheet_content_container)), withText(event.title)))
 }
