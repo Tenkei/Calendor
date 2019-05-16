@@ -1,6 +1,5 @@
 package com.esbati.keivan.persiancalendar.features.home
 
-import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
@@ -22,7 +21,6 @@ import com.esbati.keivan.persiancalendar.repository.RepositoryImp
 import ir.smartlab.persindatepicker.util.PersianCalendar
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
-import org.hamcrest.Matcher
 import org.hamcrest.core.AllOf.allOf
 import org.hamcrest.core.IsNot.not
 import org.junit.After
