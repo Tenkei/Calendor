@@ -29,7 +29,6 @@ import org.junit.runners.MethodSorters
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class HomeFragmentTest {
 
     companion object TestObjects {
@@ -180,7 +179,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun a_newEventDialogIsDisplayedWhenFabClicked(){
+    fun newEventDialogIsDisplayedWhenFabClicked(){
         onView(withId(R.id.add_event))
                 .perform(click())
 
@@ -192,7 +191,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun a_newEventIsShownOnNewEventSaved(){
+    fun newEventIsShownOnNewEventSaved(){
         onView(withId(R.id.add_event))
                 .perform(click())
 
@@ -210,7 +209,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun b_eventDetailDialogIsShownOnEventClick(){
+    fun eventDetailDialogIsShownOnEventClick(){
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
@@ -224,7 +223,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun c_editEventDialogIsShownOnEditEventClicked(){
+    fun editEventDialogIsShownOnEditEventClicked(){
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
@@ -242,7 +241,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun c_editedEventIsShownOnEditedEventSaved(){
+    fun editedEventIsShownOnEditedEventSaved(){
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
@@ -263,7 +262,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun d_deleteDialogIsShownOnDeleteBtnClicked(){
+    fun deleteDialogIsShownOnDeleteBtnClicked(){
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
@@ -280,7 +279,7 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun d_deletedEventRemovedOnEventDeleted(){
+    fun deletedEventRemovedOnEventDeleted(){
         onView(withId(R.id.bottom_sheet_date_container))
                 .perform(swipeUp())
 
