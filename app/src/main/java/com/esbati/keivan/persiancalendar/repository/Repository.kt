@@ -26,9 +26,7 @@ class Repository (
 
 
     fun prepareDays(year: Int, month: Int): List<CalendarDay> {
-        val todayCalendar = (mCalendar.clone() as PersianCalendar).apply {
-            timeInMillis = System.currentTimeMillis()
-        }
+        val todayCalendar = (mCalendar.clone() as PersianCalendar)
         val mToday = todayCalendar.persianDay
         val containToday = todayCalendar.persianYear == year && todayCalendar.persianMonth == month
 
@@ -83,10 +81,7 @@ class Repository (
     }
 
     fun getToday(): CalendarDay {
-        val date = (mCalendar.clone() as PersianCalendar).apply {
-            timeInMillis = System.currentTimeMillis()
-        }
-
+        val date = (mCalendar.clone() as PersianCalendar)
         val georgianDate = GregorianCalendar().run {
             time = date.time
             "${Constants.weekdays_en[get(Calendar.DAY_OF_WEEK) - 1]}, ${Constants.months_en[get(Calendar.MONTH)]} ${get(Calendar.DAY_OF_MONTH)} ${get(Calendar.YEAR)}"

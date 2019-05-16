@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
-                android:id="@+id/bottom_sheet_Date_container"
+                android:id="@+id/bottom_sheet_date_container"
                 android:orientation="vertical"
                 android:gravity="right|center_vertical"
                 android:layout_width="match_parent"

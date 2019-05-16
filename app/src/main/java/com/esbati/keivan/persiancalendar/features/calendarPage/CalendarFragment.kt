@@ -1,13 +1,12 @@
 package com.esbati.keivan.persiancalendar.features.calendarPage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.esbati.keivan.persiancalendar.R
 import com.esbati.keivan.persiancalendar.components.SoundManager
 import com.esbati.keivan.persiancalendar.components.locate
@@ -16,13 +15,13 @@ import com.esbati.keivan.persiancalendar.pojos.CalendarDay
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.bindView
 
-class CalendarFragment: androidx.fragment.app.Fragment() {
+class CalendarFragment: Fragment() {
 
     private val mYear by lazy { arguments!!.get(EXTRA_YEAR) as Int }
     private val mMonth by lazy { arguments!!.get(EXTRA_MONTH) as Int }
     private val repository: Repository by locate()
 
-    private val mRecyclerView: androidx.recyclerview.widget.RecyclerView by bindView(R.id.list)
+    private val mRecyclerView: RecyclerView by bindView(R.id.list)
     private val mAdapter by lazy {
         CalendarAdapter(mYear, mMonth, repository.prepareDays(mYear, mMonth)).apply {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
