@@ -5,7 +5,9 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Binder
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.repository.Repository
@@ -25,7 +27,7 @@ class NotificationService : Service() {
         addAction(Intent.ACTION_TIMEZONE_CHANGED)
     }
 
-    override fun onBind(paramIntent: Intent) = null
+    override fun onBind(paramIntent: Intent) = Binder()
 
     override fun onCreate() {
         super.onCreate()
@@ -69,6 +71,16 @@ class NotificationService : Service() {
                     return true
 
             return false
+        }
+
+        @VisibleForTesting
+        fun getServiceInfo(context: Context): ActivityManager.RunningServiceInfo? {
+            val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            for (service in manager.getRunningServices(Integer.MAX_VALUE))
+                if (NotificationService::class.java.name == service.service.className)
+                    return service
+
+            return null
         }
     }
 }
