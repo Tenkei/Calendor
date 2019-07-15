@@ -50,6 +50,16 @@
             android:description="@string/notification_action_service_description"
             android:exported="false"/>
 
+        <service
+            android:name=".features.notification.TileService"
+            android:icon="@drawable/day1"
+            android:label="@string/showToday"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="83ea65b97507c02eff34f3a7c8e8f60a637d0b88" />
