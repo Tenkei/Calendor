@@ -12,6 +12,7 @@ import com.esbati.keivan.persiancalendar.components.SoundManager
 import com.esbati.keivan.persiancalendar.components.locate
 import com.esbati.keivan.persiancalendar.features.home.HomeFragment
 import com.esbati.keivan.persiancalendar.pojos.CalendarDay
+import com.esbati.keivan.persiancalendar.repository.PreferencesHelper
 import com.esbati.keivan.persiancalendar.repository.Repository
 import com.esbati.keivan.persiancalendar.utils.bindView
 
@@ -26,7 +27,9 @@ class CalendarFragment: Fragment() {
         CalendarAdapter(mYear, mMonth, repository.getDays(mYear, mMonth)).apply {
             onCalendarClickListener = object: CalendarAdapter.OnCalendarClickListener {
                 override fun onCalendarClick(day: CalendarDay) {
-                    SoundManager.playSound(day.mDay)
+                    if (PreferencesHelper.playNote){
+                        SoundManager.playSound(day.mDay)
+                    }
                     (parentFragment as HomeFragment).showDate(day, true)
                 }
             }

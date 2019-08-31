@@ -15,6 +15,7 @@ object PreferencesHelper {
     const val KEY_NOTIFICATION_SHOW = "showNotification"
     const val KEY_NOTIFICATION_ACTIONS = "showNotificationAction"
     const val KEY_NOTIFICATION_PRIORITY = "notificationPriority"
+    const val KEY_PLAY_NOTE = "playNote"
     //endregion
 
     private val preferences: SharedPreferences =
@@ -42,6 +43,10 @@ object PreferencesHelper {
     var notificationPriority: Int
         get() = preferences.getInt(KEY_NOTIFICATION_PRIORITY, NotificationCompat.PRIORITY_MAX)
         set(value) = save { it.putInt(KEY_NOTIFICATION_PRIORITY, value) }
+
+    var playNote : Boolean
+        get() = preferences.getBoolean(KEY_PLAY_NOTE, true)
+        set(value) = save { it.putBoolean(KEY_PLAY_NOTE, value) }
 
     //endregion
 

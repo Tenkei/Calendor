@@ -65,7 +65,8 @@
     <string name="setting_sticky_notification_display">نمایش تاریخ در نوار اعلانات</string>
     <string name="setting_sticky_notification_actions">نمایش اکشن ها</string>
     <string name="setting_sticky_notification_priority">اولویت نمایش</string>
-    
+    <string name="setting_play_note">پخش صدای نوت</string>
+
     <!-- Priority Titles -->
     <string name="least">کمترین</string>
     <string name="down">پایین</string>
