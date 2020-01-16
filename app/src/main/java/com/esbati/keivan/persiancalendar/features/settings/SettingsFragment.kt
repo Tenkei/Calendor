@@ -100,6 +100,18 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
         shadowDivider()
 
+        textCheck {
+            title = getString(R.string.setting_play_note)
+            isEnabled = true
+            isChecked = PreferencesHelper.playNote
+            needDivider = true
+            onClick {
+                isChecked = PreferencesHelper.toggleOption(PreferencesHelper.KEY_PLAY_NOTE, true)
+            }
+        }
+
+        shadowDivider()
+
         //Application Version
         textInfo {
             text = "${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}"
