@@ -4,6 +4,10 @@ import com.esbati.keivan.persiancalendar.R
 
 /**
  * Created by Keivan Esbati on 11/18/2016.
+ *
+ * All of the day icons owned by persian-calendar
+ * @see <a href="https://github.com/persian-calendar">persian-calendar"</a>
+ *
  */
 
 object Constants {

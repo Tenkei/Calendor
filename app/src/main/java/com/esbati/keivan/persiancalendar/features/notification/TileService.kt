@@ -15,6 +15,9 @@ import com.esbati.keivan.persiancalendar.utils.LanguageHelper
 /**
  * @author ali (alirezaiyann@gmail.com)
  * @since 7/8/19 9:58 AM.
+ *
+ * This class owned by persian-calendar
+ * @see <a href="https://github.com/persian-calendar/DroidPersianCalendar/blob/master/PersianCalendar/src/main/java/com/byagowi/persiancalendar/service/PersianCalendarTileService.kt"</a>
  */
 
 @TargetApi(Build.VERSION_CODES.N)
