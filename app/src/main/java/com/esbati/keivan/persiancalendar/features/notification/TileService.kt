@@ -15,6 +15,9 @@ import com.esbati.keivan.persiancalendar.utils.LanguageHelper
 /**
  * @author ali (alirezaiyann@gmail.com)
  * @since 7/8/19 9:58 AM.
+ *
+ * This class owned by persian-calendar
+ * @see <a href="https://github.com/persian-calendar/DroidPersianCalendar/blob/master/PersianCalendar/src/main/java/com/byagowi/persiancalendar/service/PersianCalendarTileService.kt"</a>
  */
 
 @TargetApi(Build.VERSION_CODES.N)
@@ -34,21 +37,22 @@ class TileService : android.service.quicksettings.TileService() {
     }
 
     override fun onStartListening() {
-        val tile = qsTile
+        qsTile?.let {
+            val today = repository.getToday()
 
-        val today = repository.getToday()
+            val segmentedDate = LanguageHelper.formatStringInPersian(today.formattedDate).split(" ")
 
-        val segmentedDate = LanguageHelper.formatStringInPersian(today.formattedDate).split(" ")
+            val nameOfDay = segmentedDate[0]
+            val nameOfMonth = segmentedDate[4]
 
-        val nameOfDay = segmentedDate[0]
-        val nameOfMonth = segmentedDate[4]
+            it.icon = Icon.createWithResource(this, Constants.daysIcon_fa[today.mDay])
+            it.label = nameOfDay
+            it.contentDescription = nameOfMonth
 
-        tile.icon = Icon.createWithResource(this, Constants.daysIcon_fa[today.mDay])
-        tile.label = nameOfDay
-        tile.contentDescription = nameOfMonth
+//          explicitly set Tile state to Active, fixes tile not being lit on some Samsung devices
+            it.state = Tile.STATE_ACTIVE
+            it.updateTile()
+        }
 
-//      explicitly set Tile state to Active, fixes tile not being lit on some Samsung devices
-        tile.state = Tile.STATE_ACTIVE
-        tile.updateTile()
     }
 }
